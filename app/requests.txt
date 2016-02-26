@@ -1,0 +1,65 @@
+ GET TOKEN:
+
+ curl https://api.sandbox.paypal.com/v1/oauth2/token \
+  -H "Accept: application/json" \
+  -H "Accept-Language: en_US" \
+  -u "AZrccVcbcXX1BpSsTTIioUdmvL2PLwznBTkwDFEcfORpz4i_BhE6FPwiQZRfa4RD0kepGAXF5oAWoY71:EEigCPS468DFBtGYmL3WdOscFxd6O7fxOObEI8ebX3uave3flC9iXzjymdNZUli0Y3HOKRSz8WLwIejf" \
+  -d "grant_type=client_credentials"
+
+
+ RETURNS:
+ {"scope":"https://uri.paypal.com/services/subscriptions https://api.paypal.com/v1/payments/.* https://api.paypal.com/v1/vault/credit-card https://uri.paypal.com/services/applications/webhooks openid https://uri.paypal.com/payments/payouts https://api.paypal.com/v1/vault/credit-card/.*","nonce":"2016-02-25T15:38:24ZY-8qSfbi1xfg4zzyvqEOpmcXv6rVhts3yUMHpWrdxNc","access_token":"A101.WTIsjlE61K0DkovEOE1XwwN5qkX-VAMbW4xo0bDDYMUKj4nrOGSaQ7nhWxXBTDb-.ZmKcYOFKD0YcTD9GaE3c_9KjnH4","token_type":"Bearer","app_id":"APP-80W284485P519543T","expires_in":32398}
+
+ -------------------------------------------------------------------------------------------------
+
+STORE A CARD:
+
+curl -v https://api.sandbox.paypal.com/v1/vault/credit-card \
+-H 'Content-Type:application/json' \
+-H 'Authorization: Bearer A101.WTIsjlE61K0DkovEOE1XwwN5qkX-VAMbW4xo0bDDYMUKj4nrOGSaQ7nhWxXBTDb-.ZmKcYOFKD0YcTD9GaE3c_9KjnH4' \
+-d '{
+ "payer_id":"user12345",
+ "type":"visa",
+ "number":"4417119669820331",
+ "expire_month":"11",
+ "expire_year":"2018",
+ "first_name":"Joe",
+ "last_name":"Shopper"
+}'
+
+RETURNS:
+{"id":"CARD-3EV70752CK1507708K3HSAYA","state":"ok","payer_id":"user12345","type":"visa","number":"xxxxxxxxxxxx0331","expire_month":"11","expire_year":"2018","first_name":"Joe","last_name":"Shopper","valid_until":"2019-02-24T00:00:00Z","create_time":"2016-02-25T15:40:16Z","update_time":"2016-02-25T15:40:16Z","links":[{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-3EV70752CK1507708K3HSAYA","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-3EV70752CK1507708K3HSAYA","rel":"delete","method":"DELETE"},{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-3EV70752CK1507708K3HSAYA","rel":"patch","method":"PATCH"}]}
+
+--------------------------------------------------------------------------------
+
+USE A STORED CREDIT CARD:
+
+curl -v https://api.sandbox.paypal.com/v1/payments/payment \
+-H 'Content-Type:application/json' \
+-H 'Authorization: Bearer A101.WTIsjlE61K0DkovEOE1XwwN5qkX-VAMbW4xo0bDDYMUKj4nrOGSaQ7nhWxXBTDb-.ZmKcYOFKD0YcTD9GaE3c_9KjnH4' \
+-d '{
+  "intent":"sale",
+  "payer":{
+    "payment_method":"credit_card",
+    "funding_instruments":[
+      {
+        "credit_card_token":{
+          "credit_card_id":"CARD-3EV70752CK1507708K3HSAYA",
+          "payer_id":"user12345"
+        }
+      }
+    ]
+  },
+  "transactions":[
+    {
+      "amount":{
+        "total":"6.70",
+        "currency":"USD"
+      },
+      "description":"This is the payment transaction description."
+    }
+  ]
+}'
+
+RETURNS:
+{"id":"PAY-79J58587WY358302RK3HSCZA","create_time":"2016-02-25T15:44:36Z","update_time":"2016-02-25T15:45:21Z","state":"approved","intent":"sale","payer":{"payment_method":"credit_card","funding_instruments":[{"credit_card_token":{"credit_card_id":"CARD-3EV70752CK1507708K3HSAYA","payer_id":"user12345","last4":"0331","type":"visa","expire_month":"11","expire_year":"2018"}}]},"transactions":[{"amount":{"total":"6.70","currency":"USD","details":{"subtotal":"6.70"}},"description":"This is the payment transaction description.","related_resources":[{"sale":{"id":"71242849PJ7826804","create_time":"2016-02-25T15:44:36Z","update_time":"2016-02-25T15:45:21Z","amount":{"total":"6.70","currency":"USD"},"state":"completed","parent_payment":"PAY-79J58587WY358302RK3HSCZA","links":[{"href":"https://api.sandbox.paypal.com/v1/payments/sale/71242849PJ7826804","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/payments/sale/71242849PJ7826804/refund","rel":"refund","method":"POST"},{"href":"https://api.sandbox.paypal.com/v1/payments/payment/PAY-79J58587WY358302RK3HSCZA","rel":"parent_payment","method":"GET"}],"fmf_details":{},"processor_response":{"avs_code":"X","cvv_code":"M"}}}]}],"links":[{"href":"https://api.sandbox.paypal.com/v1/payments/payment/PAY-79J58587WY358302RK3HSCZA","rel":"self","method":"GET"}]}
