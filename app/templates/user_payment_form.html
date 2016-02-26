@@ -1,0 +1,36 @@
+{% extends "__main.html" %}
+
+{% block content %}
+
+<a href="{{ url_for('home') }}">Home</a>
+
+<br>You are buying an "item" {{ shop.id }}
+
+<form action="{{ url_for('user_payment_form', shop_id=shop.id) }}" method=post>
+    <!--PayPal user staff:-->
+    <br>
+    {{ form.email.label }}
+    {{ form.email }}
+    <br>
+    {{ form.paypal_password.label }}
+    {{ form.paypal_password }}
+
+
+    <!--Transaction stuff-->
+    <br>
+    {{ form.transaction_purpose.label }}
+    {{ form.transaction_purpose }}
+    <br>
+    {{ form.amount.label }}
+    {{ form.amount }}
+    <br>
+    {{ form.currency.label }}
+    {{ form.currency }}
+
+
+    <!--Submit button-->
+    <br>
+    {{ form.submit }}
+</form>
+
+{% endblock %}

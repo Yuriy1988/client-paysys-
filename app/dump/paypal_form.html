@@ -1,0 +1,26 @@
+{% extends "__main.html" %}
+
+{% block content %}
+
+    Form for buyer:
+    <form action="/form_action" method="post">
+        <input name="cmd" value="_cart">
+        <br>Seller email: <input name="business" value="seller@designerfotos.com">
+        <br>Item Name (the good): <input name="item_name" value="hat">
+        <br>Item Number: <input name="item_number" value="123">
+        <br>Amount: <input name="amount" value="15.00">
+        <br>First Name <input name="first_name" value="John">
+        <br>Last Name<input name="last_name" value="Doe">
+        <br>Address1: <input name="address1" value="9 Elm Street">
+        <br>Address2: <input name="address2" value="Apt 5">
+        <br>City: <input name="city" value="Berwyn">
+        <br>State: <input name="state" value="PA">
+        <br>Zip: <input name="zip" value="19312">
+        <br>Phone a: <input name="night_phone_a" value="610">
+        <br>Phone b: <input name="night_phone_b" value="555">
+        <br>Phone c: <input name="night_phone_c" value="1234">
+        <br>Payer's Email: <input name="email" value="jdoe@zyzzyu.com">
+        <br>Submit Button: <input type="submit" value="Submit">
+    </form>
+
+{% endblock %}

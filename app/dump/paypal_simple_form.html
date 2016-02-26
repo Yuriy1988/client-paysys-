@@ -1,0 +1,17 @@
+{% extends "__main.html" %}
+
+{% block content %}
+
+    Simple paypal form:
+    <form action="/simple_form_action" method="post">
+        <input name="email" value="email">
+        <br><input name="paypal_password" value="paypal_password">
+        <br><input type="submit" value="Submit">
+    </form>
+    <form action="/simple_form_action" method="post" enctype="multipart/form-data">
+        {{ form }}
+        {{ form.item_name }}
+        {{ form.amount }}
+    </form>
+
+{% endblock %}
