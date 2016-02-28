@@ -36,7 +36,8 @@ def user_payment_form(shop_id):
     """
     Form shows after the shop picking.
     """
-    # TODO: faking the getting a Shop object by ID:
+    # TODO: Add a csrf protection to form!
+    # Faking the getting a Shop object by ID:
     for i in shops:
         if shop_id == i.id:
             shop = i

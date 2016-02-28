@@ -9,14 +9,14 @@
 <form action="{{ url_for('user_payment_form', shop_id=shop.id) }}" method=post>
     <!--Payment staff:-->
     <br>
+    {{ form.item.label }}
+    {{ form.item }}
+    <br>
     {{ form.payment_intent.label }}
     {{ form.payment_intent }}
     <br>
     {{ form.payment_method.label }}
     {{ form.payment_method }}
-    <br>
-    {{ form.item.label }}
-    {{ form.item }}
     <br>
     {{ form.payment_description.label }}
     {{ form.payment_description }}
