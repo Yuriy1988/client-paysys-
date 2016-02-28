@@ -2,6 +2,13 @@
 
 {% block content %}
 
-{{ message }}
+You bought an {{ item }} in the {{ shop }}.
+<br>
+auth_token_status_code: {{ auth_token_status_code }}
+<br>
+register_card_status_code: {{ register_card_status_code }}
+<br>
+creating_payment_status_code: {{ creating_payment_status_code }}
+
 
 {% endblock %}

@@ -4,29 +4,48 @@
 
 <a href="{{ url_for('home') }}">Home</a>
 
-<br>You are buying an "item" {{ shop.id }}
+<br>You are buying an "item" {{ shop }}
 
 <form action="{{ url_for('user_payment_form', shop_id=shop.id) }}" method=post>
-    <!--PayPal user staff:-->
+    <!--Payment staff:-->
     <br>
-    {{ form.email.label }}
-    {{ form.email }}
+    {{ form.payment_intent.label }}
+    {{ form.payment_intent }}
     <br>
-    {{ form.paypal_password.label }}
-    {{ form.paypal_password }}
+    {{ form.payment_method.label }}
+    {{ form.payment_method }}
+    <br>
+    {{ form.item.label }}
+    {{ form.item }}
+    <br>
+    {{ form.payment_description.label }}
+    {{ form.payment_description }}
+    <br>
+    {{ form.amount_total.label }}
+    {{ form.amount_total }}
+    <br>
+    {{ form.amount_currency.label }}
+    {{ form.amount_currency }}
 
-
-    <!--Transaction stuff-->
+    <!--Card stuff-->
     <br>
-    {{ form.transaction_purpose.label }}
-    {{ form.transaction_purpose }}
+    {{ form.card_type.label }}
+    {{ form.card_type }}
     <br>
-    {{ form.amount.label }}
-    {{ form.amount }}
+    {{ form.card_number.label }}
+    {{ form.card_number }}
     <br>
-    {{ form.currency.label }}
-    {{ form.currency }}
-
+    {{ form.card_expire_month.label }}
+    {{ form.card_expire_month }}
+    <br>
+    {{ form.card_expire_year.label }}
+    {{ form.card_expire_year }}
+    <br>
+    {{ form.card_first_name.label }}
+    {{ form.card_first_name }}
+    <br>
+    {{ form.card_last_name.label }}
+    {{ form.card_last_name }}
 
     <!--Submit button-->
     <br>
