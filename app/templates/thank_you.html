@@ -2,13 +2,30 @@
 
 {% block content %}
 
-You bought an {{ item }} in the {{ shop }}.
-<br>
-auth_token_status_code: {{ auth_token_status_code }}
-<br>
-register_card_status_code: {{ register_card_status_code }}
-<br>
-creating_payment_status_code: {{ creating_payment_status_code }}
+    <font color="green">
+        Thx! We took your payment in process.
+        <br> You should know that we love you!
+    </font>
 
+    <br>
+    {% if auth_token_status_code %}
+        <br>
+        auth_token_status_code: {{ auth_token_status_code }}
+    {% endif %}
+
+    {% if register_card_status_code %}
+        <br>
+        register_card_status_code: {{ register_card_status_code }}
+    {% endif %}
+
+    {% if creating_payment_status_code %}
+        <br>
+        creating_payment_status_code: {{ creating_payment_status_code }}
+    {% endif %}
+
+    {% if data %}
+        <br>
+        {{ data }}
+    {% endif %}
 
 {% endblock %}

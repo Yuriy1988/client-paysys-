@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="{{ url_for('.static', filename='css/bootstrap.css') }}" rel="stylesheet" media="screen">
     <title>Title</title>
 </head>
 <body>
 
-<font color="green">Main is connected</font> <br>
+<font color="green">| <a href="{{ url_for('home') }}">Shops List</a> |</font>
+<hr>
 
 {% block content %}{% endblock %}
 

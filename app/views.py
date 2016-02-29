@@ -1,10 +1,9 @@
 import json
 import requests
-from flask import render_template, request, redirect, flash
-from wtforms import validators
+from flask import render_template, request
 
 from app import app
-from app.forms import UserPaymentForm
+from app.forms import PayPalPaymentForm, CreditCardPaymentForm
 
 
 class Shop:
@@ -14,12 +13,12 @@ class Shop:
     def __init__(self, id, name, logo):
         self.id = id
         self.name = name
-        self. logo = logo
+        self.logo = logo
 
 # DataBase:
-shop1 = Shop("1", "Shop1", "pass_to_image1")
-shop2 = Shop("2", "Shop2", "pass_to_image2")
-shop3 = Shop("3", "Shop3", "pass_to_image3")
+shop1 = Shop("1", "Шота у Ашота", "pass_to_image1")
+shop2 = Shop("2", "Товары Беллитора", "pass_to_image2")
+shop3 = Shop("3", "Лунный Сахар", "pass_to_image3")
 shops = [shop1, shop2, shop3]
 
 
@@ -32,37 +31,37 @@ def home():
     return render_template('home.html', shops=shops)
 
 
-@app.route('/form/<shop_id>', methods=["GET", "POST"])
-def user_payment_form(shop_id):
+@app.route('/paypal-form/<shop_id>', methods=["GET", "POST"])
+def paypal_payment_form(shop_id):
     """
-    Showing the payment form.
+    Showing the PayPal payment form.
     """
     # TODO: Add a csrf protection to form!
     # Faking the getting a Shop object by ID:
     for i in shops:
         if shop_id == i.id:
             shop = i
+    # Getting the form:
+    form = PayPalPaymentForm()
+    return render_template('paypal_payment_form.html', form=form, shop=shop)
 
-    form = UserPaymentForm()
 
-    return render_template('user_payment_form.html', form=form, shop=shop)
-
-
-@app.route('/form/<shop_id>/payment', methods=["GET", "POST"])
-def user_payment_form_execute(shop_id):
+@app.route('/paypal-form/<shop_id>/payment', methods=["GET", "POST"])
+def paypal_payment_form_execute(shop_id):
     """
     Getting form POST values.
     Getting an auth PayPal token using client id and secret key.
     Adding user's card to storage and getting card id.
     Creating a payment using card id.
     """
+    # Faking the getting a Shop object by ID:
     for i in shops:
         if shop_id == i.id:
             shop = i
-
-    form = UserPaymentForm(request.form)
-
+    # Form POST processing:
+    form = PayPalPaymentForm(request.form)
     if request.method == 'POST' and form.validate():
+
         # GETTING VALUES FROM THE FORM:
         # Card stuff:
         card_type = form.card_type.data
@@ -168,4 +167,80 @@ def user_payment_form_execute(shop_id):
                                shop=shop.name)
     else:
         err = form.errors
-        return render_template('user_payment_form.html', form=form, shop=shop, err=err)
+        return render_template('paypal_payment_form.html', form=form, shop=shop, err=err)
+
+
+@app.route('/credit-card-form/<shop_id>', methods=["GET", "POST"])
+def credit_card_payment_form(shop_id):
+    """
+    Showing the Credit Card payment form.
+    """
+    # Faking the getting a Shop object by ID:
+    for i in shops:
+        if shop_id == i.id:
+            shop = i
+    # Getting the form:
+    form = CreditCardPaymentForm()
+    return render_template('credit_card_payment_form.html', form=form, shop=shop)
+
+
+#TODO: convert amount_total to cents
+
+@app.route('/credit-card-form/<shop_id>/payment', methods=["GET", "POST"])
+def credit_card_payment_form_execute(shop_id):
+    """
+    Getting form POST values.
+    Returning a JSON with payment details.
+    """
+    # Faking the getting a Shop object by ID:
+    for i in shops:
+        if shop_id == i.id:
+            shop = i
+    # Form POST processing:
+    form = CreditCardPaymentForm(request.form)
+    if request.method == 'POST' and form.validate():
+        # Card sfuff:
+        card_type = form.card_type.data
+        card_number = form.card_number.data
+        card_cvv = form.card_cvv.data
+        card_expire_month = form.card_expire_month.data
+        card_expire_year = form.card_expire_year.data
+        card_first_name = form.card_first_name.data
+        card_last_name = form.card_last_name.data
+
+        # Payment stuff:
+        payment_intent = form.payment_intent.data
+        payment_method = form.payment_method.data
+        amount_total = form.amount_total.data
+        amount_currency = form.amount_currency.data
+        payment_description = form.payment_description.data
+        payment_signature = form.payment_signature.data
+
+        # etc:
+        item = form.item.data
+
+        dictionary = {
+            'payment_type': payment_method,
+            'source': {
+                'card_number': card_number,
+                'cvv': card_cvv,
+                'expdate': '{month}/{year}'.format(month=card_expire_month, year=card_expire_year[-2:]),
+                'cardholder_name': '{first_name} {last_name}'.format(first_name=card_first_name, last_name=card_last_name)
+            },
+            'destination': {
+                '': ''
+            },
+            'currency': amount_currency,
+            'amount_cent': str(int((float(amount_total) * 100))),
+            'signature': payment_signature
+        }
+
+        data = json.dumps(dictionary, sort_keys=False)
+        return render_template('thank_you.html',
+                               data=data,
+                               item=item,
+                               shop=shop.name)
+
+    else:
+        err = form.errors
+        return render_template('paypal_payment_form.html', form=form, shop=shop, err=err)
