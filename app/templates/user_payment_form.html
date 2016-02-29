@@ -4,9 +4,17 @@
 
 <a href="{{ url_for('home') }}">Home</a>
 
-<br>You are buying an "item" {{ shop }}
+<br>You are buying an item in {{ shop.name }}
 
-<form action="{{ url_for('user_payment_form', shop_id=shop.id) }}" method=post>
+<br>
+{% if err %}
+    {% for i in err %}
+        <br><font color="red">{{ i }}: {{ err[i] }}</font>
+    {% endfor %}
+
+{% endif %}
+
+<form action="{{ url_for('user_payment_form_execute', shop_id=shop.id) }}" method=post>
     <!--Payment staff:-->
     <br>
     {{ form.item.label }}

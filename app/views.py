@@ -1,6 +1,7 @@
 import json
 import requests
-from flask import render_template, request
+from flask import render_template, request, redirect, flash
+from wtforms import validators
 
 from app import app
 from app.forms import UserPaymentForm
@@ -34,7 +35,7 @@ def home():
 @app.route('/form/<shop_id>', methods=["GET", "POST"])
 def user_payment_form(shop_id):
     """
-    Form shows after the shop picking.
+    Showing the payment form.
     """
     # TODO: Add a csrf protection to form!
     # Faking the getting a Shop object by ID:
@@ -44,28 +45,40 @@ def user_payment_form(shop_id):
 
     form = UserPaymentForm()
 
-    # Showing the form to user:
-    if request.method == 'GET':
-        return render_template('user_payment_form.html', form=form, shop=shop)
+    return render_template('user_payment_form.html', form=form, shop=shop)
 
-    # If form submited by user:
-    elif request.method == 'POST':
+
+@app.route('/form/<shop_id>/payment', methods=["GET", "POST"])
+def user_payment_form_execute(shop_id):
+    """
+    Getting form POST values.
+    Getting an auth PayPal token using client id and secret key.
+    Adding user's card to storage and getting card id.
+    Creating a payment using card id.
+    """
+    for i in shops:
+        if shop_id == i.id:
+            shop = i
+
+    form = UserPaymentForm(request.form)
+
+    if request.method == 'POST' and form.validate():
         # GETTING VALUES FROM THE FORM:
         # Card stuff:
-        card_type = request.form['card_type']
-        card_number = request.form['card_number']
-        card_expire_month = request.form['card_expire_month']
-        card_expire_year = request.form['card_expire_year']
-        card_first_name = request.form['card_first_name']
-        card_last_name = request.form['card_last_name']
+        card_type = form.card_type.data
+        card_number = form.card_number.data
+        card_expire_month = form.card_expire_month.data
+        card_expire_year = form.card_expire_year.data
+        card_first_name = form.card_first_name.data
+        card_last_name = form.card_last_name.data
         # Payment stuff:
-        payment_intent = request.form['payment_intent']
-        payment_method = request.form['payment_method']
-        amount_total = request.form['amount_total']
-        amount_currency = request.form['amount_currency']
-        payment_description = request.form['payment_description']
+        payment_intent = form.payment_intent.data
+        payment_method = form.payment_method.data
+        amount_total = form.amount_total.data
+        amount_currency = form.amount_currency.data
+        payment_description = form.payment_description.data
         # etc:
-        item = request.form['item']
+        item = form.item.data
 
         # GETTING PAYPAL ACCESS TOKEN:
         url = 'https://api.sandbox.paypal.com/v1/oauth2/token'
@@ -146,9 +159,13 @@ def user_payment_form(shop_id):
         # Request:
         r = requests.post(url, headers=headers, data=data)
         creating_payment_status_code = 'Creating a payment status code: %s' % r.status_code
+
         return render_template('thank_you.html',
                                auth_token_status_code=auth_token_status_code,
                                register_card_status_code=register_card_status_code,
                                creating_payment_status_code=creating_payment_status_code,
                                item=item,
                                shop=shop.name)
+    else:
+        err = form.errors
+        return render_template('user_payment_form.html', form=form, shop=shop, err=err)

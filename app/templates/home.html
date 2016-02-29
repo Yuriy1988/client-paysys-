@@ -5,7 +5,7 @@
 This is homepage with shops list. <br>
 <hr>
 {% for shop in shops %}
-{{ shop.id }}
+{{ shop.id }}.
 <a href="{{ url_for('user_payment_form', shop_id=shop.id) }}">{{ shop.name }}</a>
 {{ shop.logo }}
 <hr>
