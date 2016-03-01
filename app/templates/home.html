@@ -3,11 +3,12 @@
 {% block content %}
 
     This is homepage with shops list:
+    <hr>
     {% for shop in shops %}
-        <br>
         {{ shop.id }}.
-        <a href="{{ url_for('credit_card_payment_form', shop_id=shop.id) }}">{{ shop.name }}</a>
-        <img src="{{ shop.logo }}">
+        <a href="{{ url_for('credit_card_payment_form', shop_id=shop.id) }}"> <img height="25" width="25" src="{{ shop.logo }}"></a>
+        <a href="{{ url_for('credit_card_payment_form', shop_id=shop.id) }}"> "{{ shop.name }}"</a> shop
+        <hr>
     {% endfor %}
 
 {% endblock %}

@@ -3,12 +3,14 @@
 {% block content %}
 
     You are buying an item in "{{ shop.name }}" shop.
-    <br>Pay with <a href="{{ url_for('credit_card_payment_form', shop_id=shop.id) }}">Credit Card</a> / <a href="{{ url_for('paypal_payment_form', shop_id=shop.id) }}">PayPal</a>
+    <br>Pay with <a href="{{ url_for('credit_card_payment_form', shop_id=shop.id) }}">Credit Card</a> /
+    <a href="{{ url_for('paypal_simple_payment_form', shop_id=shop.id) }}">PayPal Simple</a> /
+    <a href="{{ url_for('paypal_payment_form', shop_id=shop.id) }}">PayPal</a>
 
     <br><br>
     {% if err %}
         {% for i in err %}
-            <br><font color="red">{{ i }}: {{ err[i] }}</font>
+            <font color="red">{{ i }}: {{ err[i] }}</font>
         {% endfor %}
     {% endif %}
 

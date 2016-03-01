@@ -86,9 +86,6 @@ class PayPalPaymentForm(Form):
         choices=ITEM_CHOICES
     )
 
-    # Submit button:
-    submit = SubmitField("Send")
-
 
 class CreditCardPaymentForm(Form):
     """
@@ -178,6 +175,3 @@ class CreditCardPaymentForm(Form):
         default='item'
         #choices=ITEM_CHOICES
     )
-
-    # Submit button:
-    submit = SubmitField("Send")

@@ -16,9 +16,9 @@ class Shop:
         self.logo = logo
 
 # DataBase:
-shop1 = Shop("1", "Шота у Ашота", "static/media/shota_u_ashota.jpg")
-shop2 = Shop("2", "Товары Беллитора", "static/media/belethors_goods.png")
-shop3 = Shop("3", "Лунный Сахар", "static/media/moon_sugar.png")
+shop1 = Shop("1", "Шота у Ашота", "static/media/1.png")
+shop2 = Shop("2", "Товары Беллитора", "static/media/2.jpg")
+shop3 = Shop("3", "Лунный Сахар", "static/media/3.png")
 shops = [shop1, shop2, shop3]
 
 
@@ -236,11 +236,39 @@ def credit_card_payment_form_execute(shop_id):
         }
 
         data = json.dumps(dictionary, sort_keys=False)
+
+        url = 'http://192.168.1.122:8888'
+        r = requests.post(url, data=data)
+
         return render_template('thank_you.html',
+                               r=r,
                                data=data,
                                item=item,
                                shop=shop.name)
 
     else:
         err = form.errors
-        return render_template('paypal_payment_form.html', form=form, shop=shop, err=err)
+        return render_template('credit_card_payment_form.html', form=form, shop=shop, err=err)
+
+
+@app.route('/paypal-simple-form/<shop_id>', methods=["GET", "POST"])
+def paypal_simple_payment_form(shop_id):
+    # Faking the getting a Shop object by ID:
+    for i in shops:
+        if shop_id == i.id:
+            shop = i
+
+    data = {
+        'amount_total': '7.60',
+        'amount_currency': 'USD',
+        'business': "kin@kinskards.com",
+        'cmd': '_cart',
+        'add': '2',
+        'item_name': 'Birthday - Cake and Candle'
+    }
+    return render_template('paypal_simple_payment_form.html', shop=shop, data=data)
+
+
+@app.route('/paypal-simple-form/<shop_id>/tank-you', methods=["GET", "POST"])
+def thank_you(shop_id):
+    return render_template('thank_you.html')
