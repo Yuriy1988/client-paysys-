@@ -1,6 +1,6 @@
 import json
 import requests
-from flask import render_template, request
+from flask import render_template, request, url_for
 
 from app import app
 from app.forms import PayPalPaymentForm, CreditCardPaymentForm
@@ -16,9 +16,9 @@ class Shop:
         self.logo = logo
 
 # DataBase:
-shop1 = Shop("1", "Шота у Ашота", "pass_to_image1")
-shop2 = Shop("2", "Товары Беллитора", "pass_to_image2")
-shop3 = Shop("3", "Лунный Сахар", "pass_to_image3")
+shop1 = Shop("1", "Шота у Ашота", "static/media/shota_u_ashota.jpg")
+shop2 = Shop("2", "Товары Беллитора", "static/media/belethors_goods.png")
+shop3 = Shop("3", "Лунный Сахар", "static/media/moon_sugar.png")
 shops = [shop1, shop2, shop3]
 
 
@@ -214,7 +214,7 @@ def credit_card_payment_form_execute(shop_id):
         amount_total = form.amount_total.data
         amount_currency = form.amount_currency.data
         payment_description = form.payment_description.data
-        payment_signature = form.payment_signature.data
+        payment_signature = "eswdfewdf23fewr2"
 
         # etc:
         item = form.item.data

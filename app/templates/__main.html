@@ -7,10 +7,19 @@
 </head>
 <body>
 
-<font color="green">| <a href="{{ url_for('home') }}">Shops List</a> |</font>
-<hr>
+    <!--Navigation-->
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10 container">
+            <font color="green">| <a href="{{ url_for('home') }}">Shops List</a> |</font>
 
-{% block content %}{% endblock %}
+            <!--Content-->
+            <br><br>
+            {% block content %}{% endblock %}
+
+        </div>
+        <div class="col-md-1"></div>
+    </div>
 
 </body>
 </html>

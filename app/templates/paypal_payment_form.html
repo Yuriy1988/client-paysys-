@@ -2,35 +2,31 @@
 
 {% block content %}
 
-You are buying an item in "{{ shop.name }}" shop.
-<br>Pay with <a href="{{ url_for('paypal_payment_form', shop_id=shop.id) }}">PayPal</a> / <a href="{{ url_for('credit_card_payment_form', shop_id=shop.id) }}">Credit Card</a>
+    You are buying an item in "{{ shop.name }}" shop.
+    <br>Pay with <a href="{{ url_for('credit_card_payment_form', shop_id=shop.id) }}">Credit Card</a> / <a href="{{ url_for('paypal_payment_form', shop_id=shop.id) }}">PayPal</a>
 
-<br>
-{% if err %}
-    {% for i in err %}
-        <br><font color="red">{{ i }}: {{ err[i] }}</font>
-    {% endfor %}
+    <br><br>
+    {% if err %}
+        {% for i in err %}
+            <br><font color="red">{{ i }}: {{ err[i] }}</font>
+        {% endfor %}
+    {% endif %}
 
-{% endif %}
+    <form class="form-horizontal small" action="{{ url_for('paypal_payment_form_execute', shop_id=shop.id) }}" method=post>
 
-<form class="form-horizontal" action="{{ url_for('paypal_payment_form_execute', shop_id=shop.id) }}" method=post>
-
-    {% for i in form %}
-        {% if not i.label == "Send" %}
-        <div class="form-group">
-            <label class="col-sm-2 control-label">{{ i.label }}</label>
-            <div class="col-sm-10 checkbox">
-                {{ i }}
+        {% for i in form %}
+            {% if not i.label == "Send" %}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{ i.label }}</label>
+                <div class="col-sm-10 checkbox">
+                    {{ i }}
+                </div>
             </div>
-        </div>
-        {% else %}
-        {{ i }}
-        {% endif %}
-    {% endfor %}
+            {% else %}
+            {{ i }}
+            {% endif %}
+        {% endfor %}
 
-    <!--Submit button-->
-    <br>
-    {{ form.submit }}
-</form>
+    </form>
 
 {% endblock %}

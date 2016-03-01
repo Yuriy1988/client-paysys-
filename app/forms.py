@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, SubmitField, SelectField, validators
+from wtforms import Form, StringField, SubmitField, SelectField, HiddenField, validators
 
 
 CARD_TYPE_CHOICES = [('visa', 'VISA'), ('mastercard', 'MASTERCARD')]
@@ -138,46 +138,45 @@ class CreditCardPaymentForm(Form):
     )
 
     # Payment stuff:
-    payment_intent = SelectField(
+    payment_intent = HiddenField(
         'Payment Intent',
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=1, max=30)],
-        choices=PAYMENT_INTENT_CHOICES
+        default='sale'
+        #choices=PAYMENT_INTENT_CHOICES
     )
-    payment_method = SelectField(
+    payment_method = HiddenField(
         'Payment Method',
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=1, max=30)],
-        choices=PAYMENT_METHOD_CHOICES
+        default='credit_card'
+        #choices=PAYMENT_METHOD_CHOICES
     )
-    amount_total = StringField(
+    amount_total = HiddenField(
         'Amount',
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=1, max=100)],
         default='6.70'
     )
-    amount_currency = SelectField(
+    amount_currency = HiddenField(
         'Currency',
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=3, max=3)],
-        choices=CURRENCY_CHOICES
+        default='USD'
+        #choices=CURRENCY_CHOICES
     )
     payment_description = StringField(
         'Payment Description',
         [validators.Length(min=0, max=300)],
         default=''
     )
-    payment_signature = StringField(
-        'Payment Signature',
-        [validators.DataRequired(message='Sorry, this is a required field.')],
-        default="eswdfewdf23fewr2"
-    )
 
     # etc:
-    item = SelectField(
+    item = HiddenField(
         'Item',
         [validators.DataRequired(message='Sorry, this is a required field.')],
-        choices=ITEM_CHOICES
+        default='item'
+        #choices=ITEM_CHOICES
     )
 
     # Submit button:
