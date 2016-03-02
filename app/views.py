@@ -272,3 +272,10 @@ def paypal_simple_payment_form(shop_id):
 @app.route('/paypal-simple-form/<shop_id>/tank-you', methods=["GET", "POST"])
 def thank_you(shop_id):
     return render_template('thank_you.html')
+
+
+    """Checking status:
+        url = url = 'http://192.168.1.122:8888'
+        data = {'PaymentID': '?'} #TODO: Get the correct key of the 'data' disc.
+        r = requests.post(url, data=data)
+    """
