@@ -1,25 +1,12 @@
 import json
+
+import datetime
 import requests
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, redirect
 
-from app import app
-from app.forms import PayPalPaymentForm, CreditCardPaymentForm
-
-
-class Shop:
-    """
-    Fake Shop model.
-    """
-    def __init__(self, id, name, logo):
-        self.id = id
-        self.name = name
-        self.logo = logo
-
-# DataBase:
-shop1 = Shop("1", "Шота у Ашота", "static/media/1.png")
-shop2 = Shop("2", "Товары Беллитора", "static/media/2.jpg")
-shop3 = Shop("3", "Лунный Сахар", "static/media/3.png")
-shops = [shop1, shop2, shop3]
+from app import app, db
+from app.forms import PayPalPaymentForm, CreditCardForm
+from app.models import Transaction
 
 
 @app.route('/')
@@ -27,26 +14,123 @@ def home():
     """
     Homepage with a shops list.
     """
-    # TODO: Getting the list of all Shop objects.
-    return render_template('home.html', shops=shops)
+    transactions = Transaction.query.all()
+    return render_template('home.html', transactions=transactions)
 
 
-@app.route('/paypal-form/<shop_id>', methods=["GET", "POST"])
-def paypal_payment_form(shop_id):
+@app.route('/credit-card-form', methods=["GET", "POST"])
+def credit_card_form():
+    """
+    Showing the Credit Card payment form.
+    """
+    # Getting the form:
+    form = CreditCardForm()
+    return render_template('credit_card_form.html', form=form)
+
+
+#TODO: convert amount_total to cents
+
+@app.route('/credit-card-form/execute', methods=["GET", "POST"])
+def credit_card_form_execute():
+    """
+    Getting form POST values.
+    Returning a JSON with payment details.
+    """
+    form = CreditCardForm(request.form)
+    if request.method == 'POST' and form.validate():
+        # Card stuff (source):
+        card_number = form.card_number.data
+        card_cvv = form.card_cvv.data
+        card_expire_month = form.card_expire_month.data
+        card_expire_year = form.card_expire_year.data
+        card_first_name = form.card_first_name.data
+        card_last_name = form.card_last_name.data
+
+        # Transaction staff:
+        item_identifier = form.item_identifier.data
+        store_identifier = form.store_identifier.data
+        amount_total = form.amount_total.data
+        amount_currency = form.amount_currency.data
+        payment_method = 'credit_card'
+
+        # Destination:
+        # TODO: Get destination method and info from HELPER!
+
+        # Optional fields:
+        payer_email = form.payer_email.data
+        payer_phone = form.payer_phone.data
+
+        # Get from processing:
+        transaction_id = ''  # Get from Processing
+        status = ''  # Get from Processing
+        status_update = status
+
+        # Secure processing stuff:
+        payment_signature = "eswdfewdf23fewr2"
+
+        dictionary = {
+            'payment_type': payment_method,
+            'source': {
+                'card_number': card_number,
+                'cvv': card_cvv,
+                'expdate': '{month}/{year}'.format(month=card_expire_month, year=card_expire_year[-2:]),
+                'cardholder_name': '{first_name} {last_name}'.format(first_name=card_first_name, last_name=card_last_name)
+            },
+            'destination': {
+                '': ''
+            },
+            'currency': amount_currency,
+            'amount_cent': str(int((float(amount_total) * 100))),
+            'signature': payment_signature
+        }
+
+        data = json.dumps(dictionary, sort_keys=False)
+
+        url = 'http://192.168.1.122:8888'
+        #r = requests.post(url, data=data)
+
+        transaction = Transaction(
+            payer_card_number=card_number,
+            payer_first_name=card_first_name,
+            payer_last_name=card_last_name,
+            #item_identifier=item_identifier,
+            store_identifier=store_identifier,
+            amount_total=amount_total,
+            amount_currency=amount_currency,
+            payment_method=payment_method,
+            payer_email=payer_email,
+            payer_phone=payer_phone,
+            transaction_id=transaction_id,
+            status=status,
+            status_update=status_update,
+            creation_date=datetime.datetime.utcnow
+        )
+        db.session.add(transaction)
+        db.session.commit()
+
+        return render_template('thank_you.html',
+                               #r=r,
+                               data=data
+                               )
+
+    else:
+        err = form.errors
+        return render_template('credit_card_form.html', form=form, err=err)
+
+
+@app.route('/paypal-form', methods=["GET", "POST"])
+def paypal_form(shop_id):
     """
     Showing the PayPal payment form.
     """
     # TODO: Add a csrf protection to form!
-    # Faking the getting a Shop object by ID:
-    for i in shops:
-        if shop_id == i.id:
-            shop = i
+
     # Getting the form:
     form = PayPalPaymentForm()
-    return render_template('paypal_payment_form.html', form=form, shop=shop)
+    return render_template('paypal_payment_form.html', form=form)
 
 
-@app.route('/paypal-form/<shop_id>/payment', methods=["GET", "POST"])
+@app.route('/paypal-form/execute', methods=["GET", "POST"])
 def paypal_payment_form_execute(shop_id):
     """
     Getting form POST values.
@@ -54,10 +138,6 @@ def paypal_payment_form_execute(shop_id):
     Adding user's card to storage and getting card id.
     Creating a payment using card id.
     """
-    # Faking the getting a Shop object by ID:
-    for i in shops:
-        if shop_id == i.id:
-            shop = i
     # Form POST processing:
     form = PayPalPaymentForm(request.form)
     if request.method == 'POST' and form.validate():
@@ -163,100 +243,16 @@ def paypal_payment_form_execute(shop_id):
                                auth_token_status_code=auth_token_status_code,
                                register_card_status_code=register_card_status_code,
                                creating_payment_status_code=creating_payment_status_code,
-                               item=item,
-                               shop=shop.name)
+                               item=item
+                               )
     else:
         err = form.errors
-        return render_template('paypal_payment_form.html', form=form, shop=shop, err=err)
+        return render_template('paypal_payment_form.html', form=form,err=err)
 
 
-@app.route('/credit-card-form/<shop_id>', methods=["GET", "POST"])
-def credit_card_payment_form(shop_id):
-    """
-    Showing the Credit Card payment form.
-    """
+@app.route('/paypal-simple-form', methods=["GET", "POST"])
+def paypal_simple_form(shop_id):
     # Faking the getting a Shop object by ID:
-    for i in shops:
-        if shop_id == i.id:
-            shop = i
-    # Getting the form:
-    form = CreditCardPaymentForm()
-    return render_template('credit_card_payment_form.html', form=form, shop=shop)
-
-
-#TODO: convert amount_total to cents
-
-@app.route('/credit-card-form/<shop_id>/payment', methods=["GET", "POST"])
-def credit_card_payment_form_execute(shop_id):
-    """
-    Getting form POST values.
-    Returning a JSON with payment details.
-    """
-    # Faking the getting a Shop object by ID:
-    for i in shops:
-        if shop_id == i.id:
-            shop = i
-    # Form POST processing:
-    form = CreditCardPaymentForm(request.form)
-    if request.method == 'POST' and form.validate():
-        # Card sfuff:
-        card_type = form.card_type.data
-        card_number = form.card_number.data
-        card_cvv = form.card_cvv.data
-        card_expire_month = form.card_expire_month.data
-        card_expire_year = form.card_expire_year.data
-        card_first_name = form.card_first_name.data
-        card_last_name = form.card_last_name.data
-
-        # Payment stuff:
-        payment_intent = form.payment_intent.data
-        payment_method = form.payment_method.data
-        amount_total = form.amount_total.data
-        amount_currency = form.amount_currency.data
-        payment_description = form.payment_description.data
-        payment_signature = "eswdfewdf23fewr2"
-
-        # etc:
-        item = form.item.data
-
-        dictionary = {
-            'payment_type': payment_method,
-            'source': {
-                'card_number': card_number,
-                'cvv': card_cvv,
-                'expdate': '{month}/{year}'.format(month=card_expire_month, year=card_expire_year[-2:]),
-                'cardholder_name': '{first_name} {last_name}'.format(first_name=card_first_name, last_name=card_last_name)
-            },
-            'destination': {
-                '': ''
-            },
-            'currency': amount_currency,
-            'amount_cent': str(int((float(amount_total) * 100))),
-            'signature': payment_signature
-        }
-
-        data = json.dumps(dictionary, sort_keys=False)
-
-        url = 'http://192.168.1.122:8888'
-        r = requests.post(url, data=data)
-
-        return render_template('thank_you.html',
-                               r=r,
-                               data=data,
-                               item=item,
-                               shop=shop.name)
-
-    else:
-        err = form.errors
-        return render_template('credit_card_payment_form.html', form=form, shop=shop, err=err)
-
-
-@app.route('/paypal-simple-form/<shop_id>', methods=["GET", "POST"])
-def paypal_simple_payment_form(shop_id):
-    # Faking the getting a Shop object by ID:
-    for i in shops:
-        if shop_id == i.id:
-            shop = i
 
     data = {
         'amount_total': '7.60',
@@ -266,12 +262,7 @@ def paypal_simple_payment_form(shop_id):
         'add': '2',
         'item_name': 'Birthday - Cake and Candle'
     }
-    return render_template('paypal_simple_payment_form.html', shop=shop, data=data)
-
-
-@app.route('/paypal-simple-form/<shop_id>/tank-you', methods=["GET", "POST"])
-def thank_you(shop_id):
-    return render_template('thank_you.html')
+    return render_template('paypal_simple_payment_form.html', data=data)
 
 
     """Checking status:
@@ -279,3 +270,7 @@ def thank_you(shop_id):
         data = {'PaymentID': '?'} #TODO: Get the correct key of the 'data' disc.
         r = requests.post(url, data=data)
     """
+
+@app.route('/bitcoin_form')
+def bitcoin_form():
+    pass

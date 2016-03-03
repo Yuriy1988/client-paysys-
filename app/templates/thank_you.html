@@ -27,12 +27,12 @@
         <br>
         {{ data }}
     {% endif %}
-
-    <br>
-    <br>
-    {{ r }}
-    <br>
-    {{ r.text }}
-
+    {% if r %}
+        <br>
+        <br>
+        {{ r }}
+        <br>
+        {{ r.text }}
+    {% endif %}
 
 {% endblock %}

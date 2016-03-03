@@ -2,13 +2,16 @@
 
 {% block content %}
 
-    This is homepage with shops list:
-    <hr>
-    {% for shop in shops %}
-        {{ shop.id }}.
-        <a href="{{ url_for('credit_card_payment_form', shop_id=shop.id) }}"> <img height="25" width="25" src="{{ shop.logo }}"></a>
-        <a href="{{ url_for('credit_card_payment_form', shop_id=shop.id) }}"> "{{ shop.name }}"</a> shop
-        <hr>
-    {% endfor %}
+    <a href="{{ url_for('credit_card_form') }}">Credit Card Form</a>
+    <!--<a href="{{ url_for('paypal_form') }}">PayPal Form</a>-->
+    <!--<a href="{{ url_for('bitcoin_form') }}">BitCoin Form</a>-->
+
+    {% if transactions %}
+        {% for transaction in transactions %}
+            <br>{{ transaction }}
+        {% endfor %}
+    {% endif %}
+
+
 
 {% endblock %}
