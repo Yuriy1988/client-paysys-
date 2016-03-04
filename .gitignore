@@ -1,0 +1,10 @@
+*.log
+*.sql
+*.sqlite
+
+*.pyc
+
+dump_
+
+.DS_Store
+.DS_Store?
