@@ -37,7 +37,7 @@ def credit_card_form_execute():
     """
     form = CreditCardForm(request.form)
     if request.method == 'POST' and form.validate():
-        # Card stuff (source):
+        # Source:
         card_number = form.card_number.data
         card_cvv = form.card_cvv.data
         card_expire_month = form.card_expire_month.data
@@ -84,8 +84,8 @@ def credit_card_form_execute():
         #r = requests.post(url, data=data)
 
         # Get from processing:
-        transaction_id = 'sdfa'  # Get from Processing
-        status = 'NOT_FINAL'  # Get from Processing
+        transaction_id = 'sdfa'  # TODO: Get from Processing
+        status = 'NOT_FINAL'  # TODO: Get from Processing
 
         trans = Transaction(
             payer_card_number=card_number,
@@ -115,20 +115,26 @@ def credit_card_form_execute():
         return render_template('credit_card_form.html', form=form, err=err)
 
 
+@app.route('/get-transaction-status', methods=['GET', 'POST'])
+def get_transaction_status(transaction_id):
+    url = url = 'http://192.168.1.122:8888'
+    data = {'PaymentID': transaction_id} # TODO: Get transaction_id from processing.
+    r = requests.post(url, data=data)
+    return r
+
+
 @app.route('/paypal-form', methods=["GET", "POST"])
 def paypal_form():
     """
     Showing the PayPal payment form.
     """
-    # TODO: Add a csrf protection to form!
-
     # Getting the form:
     form = PayPalPaymentForm()
     return render_template('paypal_payment_form.html', form=form)
 
 
 @app.route('/paypal-form/execute', methods=["GET", "POST"])
-def paypal_payment_form_execute():
+def paypal_form_execute():
     """
     Getting form POST values.
     Getting an auth PayPal token using client id and secret key.
@@ -261,12 +267,6 @@ def paypal_simple_form():
     }
     return render_template('paypal_simple_payment_form.html', data=data)
 
-
-    """Checking status:
-        url = url = 'http://192.168.1.122:8888'
-        data = {'PaymentID': '?'} #TODO: Get the correct key of the 'data' disc.
-        r = requests.post(url, data=data)
-    """
 
 @app.route('/bitcoin_form')
 def bitcoin_form():

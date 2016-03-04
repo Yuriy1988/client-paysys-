@@ -29,13 +29,13 @@ class CreditCardForm(Form):
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=2, max=2)],
         default='11'
-    )  # TODO: 'Make a calendar picker'
+    )
     card_expire_year = StringField(
         'Expire Year',
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=4, max=4)],
         default='2018'
-    )  # TODO: 'Make a calendar picker'
+    )
     card_first_name = StringField(
         'First Name',
         [validators.DataRequired(message='Sorry, this is a required field.'),
@@ -53,7 +53,6 @@ class CreditCardForm(Form):
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=1, max=30)],
         default='credit_card'
-        #choices=PAYMENT_METHOD_CHOICES
     )
     amount_total = StringField(
         'Amount',
@@ -66,7 +65,6 @@ class CreditCardForm(Form):
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=3, max=3)],
         default='USD'
-        #choices=CURRENCY_CHOICES
     )
 
     # etc:
@@ -108,13 +106,13 @@ class PayPalPaymentForm(Form):
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=2, max=2)],
         default='11'
-    )  # TODO: 'Make a calendar picker'
+    )
     card_expire_year = StringField(
         'Expire Year',
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=4, max=4)],
         default='2018'
-    )  # TODO: 'Make a calendar picker'
+    )
     card_first_name = StringField(
         'First Name',
         [validators.DataRequired(message='Sorry, this is a required field.'),
