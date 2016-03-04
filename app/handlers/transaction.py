@@ -118,7 +118,7 @@ def credit_card_form_execute():
 @app.route('/get-transaction-status', methods=['GET', 'POST'])
 def get_transaction_status(transaction_id):
     url = url = 'http://192.168.1.122:8888'
-    data = {'PaymentID': transaction_id} # TODO: Get transaction_id from processing.
+    data = {'PaymentID': transaction_id}  # TODO: Get transaction_id from processing.
     r = requests.post(url, data=data)
     return r
 
