@@ -48,21 +48,20 @@ class CreditCardForm(Form):
          validators.Length(min=1, max=30)],
         default='Shopper'
     )
-
-    payment_method = HiddenField(
+    payment_method = StringField(
         'Payment Method',
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=1, max=30)],
         default='credit_card'
         #choices=PAYMENT_METHOD_CHOICES
     )
-    amount_total = HiddenField(
+    amount_total = StringField(
         'Amount',
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=1, max=100)],
-        default='6.70'
+        default='6'
     )
-    amount_currency = HiddenField(
+    amount_currency = StringField(
         'Currency',
         [validators.DataRequired(message='Sorry, this is a required field.'),
          validators.Length(min=3, max=3)],
@@ -75,14 +74,12 @@ class CreditCardForm(Form):
         'Item Identifier',
         [validators.DataRequired(message='Sorry, this is a required field.')],
         default='store_sdasds'
-        #choices=ITEM_CHOICES
     )
 
-    store_identifier = HiddenField(
+    store_identifier = StringField(
         'Store Identifier',
         [validators.DataRequired(message='Sorry, this is a required field.')],
         default='item_sadasad'
-        #choices=ITEM_CHOICES
     )
 
     payer_email = StringField(
@@ -94,7 +91,6 @@ class CreditCardForm(Form):
         'Payer Phone',
         [validators.Length(min=0, max=40)]
     )
-
 
 class PayPalPaymentForm(Form):
     """

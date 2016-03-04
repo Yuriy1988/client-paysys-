@@ -11,8 +11,13 @@
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-10 container">
-            <font color="green">| <a href="{{ url_for('home') }}">Shops List</a> |</font>
-
+            <font color="green">
+                | <a href="{{ url_for('home') }}">Transactions List</a>
+                ||| <a href="{{ url_for('credit_card_form') }}">Credit Card Form</a>
+                <!--| <a href="{{ url_for('paypal_form') }}">PayPal Form</a>-->
+                <!--| <a href="{{ url_for('bitcoin_form') }}">| BitCoin Form</a>-->
+                |
+            </font>
             <!--Content-->
             <br><br>
             {% block content %}{% endblock %}

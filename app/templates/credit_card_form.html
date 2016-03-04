@@ -1,12 +1,6 @@
 {% extends "__main.html" %}
 
 {% block content %}
-
-    <br>Pay with <a href="{{ url_for('credit_card_form') }}">Credit Card</a> /
-    <a href="{{ url_for('paypal_simple_form') }}">PayPal Simple</a> /
-    <a href="{{ url_for('paypal_form') }}">PayPal</a>
-
-    <br><br>
     {% if err %}
         {% for i in err %}
             <font color="red">{{ i }}: {{ err[i] }}</font>

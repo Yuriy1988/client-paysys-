@@ -2,16 +2,26 @@
 
 {% block content %}
 
-    <a href="{{ url_for('credit_card_form') }}">Credit Card Form</a>
-    <!--<a href="{{ url_for('paypal_form') }}">PayPal Form</a>-->
-    <!--<a href="{{ url_for('bitcoin_form') }}">BitCoin Form</a>-->
-
     {% if transactions %}
         {% for transaction in transactions %}
-            <br>{{ transaction }}
+        <hr>
+            {{ transaction.id }}
+            <br>{{ transaction.transaction_id }}
+            <br>{{ transaction.creation_date }}
+            <br>{{ transaction.status }}
+            <br>{{ transaction.status_updatedate }}
+            <br>{{ transaction.amount_total }}
+            <br>{{ transaction.amount_currency }}
+            <br>{{ transaction.payment_method }}
+            <br>{{ transaction.store_identifier }}
+            <br>{{ transaction.item_identifier }}
+            <br>{{ transaction.payer_card_number }}
+            <br>{{ transaction.payer_card_first_name }}
+            <br>{{ transaction.payer_card_last_name }}
+            <br>{{ transaction.payer_email }}
+            <br>{{ transaction.payer_phone }}
+            <br>{{ transaction.test }}
         {% endfor %}
     {% endif %}
-
-
 
 {% endblock %}

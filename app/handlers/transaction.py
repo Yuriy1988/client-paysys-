@@ -1,6 +1,5 @@
 import json
 
-import datetime
 import requests
 from flask import render_template, request, url_for, redirect
 
@@ -49,7 +48,7 @@ def credit_card_form_execute():
         # Transaction staff:
         item_identifier = form.item_identifier.data
         store_identifier = form.store_identifier.data
-        amount_total = form.amount_total.data
+        amount_total = form.amount_total.data  # TODO: Save in cents
         amount_currency = form.amount_currency.data
         payment_method = 'credit_card'
 
@@ -59,11 +58,6 @@ def credit_card_form_execute():
         # Optional fields:
         payer_email = form.payer_email.data
         payer_phone = form.payer_phone.data
-
-        # Get from processing:
-        transaction_id = ''  # Get from Processing
-        status = ''  # Get from Processing
-        status_update = status
 
         # Secure processing stuff:
         payment_signature = "eswdfewdf23fewr2"
@@ -80,7 +74,7 @@ def credit_card_form_execute():
                 '': ''
             },
             'currency': amount_currency,
-            'amount_cent': str(int((float(amount_total) * 100))),
+            'amount_cent': amount_total,
             'signature': payment_signature
         }
 
@@ -89,11 +83,15 @@ def credit_card_form_execute():
         url = 'http://192.168.1.122:8888'
         #r = requests.post(url, data=data)
 
-        transaction = Transaction(
+        # Get from processing:
+        transaction_id = 'sdfa'  # Get from Processing
+        status = 'NOT_FINAL'  # Get from Processing
+
+        trans = Transaction(
             payer_card_number=card_number,
-            payer_first_name=card_first_name,
-            payer_last_name=card_last_name,
-            #item_identifier=item_identifier,
+            payer_card_first_name=card_first_name,
+            payer_card_last_name=card_last_name,
+            item_identifier=item_identifier,
             store_identifier=store_identifier,
             amount_total=amount_total,
             amount_currency=amount_currency,
@@ -101,11 +99,10 @@ def credit_card_form_execute():
             payer_email=payer_email,
             payer_phone=payer_phone,
             transaction_id=transaction_id,
-            status=status,
-            status_update=status_update,
-            creation_date=datetime.datetime.utcnow
+            status=status
         )
-        db.session.add(transaction)
+
+        db.session.add(trans)
         db.session.commit()
 
         return render_template('thank_you.html',
@@ -119,7 +116,7 @@ def credit_card_form_execute():
 
 
 @app.route('/paypal-form', methods=["GET", "POST"])
-def paypal_form(shop_id):
+def paypal_form():
     """
     Showing the PayPal payment form.
     """
@@ -131,7 +128,7 @@ def paypal_form(shop_id):
 
 
 @app.route('/paypal-form/execute', methods=["GET", "POST"])
-def paypal_payment_form_execute(shop_id):
+def paypal_payment_form_execute():
     """
     Getting form POST values.
     Getting an auth PayPal token using client id and secret key.
@@ -251,7 +248,7 @@ def paypal_payment_form_execute(shop_id):
 
 
 @app.route('/paypal-simple-form', methods=["GET", "POST"])
-def paypal_simple_form(shop_id):
+def paypal_simple_form():
     # Faking the getting a Shop object by ID:
 
     data = {
