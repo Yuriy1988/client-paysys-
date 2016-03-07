@@ -1,11 +1,88 @@
 import json
 
 import requests
-from flask import render_template, request, url_for, redirect
+from flask import render_template
 
 from app import app, db
-from app.forms import PayPalPaymentForm, CreditCardForm
 from app.models import Transaction
+
+from config import helper_url, processing_url
+
+
+def parse_helper_request(form_data):
+    first_six = form_data['card_number'][0:6]
+    dictionary = {
+        'card_number': first_six,
+        'store_id': form_data['store_id']
+    }
+    return dictionary
+
+def parse_processing_request(form_data, helper_response):
+    dictionary = {
+        'payment_type': form_data['payment_method'],
+        'source': {
+            'card_number': form_data['card_number'],
+            'cvv': form_data['card_cvv'],
+            'expdate': '{month}/{year}'.format(month=form_data['card_expire_month'],
+                                               year=form_data['card_expire_year[-2:]']),
+            'cardholder_name': '{first_name} {last_name}'.format(first_name=form_data['card_first_name'],
+                                                                 last_name=form_data['card_last_name'])
+        },
+        'destination': {
+            'card_number': helper_response['card_number'],
+            'cvv': helper_response['card_cvv'],
+            'expdate': '{month}/{year}'.format(month=helper_response['card_expire_month'],
+                                               year=helper_response['card_expire_year[-2:]']),
+            'cardholder_name': '{first_name} {last_name}'.format(first_name=helper_response['card_first_name'],
+                                                                 last_name=helper_response['card_last_name'])
+        },
+        'currency': form_data['amount_currency'],
+        'amount_cent': form_data['amount_total'],
+        'signature': form_data['payment_signature']
+    }
+    return dictionary
+
+def save_transaction_to_db(form_data, processing_response):
+    transaction = Transaction(
+        payer_card_number=form_data['card_number'][0:6],
+        payer_card_first_name=form_data['card_first_name'],
+        payer_card_last_name=form_data['card_last_name'],
+        item_identifier=form_data['item_identifier'],
+        store_identifier=form_data['store_identifier'],
+        amount_total=form_data['amount_total'],
+        amount_currency=form_data['amount_currency'],
+        payment_method=form_data['payment_method'],
+        payer_email=form_data['payer_email'],
+        payer_phone=form_data['payer_phone'],
+        transaction_id=processing_response['transaction_id'],
+        status=processing_response['status']
+    )
+    db.session.add(transaction)
+    db.session.commit()
+    return transaction.id
+
+
+@app.route('/parse_transaction')
+def parse_transaction(form_json_data):
+    form_data = json.loads(form_json_data)
+
+    helper_request = parse_helper_request(form_data)
+    helper_json_response = requests.post(helper_url, data=json.dumps(helper_request))
+
+    helper_response = json.loads(helper_json_response)
+    processing_request = parse_processing_request(form_data, helper_response)
+    processing_json_response = requests.post(processing_url, data=json.dumps(processing_request))
+
+    processing_response = json.load(processing_json_response)
+    transaction_id = save_transaction_to_db(form_data, processing_response)
+    return render_template('thx.html', processing_response=processing_response, transaction_id=transaction_id)
+
+
+@app.route('/get-transaction-status', methods=['GET', 'POST'])
+def get_transaction_status(transaction_id):
+    url = url = 'http://192.168.1.122:8888'
+    data = {'PaymentID': transaction_id}  # TODO: Get transaction_id from processing.
+    return requests.post(url, data=data)
 
 
 @app.route('/')
@@ -15,259 +92,3 @@ def home():
     """
     transactions = Transaction.query.all()
     return render_template('home.html', transactions=transactions)
-
-
-@app.route('/credit-card-form', methods=["GET", "POST"])
-def credit_card_form():
-    """
-    Showing the Credit Card payment form.
-    """
-    # Getting the form:
-    form = CreditCardForm()
-    return render_template('credit_card_form.html', form=form)
-
-
-#TODO: convert amount_total to cents
-
-@app.route('/credit-card-form/execute', methods=["GET", "POST"])
-def credit_card_form_execute():
-    """
-    Getting form POST values.
-    Returning a JSON with payment details.
-    """
-    form = CreditCardForm(request.form)
-    if request.method == 'POST' and form.validate():
-        # Source:
-        card_number = form.card_number.data
-        card_cvv = form.card_cvv.data
-        card_expire_month = form.card_expire_month.data
-        card_expire_year = form.card_expire_year.data
-        card_first_name = form.card_first_name.data
-        card_last_name = form.card_last_name.data
-
-        # Transaction staff:
-        item_identifier = form.item_identifier.data
-        store_identifier = form.store_identifier.data
-        amount_total = form.amount_total.data  # TODO: Save in cents
-        amount_currency = form.amount_currency.data
-        payment_method = 'credit_card'
-
-        # Destination:
-        # TODO: Get destination method and info from HELPER!
-
-        # Optional fields:
-        payer_email = form.payer_email.data
-        payer_phone = form.payer_phone.data
-
-        # Secure processing stuff:
-        payment_signature = "eswdfewdf23fewr2"
-
-        dictionary = {
-            'payment_type': payment_method,
-            'source': {
-                'card_number': card_number,
-                'cvv': card_cvv,
-                'expdate': '{month}/{year}'.format(month=card_expire_month, year=card_expire_year[-2:]),
-                'cardholder_name': '{first_name} {last_name}'.format(first_name=card_first_name, last_name=card_last_name)
-            },
-            'destination': {
-                '': ''
-            },
-            'currency': amount_currency,
-            'amount_cent': amount_total,
-            'signature': payment_signature
-        }
-
-        data = json.dumps(dictionary, sort_keys=False)
-
-        url = 'http://192.168.1.122:8888'
-        #r = requests.post(url, data=data)
-
-        # Get from processing:
-        transaction_id = 'sdfa'  # TODO: Get from Processing
-        status = 'NOT_FINAL'  # TODO: Get from Processing
-
-        trans = Transaction(
-            payer_card_number=card_number,
-            payer_card_first_name=card_first_name,
-            payer_card_last_name=card_last_name,
-            item_identifier=item_identifier,
-            store_identifier=store_identifier,
-            amount_total=amount_total,
-            amount_currency=amount_currency,
-            payment_method=payment_method,
-            payer_email=payer_email,
-            payer_phone=payer_phone,
-            transaction_id=transaction_id,
-            status=status
-        )
-
-        db.session.add(trans)
-        db.session.commit()
-
-        return render_template('thank_you.html',
-                               #r=r,
-                               data=data
-                               )
-
-    else:
-        err = form.errors
-        return render_template('credit_card_form.html', form=form, err=err)
-
-
-@app.route('/get-transaction-status', methods=['GET', 'POST'])
-def get_transaction_status(transaction_id):
-    url = url = 'http://192.168.1.122:8888'
-    data = {'PaymentID': transaction_id}  # TODO: Get transaction_id from processing.
-    r = requests.post(url, data=data)
-    return r
-
-
-@app.route('/paypal-form', methods=["GET", "POST"])
-def paypal_form():
-    """
-    Showing the PayPal payment form.
-    """
-    # Getting the form:
-    form = PayPalPaymentForm()
-    return render_template('paypal_payment_form.html', form=form)
-
-
-@app.route('/paypal-form/execute', methods=["GET", "POST"])
-def paypal_form_execute():
-    """
-    Getting form POST values.
-    Getting an auth PayPal token using client id and secret key.
-    Adding user's card to storage and getting card id.
-    Creating a payment using card id.
-    """
-    # Form POST processing:
-    form = PayPalPaymentForm(request.form)
-    if request.method == 'POST' and form.validate():
-
-        # GETTING VALUES FROM THE FORM:
-        # Card stuff:
-        card_type = form.card_type.data
-        card_number = form.card_number.data
-        card_expire_month = form.card_expire_month.data
-        card_expire_year = form.card_expire_year.data
-        card_first_name = form.card_first_name.data
-        card_last_name = form.card_last_name.data
-        # Payment stuff:
-        payment_intent = form.payment_intent.data
-        payment_method = form.payment_method.data
-        amount_total = form.amount_total.data
-        amount_currency = form.amount_currency.data
-        payment_description = form.payment_description.data
-        # etc:
-        item = form.item.data
-
-        # GETTING PAYPAL ACCESS TOKEN:
-        url = 'https://api.sandbox.paypal.com/v1/oauth2/token'
-        headers = {
-            'Accept': 'application/json',
-            'Accept-Language': 'en_US'
-        }
-        username = 'AZrccVcbcXX1BpSsTTIioUdmvL2PLwznBTkwDFEcfORpz4i_BhE6FPwiQZRfa4RD0kepGAXF5oAWoY71'
-        password = 'EEigCPS468DFBtGYmL3WdOscFxd6O7fxOObEI8ebX3uave3flC9iXzjymdNZUli0Y3HOKRSz8WLwIejf'
-        auth = (username, password)
-        data = {'grant_type': 'client_credentials'}
-        # Request:
-        r = requests.post(url, headers=headers, auth=auth, data=data)
-        auth_token_status_code = 'Getting auth token status code: %s' % r.status_code
-        # Getting access token and token type:
-        r_dict = json.loads(r.text)
-        access_token = r_dict['access_token']
-        token_type = r_dict['token_type']
-
-        # REGISTERING USER'S CARD:
-        url = 'https://api.sandbox.paypal.com/v1/vault/credit-card'
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': '{token_type} {access_token}'.format(token_type=token_type, access_token=access_token)
-        }
-        # Dumping card info to JSON:
-        payer_id = 'user12345'
-        data = json.dumps(
-            {
-                "payer_id":payer_id,
-                 "type":card_type,
-                 "number":card_number,
-                 "expire_month":card_expire_month,
-                 "expire_year":card_expire_year,
-                 "first_name":card_first_name,
-                 "last_name":card_last_name
-            }
-        )
-        # Request:
-        r = requests.post(url, headers=headers, data=data)
-        register_card_status_code = 'Registering a card status code: %s' % r.status_code
-        # Getting a Card ID and Payer ID:
-        r_dict = json.loads(r.text)
-        card_id = r_dict['id']
-        payer_id = r_dict['payer_id']
-
-        # USING A STORED CARD -- CREATING A PAYMENT:
-        url = 'https://api.sandbox.paypal.com/v1/payments/payment'
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': '{token_type} {access_token}'.format(token_type=token_type, access_token=access_token)
-        }
-        data = json.dumps(
-            {
-                'intent':payment_intent,
-                'payer':{
-                    'payment_method':payment_method,
-                    'funding_instruments':[
-                        {
-                            'credit_card_token':{
-                                'credit_card_id':card_id,
-                                'payer_id':payer_id
-                            }
-                        }
-                    ]
-                },
-                'transactions':[
-                    {
-                        'amount':{
-                            'total':amount_total,
-                            'currency':amount_currency
-                        },
-                        'description':payment_description
-                    }
-                ]
-            }, sort_keys=True
-        )
-        # Request:
-        r = requests.post(url, headers=headers, data=data)
-        creating_payment_status_code = 'Creating a payment status code: %s' % r.status_code
-
-        return render_template('thank_you.html',
-                               auth_token_status_code=auth_token_status_code,
-                               register_card_status_code=register_card_status_code,
-                               creating_payment_status_code=creating_payment_status_code,
-                               item=item
-                               )
-    else:
-        err = form.errors
-        return render_template('paypal_payment_form.html', form=form,err=err)
-
-
-@app.route('/paypal-simple-form', methods=["GET", "POST"])
-def paypal_simple_form():
-    # Faking the getting a Shop object by ID:
-
-    data = {
-        'amount_total': '7.60',
-        'amount_currency': 'USD',
-        'business': "kin@kinskards.com",
-        'cmd': '_cart',
-        'add': '2',
-        'item_name': 'Birthday - Cake and Candle'
-    }
-    return render_template('paypal_simple_payment_form.html', data=data)
-
-
-@app.route('/bitcoin_form')
-def bitcoin_form():
-    pass
