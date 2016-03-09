@@ -17,6 +17,7 @@ def parse_helper_request(form_data):
     }
     return dictionary
 
+
 def parse_processing_request(form_data, helper_response):
     dictionary = {
         'payment_type': form_data['payment_method'],
@@ -41,6 +42,7 @@ def parse_processing_request(form_data, helper_response):
         'signature': form_data['payment_signature']
     }
     return dictionary
+
 
 def save_transaction_to_db(form_data, processing_response):
     transaction = Transaction(
@@ -68,12 +70,12 @@ def parse_transaction(form_json_data):
 
     helper_request = parse_helper_request(form_data)
     helper_json_response = requests.post(helper_url, data=json.dumps(helper_request))
-
     helper_response = json.loads(helper_json_response)
+
     processing_request = parse_processing_request(form_data, helper_response)
     processing_json_response = requests.post(processing_url, data=json.dumps(processing_request))
-
     processing_response = json.load(processing_json_response)
+
     transaction_id = save_transaction_to_db(form_data, processing_response)
     return render_template('thx.html', processing_response=processing_response, transaction_id=transaction_id)
 
@@ -82,6 +84,8 @@ def parse_transaction(form_json_data):
 def get_transaction_status(transaction_id):
     url = url = 'http://192.168.1.122:8888'
     data = {'PaymentID': transaction_id}  # TODO: Get transaction_id from processing.
+
+
     return requests.post(url, data=data)
 
 
