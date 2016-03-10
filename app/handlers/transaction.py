@@ -82,7 +82,7 @@ def parse_transaction(form_json_data):
 
 @app.route('/get-transaction-status', methods=['GET', 'POST'])
 def get_transaction_status(transaction_id):
-    url = url = 'http://192.168.1.122:8888'
+    url = 'http://192.168.1.122:8888'
     data = {'PaymentID': transaction_id}  # TODO: Get transaction_id from processing.
 
 

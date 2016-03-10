@@ -7,7 +7,7 @@ class Transaction(db.Model):
     __tablename__ = 'transaction'
 
     id = db.Column(db.Integer, primary_key=True)
-    transaction_id = db.Column(db.String(127))  # Get from Processing
+    transaction_id = db.Column(db.String(127))  # TODO: Generate with UUID4
     creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     status = db.Column(db.String(100), default='NOT_FINAL', nullable=False)
     status_update = db.Column(db.DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)  # Changes every status update
@@ -19,8 +19,6 @@ class Transaction(db.Model):
 
     # Source:
     payer_card_number = db.Column(db.String(16), nullable=False) # TODO: must be encrypted
-    # payer_card_expiration_date = db.Column(db.String(5), nullable=False)
-    # payer_card_cvv = db.Column(db.String(3), nullable=False)
     payer_card_first_name = db.Column(db.String(33))
     payer_card_last_name = db.Column(db.String(33))
 
