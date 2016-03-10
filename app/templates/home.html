@@ -7,9 +7,10 @@
         <form class="" action="{{ url_for('credit_card_form', item_id=i.id) }}" method=post>
             <div class="row">
                 <div class="col-xs-3 col-sm-3"><img src="static/media/{{ i.logo }}"></div>
+                <br><br>
                 <div class="col-xs-2 col-sm-2"><strong>{{ i.name }}</strong></div>
                 <div class="col-xs-6 col-sm-6">{{ i.description }}</div>
-                <div class="col-xs-1 col-sm-1"><u>${{ i.price }}</u>
+                <div class="col-xs-1 col-sm-1">$<u>{{ i.price }}</u>
                 <br><button type="submit" class="btn btn-success">Get</button></div>
             </div>
             <br><br>

@@ -22,8 +22,8 @@ HD Graphics 5300 • SSD: 256 ГБ • 0,92 кг • ОС: OS X Yosemite', '1599
 items = [item1, item2, item3]
 
 store_identifier = 'storeid2'
-admin_url = 'http://192.168.1.105:7128/api/admin/dev/info/stores/'
-processing_url = 'http://192.168.1.105:8888'
+admin_url = 'http://127.0.0.1:7128/api/admin/dev/info/stores/'
+processing_url = 'http://127.0.01:8888'
 
 
 @app.route('/')
@@ -61,7 +61,7 @@ def credit_card_form_execute():
 
         # Source:
         card_number = request.form['card_number']
-        print('!!!!!' + card_number)
+        print('Card number: ', card_number)
         card_cvv = request.form['cvv']
         card_expire_month = request.form['expire_month']
         card_expire_year = request.form['expire_year']
