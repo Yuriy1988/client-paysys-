@@ -3,7 +3,7 @@
 *.sqlite
 *.pyc
 dump_
-*/__pycache__/*
 .DS_Store
 .DS_Store?
 .idea
+venv
