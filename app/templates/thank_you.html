@@ -2,37 +2,10 @@
 
 {% block content %}
 
-    <font color="green">
-        Thx! We took your payment in process.
-        <br> You should know that we love you!
-    </font>
+    <h4><font color="green">Success!</font></h4>
+    <br> We took your transaction to process.
+    <br> Transaction id is "{{ transaction_id }}"
+    <br> Love you!
 
-    <br>
-    {% if auth_token_status_code %}
-        <br>
-        auth_token_status_code: {{ auth_token_status_code }}
-    {% endif %}
-
-    {% if register_card_status_code %}
-        <br>
-        register_card_status_code: {{ register_card_status_code }}
-    {% endif %}
-
-    {% if creating_payment_status_code %}
-        <br>
-        creating_payment_status_code: {{ creating_payment_status_code }}
-    {% endif %}
-
-    {% if data %}
-        <br>
-        {{ data }}
-    {% endif %}
-    {% if r %}
-        <br>
-        <br>
-        {{ r }}
-        <br>
-        {{ r.text }}
-    {% endif %}
 
 {% endblock %}

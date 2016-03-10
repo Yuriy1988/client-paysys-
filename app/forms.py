@@ -54,31 +54,6 @@ class CreditCardForm(Form):
          validators.Length(min=1, max=30)],
         default='credit_card'
     )
-    amount_total = StringField(
-        'Amount',
-        [validators.DataRequired(message='Sorry, this is a required field.'),
-         validators.Length(min=1, max=100)],
-        default='6'
-    )
-    amount_currency = StringField(
-        'Currency',
-        [validators.DataRequired(message='Sorry, this is a required field.'),
-         validators.Length(min=3, max=3)],
-        default='USD'
-    )
-
-    # etc:
-    item_identifier = StringField(
-        'Item Identifier',
-        [validators.DataRequired(message='Sorry, this is a required field.')],
-        default='store_sdasds'
-    )
-
-    store_identifier = StringField(
-        'Store Identifier',
-        [validators.DataRequired(message='Sorry, this is a required field.')],
-        default='item_sadasad'
-    )
 
     payer_email = StringField(
         'Payer Email',

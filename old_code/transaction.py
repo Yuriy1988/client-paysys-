@@ -1,7 +1,7 @@
 import json
 
 import requests
-from flask import render_template, request, jsonify
+from flask import render_template, request
 
 from app import app, db
 from app.forms import PayPalPaymentForm, CreditCardForm
