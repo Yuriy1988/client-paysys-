@@ -8,7 +8,7 @@ FRONTEND_FOLDER = os.path.join(BASE_FOLDER, 'frontend')
 STATIC_FOLDER = os.path.join(FRONTEND_FOLDER, 'static')
 
 # Define the database
-SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost/postgres'
+SQLALCHEMY_DATABASE_URI = 'postgresql://xopclientadmin:xopclient@localhost/xopclientdb'
 SQLALCHEMY_TRACK_MODIFICATIONS = False      # flask-sql signaling not used now
 
 CSRF_ENABLED = True
