@@ -1,10 +1,11 @@
 import json
+import uuid
 
 import requests
-from flask import render_template
+from flask import render_template, request, redirect, url_for
 
 from app import app, db
-from app.models import Transaction
+from app.models import Transaction, Order
 
 from config import helper_url, processing_url
 
@@ -49,8 +50,8 @@ def save_transaction_to_db(form_data, processing_response):
         payer_card_number=form_data['card_number'][0:6],
         payer_card_first_name=form_data['card_first_name'],
         payer_card_last_name=form_data['card_last_name'],
-        item_identifier=form_data['item_identifier'],
-        store_identifier=form_data['store_identifier'],
+        item_id=form_data['item_id'],
+        store_id=form_data['store_id'],
         amount_total=form_data['amount_total'],
         amount_currency=form_data['amount_currency'],
         payment_method=form_data['payment_method'],
@@ -94,5 +95,82 @@ def home():
     """
     Homepage with a shops list.
     """
+    orders = Order.query.all()
     transactions = Transaction.query.all()
-    return render_template('home.html', transactions=transactions)
+    return render_template('home.html', orders=orders, transactions=transactions)
+
+
+@app.route('/credit_card_form', methods=['GET', 'POST'])
+def credit_card_form():
+    """
+    Homepage with a shops list.
+    """
+    if request.method == 'POST':
+        store_id = request.form['store_id']
+        item_id = request.form['item_id']
+        quantity = request.form['quantity']
+        amount_total = request.form['amount_total']
+        amount_currency = request.form['amount_currency']
+
+        order = Order(
+            store_id=store_id,
+            item_id=item_id,
+            quantity=quantity,
+            amount_total=amount_total,
+            amount_currency=amount_currency
+        )
+        db.session.add(order)
+        db.session.commit()
+        return render_template('credit_card_form.html', order=order)
+
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/credit_card_form_execute/', methods=['GET', 'POST'])
+def credit_card_form_execute():
+    if request.method == 'POST':
+        order_id = int(request.form['order_id'])
+        store_id = request.form['store_id']
+        item_id = request.form['item_id']
+        amount_total = str(int(request.form['amount_total']) * 100)
+        amount_currency = request.form['amount_currency']
+
+        card_number = request.form['card_number']
+        card_cvv = request.form['card_cvv']
+        card_expire_month = request.form['expire_month']
+        card_expire_year = request.form['expire_year']
+        card_first_name = request.form['first_name']
+        card_last_name = request.form['last_name']
+        payment_method = 'credit_card'
+        payment_signature = 'eswdfewdf23fewr2'
+
+        payer_email = request.form['payer_email']
+        payer_phone = request.form['payer_phone']
+
+        transaction_id = str(uuid.uuid4())
+        status = 'NOT_FINAL'
+
+        transaction = Transaction(
+            order_id=order_id,
+            transaction_id=transaction_id,
+            status=status,
+            amount_total=amount_total,
+            amount_currency=amount_currency,
+            payment_method=payment_method,
+            store_id=store_id,
+            payer_card_number=card_number,
+            payer_card_first_name=card_first_name,
+            payer_card_last_name=card_last_name,
+            payer_email=payer_email,
+            payer_phone=payer_phone,
+            item_id=item_id
+        )
+        db.session.add(transaction)
+        db.session.commit()
+
+        return render_template('thank_you.html')
+
+    else:
+        err = "hi"
+        return render_template('credit_card_form.html', err=err)
