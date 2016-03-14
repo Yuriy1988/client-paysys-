@@ -6,11 +6,17 @@ Werkzeug==0.11.4
 wheel==0.24.0
 requests==2.9.1
 WTForms==2.1
-flask-sqlalchemy==2.1
-sqlalchemy==1.0.11
 Flask-Migrate==1.8.0
 Flask-Script==2.0.5
+Flask-SQLAlchemy==2.1
+flask-marshmallow==0.6.2
+marshmallow==2.6.0
 psycopg2==2.6.1  # If some issues, try: $sudo PATH=$PATH:/usr/pgsql-9.5.1/bin/ pip install psycopg2
+six==1.10.0
+SQLAlchemy==1.0.11
 
-
+# alembic==0.8.5
+# Mako==1.0.3
+# MarkupSafe==0.23
+# python-editor==0.5
 

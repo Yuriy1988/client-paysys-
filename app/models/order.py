@@ -1,5 +1,6 @@
 from app import db
 import datetime
+from app.models import enum
 
 
 class Order(db.Model):
@@ -12,7 +13,7 @@ class Order(db.Model):
     item_id = db.Column(db.String(127))
     quantity = db.Column(db.Integer)
     amount_total = db.Column(db.String(300))
-    amount_currency = db.Column(db.String(3), default='USD', nullable=False)
+    amount_currency = db.Column(db.Enum(*enum.CURRENCY_ENUM, name='enum_currency'))
     transactions = db.relationship('Transaction', backref='transaction', lazy='dynamic')
 
     def __init__(self, store_id, item_id, quantity, amount_total, amount_currency):

@@ -49,7 +49,8 @@
     </form>
 
     {% if orders %}
-        Orders are:
+        <br>
+        <strong>Orders are:</strong>
         {% for order in orders %}
             <hr>Store_id: {{ order.store_id }}
             Transactions:
@@ -61,7 +62,7 @@
 
     {% if transactions %}
         <hr><br><br>
-        Transactions are:<br>
+        <strong>Transactions are:</strong><br>
         {% for transaction in transactions %}
             <hr>{{ transaction.id }}
             <br>{{ transaction.transaction_id }}
