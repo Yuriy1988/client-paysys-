@@ -51,17 +51,19 @@
     {% if orders %}
         Orders are:
         {% for order in orders %}
-            <br>
-            <br>Store_id: {{ order.store_id }}
-            Transactions: {{ order.transactions.id }}
+            <hr>Store_id: {{ order.store_id }}
+            Transactions:
+            {% for transaction in order.transactions %}
+                {{ transaction }}
+            {% endfor %}
         {% endfor %}
     {% endif %}
 
     {% if transactions %}
-        Transactions are:
+        <hr><br><br>
+        Transactions are:<br>
         {% for transaction in transactions %}
-        <hr>
-            {{ transaction.id }}
+            <hr>{{ transaction.id }}
             <br>{{ transaction.transaction_id }}
             <br>{{ transaction.creation_date }}
             <br>{{ transaction.status }}

@@ -7,32 +7,4 @@
         <br> You should know that we love you!
     </font>
 
-    <br>
-    {% if auth_token_status_code %}
-        <br>
-        auth_token_status_code: {{ auth_token_status_code }}
-    {% endif %}
-
-    {% if register_card_status_code %}
-        <br>
-        register_card_status_code: {{ register_card_status_code }}
-    {% endif %}
-
-    {% if creating_payment_status_code %}
-        <br>
-        creating_payment_status_code: {{ creating_payment_status_code }}
-    {% endif %}
-
-    {% if data %}
-        <br>
-        {{ data }}
-    {% endif %}
-    {% if r %}
-        <br>
-        <br>
-        {{ r }}
-        <br>
-        {{ r.text }}
-    {% endif %}
-
 {% endblock %}

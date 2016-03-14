@@ -86,7 +86,6 @@ def get_transaction_status(transaction_id):
     url = 'http://192.168.1.122:8888'
     data = {'PaymentID': transaction_id}  # TODO: Get transaction_id from processing.
 
-
     return requests.post(url, data=data)
 
 
@@ -142,7 +141,7 @@ def credit_card_form_execute():
         card_expire_year = request.form['expire_year']
         card_first_name = request.form['first_name']
         card_last_name = request.form['last_name']
-        payment_method = 'credit_card'
+        payment_method = 'PAY_PAL'
         payment_signature = 'eswdfewdf23fewr2'
 
         payer_email = request.form['payer_email']

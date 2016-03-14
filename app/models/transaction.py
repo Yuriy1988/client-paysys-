@@ -15,12 +15,12 @@ class Transaction(db.Model):
     status_update = db.Column(db.DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)  # Changes every status update
     amount_total = db.Column(db.Integer)
     amount_currency = db.Column(db.Enum(*enum.CURRENCY_ENUM, name='enum_currency'))
-    payment_method = db.Column(db.Enum(*enum.PAYMENT_SYSTEMS_ID_ENUM, name='enum_payment_system_id'), primary_key=True)
+    payment_method = db.Column(db.Enum(*enum.PAYMENT_SYSTEMS_ID_ENUM, name='enum_payment_system_id'))
     store_id = db.Column(db.String(127), nullable=False)
     item_id = db.Column(db.String(127))
 
     # Source:
-    payer_card_number = db.Column(db.String(16), nullable=False) # TODO: must be encrypted
+    payer_card_number = db.Column(db.String(16), nullable=False)  # TODO: must be encrypted
     payer_card_first_name = db.Column(db.String(33))
     payer_card_last_name = db.Column(db.String(33))
 
@@ -40,13 +40,13 @@ class Transaction(db.Model):
         self.amount_total = amount_total
         self.amount_currency = amount_currency
         self.payment_method = payment_method
-        self.store_identifier = store_id
+        self.store_id = store_id
         self.payer_card_number = payer_card_number
         self.payer_card_first_name = payer_card_first_name
         self.payer_card_last_name = payer_card_last_name
         self.payer_email = payer_email
         self.payer_phone = payer_phone
-        self.item_identifier = item_id
+        self.item_id = item_id
 
     def __repr__(self):
         return '<Transaction id: %r>' % self.transaction_id
