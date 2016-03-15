@@ -8,7 +8,7 @@ class Transaction(db.Model):
     __tablename__ = 'transaction'
 
     id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
+    order_id = db.Column(db.String, db.ForeignKey('invoice.id'))
     transaction_id = db.Column(db.String(127), unique=True)  # TODO: Generate with UUID4
     creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     status = db.Column(db.Enum(*enum.TRANSACTION_STATUS_ENUM, name='enum_transaction_status'))

@@ -5,9 +5,9 @@ import requests
 from flask import render_template, request, redirect, url_for
 
 from app import app, db
-from app.models import Transaction, Order
+from app.models import Transaction, Invoice
 
-from config import helper_url, processing_url
+from config import HELPER_URL, PROCESSING_URL
 
 
 def parse_helper_request(form_data):
@@ -70,11 +70,11 @@ def parse_transaction(form_json_data):
     form_data = json.loads(form_json_data)
 
     helper_request = parse_helper_request(form_data)
-    helper_json_response = requests.post(helper_url, data=json.dumps(helper_request))
+    helper_json_response = requests.post(HELPER_URL, data=json.dumps(helper_request))
     helper_response = json.loads(helper_json_response)
 
     processing_request = parse_processing_request(form_data, helper_response)
-    processing_json_response = requests.post(processing_url, data=json.dumps(processing_request))
+    processing_json_response = requests.post(PROCESSING_URL, data=json.dumps(processing_request))
     processing_response = json.load(processing_json_response)
 
     transaction_id = save_transaction_to_db(form_data, processing_response)
@@ -94,7 +94,7 @@ def home():
     """
     Homepage with a shops list.
     """
-    orders = Order.query.all()
+    orders = Invoice.query.all()
     transactions = Transaction.query.all()
     return render_template('home.html', orders=orders, transactions=transactions)
 
@@ -111,7 +111,7 @@ def credit_card_form():
         amount_total = request.form['amount_total']
         amount_currency = request.form['amount_currency']
 
-        order = Order(
+        order = Invoice(
             store_id=store_id,
             item_id=item_id,
             quantity=quantity,

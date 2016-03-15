@@ -65,6 +65,7 @@
         <strong>Transactions are:</strong><br>
         {% for transaction in transactions %}
             <hr>{{ transaction.id }}
+            <br>{{ transaction.order_id }}
             <br>{{ transaction.transaction_id }}
             <br>{{ transaction.creation_date }}
             <br>{{ transaction.status }}
@@ -72,14 +73,13 @@
             <br>{{ transaction.amount_total }}
             <br>{{ transaction.amount_currency }}
             <br>{{ transaction.payment_method }}
-            <br>{{ transaction.store_identifier }}
-            <br>{{ transaction.item_identifier }}
+            <br>{{ transaction.store_id }}
+            <br>{{ transaction.item_id }}
             <br>{{ transaction.payer_card_number }}
             <br>{{ transaction.payer_card_first_name }}
             <br>{{ transaction.payer_card_last_name }}
             <br>{{ transaction.payer_email }}
             <br>{{ transaction.payer_phone }}
-            <br>{{ transaction.test }}
         {% endfor %}
     {% endif %}
 
