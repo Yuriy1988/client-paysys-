@@ -1,22 +1,34 @@
 import requests
 import json
 
+ADMIN_SERVER_URL = "localhost://"
+API_URL = ADMIN_SERVER_URL + "/api/admin/{version}".format(version="dev")
 
-API_URL = "/api/admin/{version}".format(version="dev")
+
+def contract_json_parser(contracts_json):
+    contracts = json.loads(contracts_json).get("contracts", [])
+    if contracts:
+        return contracts
+    else:
+        raise ValueError("There is no active contracts.")
 
 
 def get_merchant_contracts(merchant_id, currency):
-    merchant_contracts_json = requests.get(
-        url=API_URL + "/merchants/{merchant_id}/contracts?currency={ccy}".format(merchant_id=merchant_id, ccy=currency)
+    contracts_json = requests.get(
+        url=API_URL + "/merchants/{merchant_id}/contracts?currency={ccy}&active=true".format(
+            merchant_id=merchant_id,
+            ccy=currency)
     )
-    return json.loads(merchant_contracts_json).get("merchant_contracts", [])
+    return contract_json_parser(contracts_json)
 
 
 def get_bank_contracts(payment_system_id, currency):
-    bank_contracts_json = requests.get(
-        url=API_URL + "/payment_systems/{ps_id}/contracts?currency={ccy}".format(ps_id=payment_system_id, ccy=currency)
+    contracts_json = requests.get(
+        url=API_URL + "/payment_systems/{ps_id}/contracts?currency={ccy}&active=true".format(
+            ps_id=payment_system_id,
+            ccy=currency)
     )
-    return json.loads(bank_contracts_json).get("bank_contracts", [])
+    return contract_json_parser(contracts_json)
 
 
 def contract_key_func(amount):
@@ -25,7 +37,7 @@ def contract_key_func(amount):
     :param amount: Payment amount
     """
     def get_contract_key(contract):
-        return contract.get("fix", 0) + amount * contract.get("percent")
+        return contract.get("commission_fixed", 0.0) + amount * contract.get("commission_pct", 0.0) / 100.0
     return get_contract_key
 
 
