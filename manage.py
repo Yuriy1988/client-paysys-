@@ -10,6 +10,7 @@ migration = migrate.Migrate(app, db)
 manager = script.Manager(app)
 manager.add_command('db', migrate.MigrateCommand)
 
+
 @manager.command
 def create_db():
     return db.create_all()

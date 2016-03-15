@@ -16,3 +16,9 @@ db_install:
 	sudo -u postgres psql -c "CREATE DATABASE xopclientdb OWNER xopclientadmin"
 	sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE xopclientdb TO xopclientadmin"
 
+db_install_mac:
+	brew install postgresql
+	sudo PATH=$PATH:/usr/pgsql-9.5.1/bin/ pip install psycopg2
+	sudo -u postgres psql -c "CREATE USER xopclientadmin WITH PASSWORD 'xopclient'"
+	sudo -u postgres psql -c "CREATE DATABASE xopclientdb OWNER xopclientadmin"
+	sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE xopclientdb TO xopclientadmin"
