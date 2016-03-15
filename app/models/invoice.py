@@ -1,19 +1,24 @@
+import uuid
+
 from app import db
 import datetime
-from app.models import enum
+from app.models import enum, base
+from copy import deepcopy
 
 
-class Item(db.Model):
+class Item(base.BaseModel):
 
     __tablename__ = 'item'
 
-    item_id = db.Column(db.String, nullable=False, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.String, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     unit_price = db.Column(db.Numeric, nullable=False)
+    item_name = db.Column(db.String)
     invoice_id = db.Column(db.String, db.ForeignKey('invoice.id'))
 
 
-class Invoice(db.Model):
+class Invoice(base.BaseModel):
 
     __tablename__ = 'invoice'
 
@@ -21,10 +26,9 @@ class Invoice(db.Model):
     order_id = db.Column(db.String)
     store_id = db.Column(db.String, nullable=False)
     currency = db.Column(db.Enum(*enum.CURRENCY_ENUM, name='enum_currency'))
-    items = db.relationship('Items', backref='invoice', lazy='dynamic')
+    items = db.relationship('Item', backref='invoice', lazy='dynamic')
     creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    payment = db.relationship('Payment', backref='invoice', lazy='dynamic')
-    # payment_id = db.Column(db.String, db.ForeignKey('payment.id'))
+    payment = db.relationship('Payment', lazy='dynamic')
     # transactions = db.relationship('Transaction', backref='transaction', lazy='dynamic')
 
     def __init__(self, id, order_id, store_id, currency, items):
@@ -36,3 +40,23 @@ class Invoice(db.Model):
 
     def __repr__(self):
         return '<Invoice id: %r>' % self.id
+
+    @classmethod
+    def create(cls, data, add_to_db=True):
+        data = deepcopy(data)
+
+        # Generating a unique Invoice id:
+        data['id'] = str(uuid.uuid4())
+
+        items_data = data.pop('items', {})
+
+        items_list = []
+        for item in items_data:
+            item = Item.create(item)
+            db.session.commit()
+            items_list.append(item)
+
+        data['items'] = items_list
+
+        invoice = super(Invoice, cls).create(data)
+        return invoice

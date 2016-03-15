@@ -48,15 +48,21 @@
 
     </form>
 
-    {% if orders %}
+    {% if invoices %}
         <br>
-        <strong>Orders are:</strong>
-        {% for order in orders %}
-            <hr>Store_id: {{ order.store_id }}
-            Transactions:
-            {% for transaction in order.transactions %}
-                {{ transaction }}
-            {% endfor %}
+        <strong>Invoices are:</strong>
+        {% for invoice in invoices %}
+            <hr>
+            id: {{ invoice.id }}
+            <br>order_id: {{ invoice.order_id }}
+            <br>store_id: {{ invoice.store_id }}
+            <br>currency: {{ invoice.currency }}
+            <br>items:
+                {% for item in invoice.items %}
+                    -(id: {{ item.item_id }}/quantity: {{ item.quantity }}/ unit_price: {{ item.unit_price }})-
+                {% endfor %})
+            <br>creation_date: {{ invoice.creation_date }}
+            <br>payment: {{ invoice.payment.payment_id }}
         {% endfor %}
     {% endif %}
 

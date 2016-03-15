@@ -1,8 +1,8 @@
-from flask import Flask
+from flask import Flask, json
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-import logging
+import logging, decimal
 from logging import FileHandler, Formatter
 
 
@@ -29,6 +29,18 @@ file_handler.setFormatter(Formatter(
     '''
 ))
 app.logger.addHandler(file_handler)
+
+
+# Decimal-to-json fix:
+class MyJSONEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+        if isinstance(obj, decimal.Decimal):
+            # Convert decimal instances to strings.
+            return str(obj)
+        return super(MyJSONEncoder, self).default(obj)
+
+app.json_encoder = MyJSONEncoder
 
 
 from app import handlers

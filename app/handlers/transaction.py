@@ -94,9 +94,9 @@ def home():
     """
     Homepage with a shops list.
     """
-    orders = Invoice.query.all()
+    invoices = Invoice.query.all()
     transactions = Transaction.query.all()
-    return render_template('home.html', orders=orders, transactions=transactions)
+    return render_template('home.html', invoices=invoices, transactions=transactions)
 
 
 @app.route('/credit_card_form', methods=['GET', 'POST'])

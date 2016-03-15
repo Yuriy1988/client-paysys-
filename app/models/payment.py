@@ -1,8 +1,9 @@
 from app import db
 import datetime
+from app.models import base
 
 
-class Payment(db.Model):
+class Payment(base.BaseModel):
 
     __tablename__ = 'payment'
 
@@ -14,8 +15,9 @@ class Payment(db.Model):
     notify_by_email = db.Column(db.String(120))
     notify_by_phone = db.Column(db.String(120))
     creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
     invoice_id = db.Column(db.String, db.ForeignKey('invoice.id'))
-    invoice = db.relationship('Invoice', backref='payment', lazy='dynamic')
+    invoice = db.relationship('Invoice')
 
     def __init__(self, id, card_number, cardholder_name, cvv, expiry_date, notify_by_email, notify_by_phone, invoice):
         self.id = id
