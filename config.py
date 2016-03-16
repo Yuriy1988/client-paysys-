@@ -18,5 +18,6 @@ SECRET_KEY = "ugGB0uH1cJTW=1L9Vs|8roMlFfFgsWD%NA|*WBpYQ3Uytr-6rImVk2Rp%BJ+"
 
 HELPER_URL = 'http://192.168.1.122:8888'  # TODO: Write down the rigth Helper-server adress.
 PROCESSING_URL = 'http://192.168.1.122:8888'  # TODO: Write down the rigth Processing-server adress.
+ADMIN_URL = 'http://127.0.0.1:7128' # TODO: Write down the rigth Admin-server adress.
 
 CURRENT_API_VERSION = 'dev'

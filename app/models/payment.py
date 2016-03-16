@@ -1,3 +1,6 @@
+import uuid
+from copy import deepcopy
+
 from app import db
 import datetime
 from app.models import base
@@ -31,3 +34,12 @@ class Payment(base.BaseModel):
 
     def __repr__(self):
         return '<Payment id: %r>' % self.id
+
+    @classmethod
+    def create(cls, data, add_to_db=True):
+        data = deepcopy(data)
+
+        data['id'] = str(uuid.uuid4())
+
+        payment = super(Payment, cls).create(data)
+        return payment
