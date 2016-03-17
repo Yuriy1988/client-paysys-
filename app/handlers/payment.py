@@ -2,7 +2,7 @@ from flask import request, jsonify
 from app import app, db
 from app.models import Invoice, Payment
 from app.schemas import VisaMasterSchema, PaymentResponceSchema
-from app.errors import NotFoundError, ValidationError
+from app.errors import ValidationError
 from config import CURRENT_API_VERSION
 
 
@@ -38,13 +38,12 @@ def payment_create(invoice_id):
     data['invoice'] = invoice
     payment = Payment.create(data)
     db.session.commit()
-    print('!!!!!!!!: ', payment.id)
-    to_responce = {
+
+    payment_responce_dict = {
         'id': payment.id,
         'status': 'ACCEPTED'
     }
-
-    to_responce_schema = PaymentResponceSchema()
-    result = to_responce_schema.dump(to_responce)
+    payment_responce_schema = PaymentResponceSchema()
+    result = payment_responce_schema.dump(payment_responce_dict)
 
     return jsonify(result.data)
