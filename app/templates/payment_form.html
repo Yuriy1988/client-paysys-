@@ -1,0 +1,20 @@
+{% extends "__main.html" %}
+
+{% block content %}
+
+    {{ store_info.store_name }}
+    {{ store_info.store_url }}
+    {{ store_info.description }}
+    {{ store_info.logo }}
+    {{ store_info.show_logo }}
+
+    <form action="/" method='post'>
+
+        {% for field in visa_master_form %}
+            <br>{{ field }} {{ field.label }}
+        {% endfor %}
+
+        <br><input type="submit" value="Go">
+    </form>
+
+{% endblock %}

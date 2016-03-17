@@ -16,8 +16,11 @@ CSRF_SESSION_KEY = "mhe=d4#2xvb1348j%m+sn0d8ssdbjv18yi+f_w#&yd!+&4ic4)"
 
 SECRET_KEY = "ugGB0uH1cJTW=1L9Vs|8roMlFfFgsWD%NA|*WBpYQ3Uytr-6rImVk2Rp%BJ+"
 
+# Current links:
 HELPER_URL = 'http://192.168.1.122:8888'  # TODO: Write down the rigth Helper-server adress.
 PROCESSING_URL = 'http://192.168.1.122:8888'  # TODO: Write down the rigth Processing-server adress.
 ADMIN_URL = 'http://127.0.0.1:7128' # TODO: Write down the rigth Admin-server adress.
 
+# Current versions:
 CURRENT_API_VERSION = 'dev'
+CURRENT_ADMIN_API_VERSION = 'dev'

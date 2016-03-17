@@ -24,7 +24,6 @@ def payment_create(invoice_id):
     }
     < 400 Bad Request
     < 404 Not Found
-
     """
     invoice = Invoice.query.get(invoice_id)
 
@@ -34,7 +33,7 @@ def payment_create(invoice_id):
     if errors:
         raise ValidationError(errors=errors)
 
-    # Creating a new Transaction object:
+    # Creating a new Transaction object (for saving to DB):
     data['invoice'] = invoice
     payment = Payment.create(data)
     db.session.commit()

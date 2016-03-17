@@ -1,10 +1,11 @@
+import requests
 from flask import Response, request, jsonify, render_template
 
 from app import app, db
 from app.models import Invoice
-from app.schemas import InvoiceSchema
+from app.schemas import InvoiceSchema, StoreSchema
 
-from config import CURRENT_API_VERSION
+from config import CURRENT_API_VERSION, ADMIN_URL, CURRENT_ADMIN_API_VERSION
 from app.errors import NotFoundError, ValidationError
 from app.forms import VisaMasterPaymentForm
 
@@ -66,37 +67,36 @@ def invoice_get_info(invoice_id):
     return jsonify(result.data)
 
 
-@app.route('/get-payment-form/<paysys_id>/<invoice_id>', methods=['GET'])
-def get_payment_form(paysys_id, invoice_id):
-    if paysys_id == "VISA_MASTER":
+@app.route('/payment/<invoice_id>', methods=['GET'])
+def get_payment_form(invoice_id):
         invoice = Invoice.query.get(invoice_id)
 
-        # Get store info from Admin for custom layout (logo, etc):
-        store_info = {
-            'logo': 'path_to_logo',
-            'name': 'Store Name'
-        }
-        '''
-        url = '{admin_url}/api/admin/{current_api_version}/info/stores/{store_id}/merchant_account'.format(
+        # Getting store info from Admin for custom layout (logo, etc):
+        url = '{admin_url}/api/admin/{current_admin_api_version}/info/stores/{store_id}'.format(
             admin_url=ADMIN_URL,
-            current_api_version=CURRENT_API_VERSION,
+            current_admin_api_version=CURRENT_ADMIN_API_VERSION,
             store_id=invoice.store_id
         )
         store_json_info = requests.get(url)
-        '''
+        store_schema = StoreSchema()
+        store_data, store_errors = store_schema.load(store_json_info)
+        if store_errors:
+            raise ValidationError(errors=store_errors)
+        store_info = {
+            'store_name': store_data['store_name'],
+            'store_url': store_data['store_url'],
+            'description': store_data['description'],
+            'logo': store_data['logo'],
+            'show_logo': store_data['show_logo']
+        }
 
-        form = VisaMasterPaymentForm()
-        return render_template('credit_card_form.html',
+        # Getting forms:
+        visa_master_form = VisaMasterPaymentForm()
+        # paypal_form = PayPalForm() TODO: write me.
+        # bitcoin_form = BitCoinForm() TODO: write me.
+
+        return render_template('payment_form.html',
                                store_info=store_info,
-                               form=form)
-
-    elif paysys_id == "PAY_PAL":
-        pass
-
-    elif paysys_id == "BIT_COIN":
-        pass
-
-    else:
-        return 'Wrong paysys_id inside the link'
+                               visa_master_form=visa_master_form)
 
 

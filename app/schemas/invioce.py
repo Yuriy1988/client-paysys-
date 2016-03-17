@@ -18,3 +18,4 @@ class InvoiceSchema(base.BaseSchema):
     store_id = fields.Str(required=True)
     currency = fields.Str(required=True, validate=OneOf(enum.CURRENCY_ENUM), default='USD')
     items = fields.Nested(ItemSchema, many=True, required=True)
+
