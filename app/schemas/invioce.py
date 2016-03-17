@@ -17,5 +17,5 @@ class InvoiceSchema(base.BaseSchema):
     order_id = fields.Str(required=True)
     store_id = fields.Str(required=True)
     currency = fields.Str(required=True, validate=OneOf(enum.CURRENCY_ENUM), default='USD')
-    items = fields.Nested(ItemSchema, many=True, required=True)
+    items = fields.Nested(ItemSchema, many=True, required=True, allow_none=False)
 
