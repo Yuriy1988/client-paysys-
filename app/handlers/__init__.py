@@ -1,3 +1,3 @@
-from . import transaction, invoice, payment
+from . import invoice, payment
 
 __author__ = 'Andrey Kupriy'

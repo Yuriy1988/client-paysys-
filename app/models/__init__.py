@@ -1,4 +1,3 @@
-from .transaction import Transaction
 from .invoice import Invoice, Item
 from .payment import Payment
 
