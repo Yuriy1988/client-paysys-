@@ -21,6 +21,10 @@ HELPER_URL = 'http://192.168.1.122:8888'  # TODO: Write down the rigth Helper-se
 PROCESSING_URL = 'http://192.168.1.122:8888'  # TODO: Write down the rigth Processing-server adress.
 ADMIN_URL = 'http://127.0.0.1:7128' # TODO: Write down the rigth Admin-server adress.
 
+# Queue:
+QUEUE_HOST_ADDRESS = 'localhost'
+QUEUE_NAME = 'hello'
+
 # Current versions:
 CURRENT_API_VERSION = 'dev'
 CURRENT_ADMIN_API_VERSION = 'dev'

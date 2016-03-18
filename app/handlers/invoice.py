@@ -1,18 +1,13 @@
-import requests
 from flask import Response, request, jsonify, render_template
-
 from app import app, db
 from app.models import Invoice
 from app.schemas import InvoiceSchema, StoreSchema
-
-from config import CURRENT_API_VERSION, ADMIN_URL, CURRENT_ADMIN_API_VERSION
+from app.handlers.utils import get_store_by_store_id
+from config import CURRENT_API_VERSION
 from app.errors import NotFoundError, ValidationError
 from app.forms import VisaMasterPaymentForm
 
 
-
-
-# Handlers:
 @app.route('/api/client/version', methods=['GET'])
 def get_version():
     """
@@ -69,34 +64,32 @@ def invoice_get_info(invoice_id):
 
 @app.route('/payment/<invoice_id>', methods=['GET'])
 def get_payment_form(invoice_id):
-        invoice = Invoice.query.get(invoice_id)
+    invoice = Invoice.query.get(invoice_id)
+    if not invoice:
+        raise NotFoundError()
 
-        # Getting store info from Admin for custom layout (logo, etc):
-        url = '{admin_url}/api/admin/{current_admin_api_version}/info/stores/{store_id}'.format(
-            admin_url=ADMIN_URL,
-            current_admin_api_version=CURRENT_ADMIN_API_VERSION,
-            store_id=invoice.store_id
-        )
-        store_json_info = requests.get(url)
-        store_schema = StoreSchema()
-        store_data, store_errors = store_schema.load(store_json_info)
-        if store_errors:
-            raise ValidationError(errors=store_errors)
-        store_info = {
-            'store_name': store_data['store_name'],
-            'store_url': store_data['store_url'],
-            'description': store_data['description'],
-            'logo': store_data['logo'],
-            'show_logo': store_data['show_logo']
-        }
+    # Getting custom layout store info from Admin (logo, etc):
+    store_json_info = get_store_by_store_id(invoice.store_id)
 
-        # Getting forms:
-        visa_master_form = VisaMasterPaymentForm()
-        # paypal_form = PayPalForm() TODO: write me.
-        # bitcoin_form = BitCoinForm() TODO: write me.
+    store_schema = StoreSchema()
+    store_data, store_errors = store_schema.load(store_json_info)
+    if store_errors:
+        raise ValidationError(errors=store_errors)
+    store_info = {
+        'store_name': store_data['store_name'],
+        'store_url': store_data['store_url'],
+        'description': store_data['description'],
+        'logo': store_data['logo'],
+        'show_logo': store_data['show_logo']
+    }
 
-        return render_template('payment_form.html',
-                               store_info=store_info,
-                               visa_master_form=visa_master_form)
+    # Getting forms:
+    visa_master_form = VisaMasterPaymentForm()
+    # paypal_form = PayPalForm() TODO: write me.
+    # bitcoin_form = BitCoinForm() TODO: write me.
+
+    return render_template('payment_form.html',
+                           store_info=store_info,
+                           visa_master_form=visa_master_form)
 
 

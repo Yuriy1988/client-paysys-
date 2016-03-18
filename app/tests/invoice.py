@@ -1,5 +1,3 @@
-import unittest
-
 from app.tests import base
 from app.models import Invoice
 
@@ -10,7 +8,6 @@ class TestInvoice(base.BaseTestCase):
 
     # POST /invoices
 
-    # Positive:
     def test_post_invoice_full_valid_response(self):
         invoice = self.get_invoice()
 
@@ -22,7 +19,6 @@ class TestInvoice(base.BaseTestCase):
         # items created and added:
         self.assertIn('items', body)
 
-    # Negative:
     def test_post_invoice_with_no_order_id(self):
         invoice = self.get_invoice()
         del invoice['order_id']

@@ -44,6 +44,14 @@ class BaseTestCase(TestCase):
         "notify_by_phone": "1111111111"
     }
 
+    _payment = {
+        "card_number": "1111111111111111",
+        "status": "ACCEPTED",
+        "notify_by_email": "email@email.com",
+        "notify_by_phone": "011111111111",
+        "invoice": _invoice
+    }
+
     def setUp(self):
         """ Setup before test case """
         app_db.session.close()
@@ -97,3 +105,9 @@ class BaseTestCase(TestCase):
 
     def get_invoice(self):
         return deepcopy(self._invoice)
+
+    def get_payment(self):
+        return deepcopy(self._payment)
+
+    def get_card_info(self):
+        return deepcopy(self._card_info)

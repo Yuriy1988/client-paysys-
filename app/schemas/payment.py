@@ -16,3 +16,4 @@ class VisaMasterSchema(base.BaseSchema):
 class PaymentResponceSchema(base.BaseSchema):
     id = fields.Str(required=True)
     status = fields.Str(required=True, default="ACCEPTED")
+
