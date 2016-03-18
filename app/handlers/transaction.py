@@ -50,7 +50,7 @@ def save_transaction_to_db(form_data, processing_response):
         payer_card_number=form_data['card_number'][0:6],
         payer_card_first_name=form_data['card_first_name'],
         payer_card_last_name=form_data['card_last_name'],
-        item_id=form_data['item_id'],
+        store_item_id=form_data['store_item_id'],
         store_id=form_data['store_id'],
         amount_total=form_data['amount_total'],
         amount_currency=form_data['amount_currency'],
@@ -106,14 +106,14 @@ def credit_card_form():
     """
     if request.method == 'POST':
         store_id = request.form['store_id']
-        item_id = request.form['item_id']
+        store_item_id = request.form['store_item_id']
         quantity = request.form['quantity']
         amount_total = request.form['amount_total']
         amount_currency = request.form['amount_currency']
 
         order = Invoice(
             store_id=store_id,
-            item_id=item_id,
+            store_item_id=store_item_id,
             quantity=quantity,
             amount_total=amount_total,
             amount_currency=amount_currency
@@ -131,7 +131,7 @@ def credit_card_form_execute():
     if request.method == 'POST':
         order_id = int(request.form['order_id'])
         store_id = request.form['store_id']
-        item_id = request.form['item_id']
+        store_item_id = request.form['store_item_id']
         amount_total = str(int(request.form['amount_total']) * 100)
         amount_currency = request.form['amount_currency']
 
@@ -163,7 +163,7 @@ def credit_card_form_execute():
             payer_card_last_name=card_last_name,
             payer_email=payer_email,
             payer_phone=payer_phone,
-            item_id=item_id
+            store_item_id=store_item_id
         )
         db.session.add(transaction)
         db.session.commit()

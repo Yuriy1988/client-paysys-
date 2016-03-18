@@ -17,7 +17,7 @@ class Transaction(db.Model):
     amount_currency = db.Column(db.Enum(*enum.CURRENCY_ENUM, name='enum_currency'))
     payment_method = db.Column(db.Enum(*enum.PAYMENT_SYSTEMS_ID_ENUM, name='enum_payment_system_id'))
     store_id = db.Column(db.String(127), nullable=False)
-    item_id = db.Column(db.String(127))
+    store_item_id = db.Column(db.String(127))
 
     # Source:
     payer_card_number = db.Column(db.String(16), nullable=False)  # TODO: must be encrypted
@@ -33,7 +33,7 @@ class Transaction(db.Model):
 
     def __init__(self, order_id, transaction_id, amount_total, amount_currency, payment_method, store_id,
                  payer_card_number, payer_card_first_name, payer_card_last_name, payer_email,
-                 payer_phone, status, item_id):
+                 payer_phone, status, store_item_id):
         self.order_id = order_id
         self.transaction_id = transaction_id
         self.status = status
@@ -46,7 +46,7 @@ class Transaction(db.Model):
         self.payer_card_last_name = payer_card_last_name
         self.payer_email = payer_email
         self.payer_phone = payer_phone
-        self.item_id = item_id
+        self.store_item_id = store_item_id
 
     def __repr__(self):
         return '<Transaction id: %r>' % self.transaction_id

@@ -25,6 +25,7 @@ def payment_create(invoice_id):
     < 400 Bad Request
     < 404 Not Found
     """
+    # FIXME: Add a 404-check.
     invoice = Invoice.query.get(invoice_id)
 
     schema = VisaMasterSchema()

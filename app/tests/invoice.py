@@ -44,20 +44,12 @@ class TestInvoice(base.BaseTestCase):
         status, body = self.post('/invoices', invoice)
         self.assertEqual(status, 400)
 
-    def test_post_invoice_create_items_info_model(self):
+    def test_post_invoice_create_items_in_model(self):
         invoice = self.get_invoice()
         invoice['items'] = None
 
         status, body = self.post('/invoices', invoice)
-        self.assertEqual(status, 200)
-
-        invoice_model = Invoice.query.get(body['id'])
-        self.assertIsNotNone(invoice_model.items)
-        for item in invoice_model.items:
-            self.assertIsNotNone(item.item_id)
-            self.assertIsNotNone(item.quantity)
-            self.assertIsNotNone(item.unit_price)
-            self.assertIsNotNone(item.item_name)
+        self.assertEqual(status, 400)
 
     def test_post_invoice_created(self):
         invoice = self.get_invoice()
@@ -72,7 +64,8 @@ class TestInvoice(base.BaseTestCase):
     # GET /invoices/<id>
 
     def test_get_invoice_not_found(self):
-        self.create_invoice(self.get_invoice())
+        invoice = self.get_invoice()
+        status, body = self.post('/invoices', invoice)
 
         status, body = self.get('/invoices/0')
         self.assertEqual(status, 404)
@@ -91,8 +84,10 @@ class TestInvoice(base.BaseTestCase):
 
     def test_get_invoice_by_id(self):
         invoice = self.get_invoice()
-        invoice_model_1 = self.create_invoice(invoice)
-        invoice_model_2 = self.create_invoice(invoice)
+        status1, body1 = self.post('/invoices', invoice)
+        status2, body2 = self.post('/invoices', invoice)
+        invoice_model_1 = Invoice.query.get(body1['id'])
+        invoice_model_2 = Invoice.query.get(body2['id'])
 
         status, body = self.get('/invoices/{id}'.format(id=invoice_model_1.id))
         self.assertEqual(status, 200)
@@ -102,7 +97,8 @@ class TestInvoice(base.BaseTestCase):
 
     def test_get_invoice_full_valid_response(self):
         invoice = self.get_invoice()
-        invoice_model = self.create_invoice(invoice)
+        status, body = self.post('/invoices', invoice)
+        invoice_model = Invoice.query.get(body['id'])
 
         status, body = self.get('/invoices/{id}'.format(id=invoice_model.id))
         self.assertEqual(status, 200)
@@ -110,10 +106,10 @@ class TestInvoice(base.BaseTestCase):
         self.assertIn('id', body)
         self.assertIn('order_id', body)
         self.assertIn('store_id', body)
-        self.assertIn('currency_id', body)
+        self.assertIn('currency', body)
         self.assertIn('items', body)
         for item in body['items']:
-            self.assertIn('item_id', item)
+            self.assertIn('store_item_id', item)
             self.assertIn('quantity', item)
             self.assertIn('unit_price', item)
             self.assertIn('item_name', item)

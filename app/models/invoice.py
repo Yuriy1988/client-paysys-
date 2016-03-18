@@ -11,7 +11,7 @@ class Item(base.BaseModel):
     __tablename__ = 'item'
 
     id = db.Column(db.Integer, primary_key=True)
-    item_id = db.Column(db.String, nullable=False)
+    store_item_id = db.Column(db.String, nullable=False, default='default_store_item_id')
     quantity = db.Column(db.Integer, nullable=False)
     unit_price = db.Column(db.Numeric, nullable=False)
     item_name = db.Column(db.String)

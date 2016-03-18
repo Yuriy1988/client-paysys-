@@ -27,8 +27,8 @@ def invoice_create():
     Create invoice using an incoming JSON.
 
     Test JSON:
-    {"order_id": "order_id_1", "store_id": "dss9-asdf-sasf-fsaa", "currency": "USD", "items": [{"item_id": "item_id_1",
-    "quantity": 3, "unit_price": 23.5}, {"item_id": "item_id_2", "quantity": 1, "unit_price": 10}]}
+    {"order_id": "order_id_1", "store_id": "dss9-asdf-sasf-fsaa", "currency": "USD", "items": [{"store_item_id": "item_id_1",
+    "quantity": 3, "unit_price": 23.5}, {"store_item_id": "item_id_2", "quantity": 1, "unit_price": 10}]}
 
     Returns:
     < 200 OK $Invoice

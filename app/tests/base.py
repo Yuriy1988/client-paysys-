@@ -23,12 +23,12 @@ class BaseTestCase(TestCase):
         "currency": "USD",
         "items": [
             {
-                "item_id": "item_id_1",
+                "store_item_id": "store_item_id_1",
                 "quantity": 3,
                 "unit_price": 23.5
             },
             {
-                "item_id": "item_id_2",
+                "store_item_id": "store_item_id_2",
                 "quantity": 1,
                 "unit_price": 10
             }
@@ -97,9 +97,3 @@ class BaseTestCase(TestCase):
 
     def get_invoice(self):
         return deepcopy(self._invoice)
-
-    def create_invoice(self, **invoice_data):
-        invoice = Invoice(**invoice_data)
-        self.db.add(invoice)
-        self.db.commit()
-        return invoice

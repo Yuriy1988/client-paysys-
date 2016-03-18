@@ -12,9 +12,9 @@
         </div>
 
         <div class="form-group">
-            <label for="item_id" class="col-sm-2 control-label">Item ID</label>
+            <label for="store_item_id" class="col-sm-2 control-label">Item ID</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="item_id" id="item_id" value="itemId1">
+                <input type="text" class="form-control" name="store_item_id" id="store_item_id" value="itemId1">
             </div>
         </div>
 
@@ -59,7 +59,7 @@
             <br>currency: {{ invoice.currency }}
             <br>items:
                 {% for item in invoice.items %}
-                    -(id: {{ item.item_id }}/quantity: {{ item.quantity }}/ unit_price: {{ item.unit_price }})-
+                    -(id: {{ item.store_item_id }}/quantity: {{ item.quantity }}/ unit_price: {{ item.unit_price }})-
                 {% endfor %})
             <br>creation_date: {{ invoice.creation_date }}
             <br>payment: {{ invoice.payment.payment_id }}
@@ -80,7 +80,7 @@
             <br>{{ transaction.amount_currency }}
             <br>{{ transaction.payment_method }}
             <br>{{ transaction.store_id }}
-            <br>{{ transaction.item_id }}
+            <br>{{ transaction.store_item_id }}
             <br>{{ transaction.payer_card_number }}
             <br>{{ transaction.payer_card_first_name }}
             <br>{{ transaction.payer_card_last_name }}

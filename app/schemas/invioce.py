@@ -6,7 +6,7 @@ from app.models import enum
 
 
 class ItemSchema(base.BaseSchema):
-    item_id = fields.Str(required=True)
+    store_item_id = fields.Str(required=True)
     quantity = fields.Int(required=True, validate=Range(min=1))
     unit_price = fields.Decimal(required=True, places=2)  # TODO: Check if places count works right.
     item_name = fields.Str(required=False, default=None)
