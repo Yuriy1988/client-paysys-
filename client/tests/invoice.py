@@ -1,5 +1,5 @@
-from app.tests import base
-from app.models import Invoice
+from client.tests import base
+from client.models import Invoice
 
 __author__ = 'Andrey Kupriy'
 

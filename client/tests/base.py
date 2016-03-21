@@ -2,10 +2,15 @@ import random
 import string
 import json
 from copy import deepcopy
+
+from flask import jsonify
 from flask.ext.testing import TestCase
 
-from app import app, db as app_db
-from app.models import Item, Invoice, Payment
+from unittest.mock import MagicMock
+import client.handlers.client_utils
+from client.schemas import StoreSchema
+
+from client import app, db as app_db
 
 __author__ = 'Andrey Kupriy'
 
@@ -58,6 +63,31 @@ class BaseTestCase(TestCase):
         app_db.drop_all()
         app_db.create_all()
 
+        _store = {
+            "id": 10,
+            "store_name": "The Greatest Store Ever!",
+            "store_url": "http://www.greatest.com",
+            "store_identifier": "dss9-asdf-sasf-fsaa",
+            "category": None,
+            "description": "Desdafggagagagas",
+            "logo": None,
+            "show_logo": False,
+            "merchant_id": "dss9-asdf-sasf-fsda",
+            "store_settings":
+                {
+                    "sign_algorithm": "sign_algorithm",
+                    "sign_key": "somethingdfsfdf",
+                    "succeed_url": "sdfasdfasfasfsdfasfsdf",
+                    "failure_url": "sdfasfasfasdfasdfasdfasd",
+                    "commission_pct": 10.0
+                }
+            }
+
+        store_json = json.dumps(_store)
+
+        client.handlers.payment.get_store_by_store_id = MagicMock(return_value=store_json)
+        client.handlers.payment.put_to_queue = MagicMock(return_value=["ACCEPTED"])
+
     def tearDown(self):
         """ Teardown after test case """
         self.db.remove()
@@ -101,7 +131,7 @@ class BaseTestCase(TestCase):
 
     def delete(self, url):
         response = self.client.delete(self.api_base + url)
-        return response.status_code, response.json if response.status_code >=400 else None
+        return response.status_code, response.json if response.status_code >= 400 else None
 
     def get_invoice(self):
         return deepcopy(self._invoice)

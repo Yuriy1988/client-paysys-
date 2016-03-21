@@ -66,26 +66,17 @@
         {% endfor %}
     {% endif %}
 
-    {% if transactions %}
+    {% if payments %}
         <hr><br><br>
-        <strong>Transactions are:</strong><br>
-        {% for transaction in transactions %}
-            <hr>{{ transaction.id }}
-            <br>{{ transaction.order_id }}
-            <br>{{ transaction.transaction_id }}
-            <br>{{ transaction.creation_date }}
-            <br>{{ transaction.status }}
-            <br>{{ transaction.status_updatedate }}
-            <br>{{ transaction.amount_total }}
-            <br>{{ transaction.amount_currency }}
-            <br>{{ transaction.payment_method }}
-            <br>{{ transaction.store_id }}
-            <br>{{ transaction.store_item_id }}
-            <br>{{ transaction.payer_card_number }}
-            <br>{{ transaction.payer_card_first_name }}
-            <br>{{ transaction.payer_card_last_name }}
-            <br>{{ transaction.payer_email }}
-            <br>{{ transaction.payer_phone }}
+        <strong>Payments are:</strong><br>
+        {% for payment in payments %}
+            {{ payment.id }}<br>
+            {{ payment.card_number }}<br>
+            {{ payment.status }}<br>
+            {{ payment.notify_by_email }}<br>
+            {{ payment.notify_by_phone }}<br>
+            {{ payment.invoice_id }}<br>
+            {{ payment.creation_date }}<br>
         {% endfor %}
     {% endif %}
 

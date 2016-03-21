@@ -1,12 +1,13 @@
+from client.handlers.client_utils import mask_card_number, get_store_by_store_id, get_amount, \
+    make_transaction_json, put_to_queue
 from flask import request, jsonify
-from app import app, db
-from app.models import Invoice, Payment
-from app.schemas import VisaMasterSchema, PaymentResponceSchema, StoreSchema
-from app.errors import ValidationError, NotFoundError
+from client import app, db
+from client.models import Invoice, Payment
+from client.schemas import VisaMasterSchema, PaymentResponceSchema, StoreSchema
+from client.errors import ValidationError, NotFoundError
 from config import CURRENT_API_VERSION
-from app.handlers.utils import mask_card_number, get_store_by_store_id, get_amount, \
-    get_transaction_json, put_to_queue
 from helper.main import get_route
+import json
 
 
 @app.route('/api/client/{version}/invoices/<invoice_id>/payments/visa_master'.format(
@@ -47,27 +48,28 @@ def payment_create(invoice_id):
         'status': None,
         'notify_by_email': visa_master_data['notify_by_email'],
         'notify_by_phone': visa_master_data['notify_by_phone'],
-        'invoice': invoice
+        'invoice_id': invoice.id
     }
     payment = Payment.create(payment)
     db.session.commit()
 
-    # 3.1 Get merchant_id from Admin (using store)
+    # 3.1 Get merchant_id from Admin (using store API)
     store_json_info = get_store_by_store_id(invoice.store_id)
+    store_data = json.loads(store_json_info)
 
-    store_schema = StoreSchema()
-    store_data, store_errors = store_schema.load(store_json_info)
-    if store_errors:
-        raise ValidationError(errors=store_errors)
+    # store_schema = StoreSchema()
+    # store_data, store_errors = store_schema.load(store_json_info)
+    # if store_errors:
+    #     raise ValidationError(errors=store_errors)
 
     # 3.2 Get Helper result
     merchant_id = store_data['merchant_id']
     amount = get_amount(invoice.items)
-    currency = invoice['currency']
+    currency = invoice.currency
     helper_responce = get_route('VISA_MASTER', merchant_id, amount, currency)
 
     # 4. Send the Transaction JSON to queue
-    transaction_json = get_transaction_json(invoice,
+    transaction_json = make_transaction_json(invoice,
                                             helper_responce['bank_contract'],
                                             helper_responce['merchant_contract'],
                                             amount,
@@ -84,6 +86,7 @@ def payment_create(invoice_id):
         'id': payment.id,
         'status': payment.status
     }
+
     payment_responce_schema = PaymentResponceSchema()
     result = payment_responce_schema.dump(payment_responce_dict)
 

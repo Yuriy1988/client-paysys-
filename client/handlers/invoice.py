@@ -1,11 +1,22 @@
 from flask import Response, request, jsonify, render_template
-from app import app, db
-from app.models import Invoice
-from app.schemas import InvoiceSchema, StoreSchema
-from app.handlers.utils import get_store_by_store_id
+from client import app, db
+from client.models import Invoice, Payment
+from client.schemas import InvoiceSchema, StoreSchema
+from client.handlers.client_utils import get_store_by_store_id
 from config import CURRENT_API_VERSION
-from app.errors import NotFoundError, ValidationError
-from app.forms import VisaMasterPaymentForm
+from client.errors import NotFoundError, ValidationError
+from client.forms import VisaMasterPaymentForm
+
+
+@app.route('/', methods=['GET'])
+def home():
+    invoices = Invoice.query.all()
+    if not invoices:
+        raise NotFoundError()
+    payments = Payment.query.all()
+    if not payments:
+        raise NotFoundError()
+    return render_template('home.html', invoices=invoices, payments=payments)
 
 
 @app.route('/api/client/version', methods=['GET'])

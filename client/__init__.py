@@ -34,16 +34,13 @@ app.logger.addHandler(file_handler)
 
 # Decimal-to-json fix:
 class MyJSONEncoder(json.JSONEncoder):
-
     def default(self, obj):
         if isinstance(obj, decimal.Decimal):
             # Convert decimal instances to strings.
             return str(obj)
         return super(MyJSONEncoder, self).default(obj)
 
+
 app.json_encoder = MyJSONEncoder
 
-
-from app import handlers
-
-
+from client import handlers

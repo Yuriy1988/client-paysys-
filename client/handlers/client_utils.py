@@ -42,11 +42,11 @@ def mask_card_number(number):
 def get_amount(items_list):
     amount = 0
     for item in items_list:
-        amount += decimal.Decimal(item['unit_price']) * int(item['quantity'])
+        amount += decimal.Decimal(item.unit_price) * int(item.quantity)
     return round(amount, 2)
 
 
-def get_transaction_json(invoice, bank_contract, merchant_contract, amount, source):
+def make_transaction_json(invoice, bank_contract, merchant_contract, amount, source):
     transaction = {
         'invoice': invoice,
         'bank_contract': bank_contract,

@@ -1,6 +1,6 @@
 from sqlalchemy.inspection import inspect
 
-from app import db
+from client import db
 
 __author__ = 'Kostel Serhii'
 

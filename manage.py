@@ -2,8 +2,8 @@
 
 import flask_script as script
 import flask_migrate as migrate
-from app import app, db
-from app.models import *
+from client import app, db
+from client.models import *
 
 
 migration = migrate.Migrate(app, db)

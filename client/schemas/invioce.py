@@ -1,8 +1,8 @@
 from marshmallow import fields
 from marshmallow.validate import OneOf, Range
 
-from app.schemas import base
-from app.models import enum
+from client.schemas import base
+from client.models import enum
 
 
 class ItemSchema(base.BaseSchema):
