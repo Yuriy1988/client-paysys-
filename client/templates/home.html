@@ -2,67 +2,21 @@
 
 {% block content %}
 
-    <form class="form-horizontal" action="{{ url_for('credit_card_form') }}" method='post'>
-
-        <div class="form-group">
-            <label for="store_id" class="col-sm-2 control-label">Store ID</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" name="store_id" id="store_id" value="storeId1">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="store_item_id" class="col-sm-2 control-label">Item ID</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" name="store_item_id" id="store_item_id" value="itemId1">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="quantity" class="col-sm-2 control-label">Quantity</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" name="quantity" id="quantity" value="2">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="amount_total" class="col-sm-2 control-label">Amount Total</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" name="amount_total" id="amount_total" value="100">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="amount_currency" class="col-sm-2 control-label">Amount Currency</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" name="amount_currency" id="amount_currency" value="USD">
-            </div>
-        </div>
-
-        <!-- Button -->
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-success">Get</button>
-            </div>
-        </div>
-
-    </form>
-
     {% if invoices %}
         <br>
         <strong>Invoices are:</strong>
         {% for invoice in invoices %}
             <hr>
-            id: {{ invoice.id }}
-            <br>order_id: {{ invoice.order_id }}
-            <br>store_id: {{ invoice.store_id }}
-            <br>currency: {{ invoice.currency }}
-            <br>items:
+            (id): {{ invoice.id }}
+            <br>(order_id): {{ invoice.order_id }}
+            <br>(store_id): {{ invoice.store_id }}
+            <br>(currency): {{ invoice.currency }}
+            <br>(items):
                 {% for item in invoice.items %}
                     -(id: {{ item.store_item_id }}/quantity: {{ item.quantity }}/ unit_price: {{ item.unit_price }})-
                 {% endfor %})
-            <br>creation_date: {{ invoice.creation_date }}
-            <br>payment: {{ invoice.payment.payment_id }}
+            <br>(creation_date): {{ invoice.creation_date }}
+            <br>(payment): {{ invoice.payment.payment_id }}
         {% endfor %}
     {% endif %}
 
@@ -70,13 +24,13 @@
         <hr><br><br>
         <strong>Payments are:</strong><br>
         {% for payment in payments %}
-            {{ payment.id }}<br>
-            {{ payment.card_number }}<br>
-            {{ payment.status }}<br>
-            {{ payment.notify_by_email }}<br>
-            {{ payment.notify_by_phone }}<br>
-            {{ payment.invoice_id }}<br>
-            {{ payment.creation_date }}<br>
+            {% if payment.id %}(id): {{ payment.id }}<br>{% endif %}
+            {% if payment.card_number %}(card_number): {{ payment.card_number }}<br>{% endif %}
+            {% if payment.status %}(status): {{ payment.status }}<br>{% endif %}
+            {% if payment.notify_by_email %}(notify_by_email): {{ payment.notify_by_email }}<br>{% endif %}
+            {% if payment.notify_by_phone %}(notify_by_phone): {{ payment.notify_by_phone }}<br>{% endif %}
+            {% if payment.invoice_id %}(invoice_id): {{ payment.invoice_id }}<br>{% endif %}
+            {% if payment.creation_date %}(creation_date): {{ payment.creation_date }}<br>{% endif %}
         {% endfor %}
     {% endif %}
 

@@ -1,5 +1,5 @@
 from marshmallow import fields
-from marshmallow.validate import Length, OneOf, Range
+from marshmallow.validate import Length, Range
 
 from client.schemas import base
 from client.models import enum
