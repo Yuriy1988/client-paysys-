@@ -27,7 +27,7 @@ db_install_mac:
 # ------ Database -----
 DB_NAME=xopclientdb
 DB_USER=xopclientadmin
-DB_PASSWORD=postgres
+DB_PASSWORD=xopclient
 
 db_psql_remove:
 	sudo -u postgres dropdb -e --if-exists $(DB_NAME)
