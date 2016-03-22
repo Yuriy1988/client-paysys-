@@ -15,11 +15,17 @@ class TestPayment(base.BaseTestCase):
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
             invoice_id=invoice_body['id']), card_info)
 
-        self.assertEqual(payment_status, 200)
+        self.assertEqual(payment_status, 202)
         # payment id generated:
         self.assertIn('id', payment_body)
         # status added:
         self.assertIn('status', payment_body)
+
+    def test_post_payment_response_wrong_invoice_id(self):
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/4k3k-kde3-ofkl-3345-sdada2-2a/payments/visa_master', card_info)
+
+        self.assertEqual(payment_status, 404)
 
     def test_payment_saved_to_db(self):
         invoice = self.get_invoice()
@@ -170,9 +176,3 @@ class TestPayment(base.BaseTestCase):
         self.assertEqual(payment_body['error']['errors']['expiry_date'],
                          ['Length must be between 7 and 7.',
                           'Wrong card expiry date format. Required format: "11/1111"'])
-
-    def test_payment_fields_validation(self):
-        pass
-
-    def test_payment_create_if_invoice_does_not_exist(self):
-        pass

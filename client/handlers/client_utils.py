@@ -44,14 +44,3 @@ def get_amount(items_list):
     for item in items_list:
         amount += decimal.Decimal(item.unit_price) * int(item.quantity)
     return round(amount, 2)
-
-
-def make_transaction_json(invoice, bank_contract, merchant_contract, amount, source):
-    transaction = {
-        'invoice': str(invoice),
-        'bank_contract': bank_contract,
-        'merchant_contract': merchant_contract,
-        'amount': str(amount * 100),
-        'source': source
-    }
-    return json.dumps(transaction)

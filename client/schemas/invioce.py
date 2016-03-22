@@ -1,5 +1,5 @@
 from marshmallow import fields
-from marshmallow.validate import OneOf, Range
+from marshmallow.validate import OneOf, Range, Length
 
 from client.schemas import base
 from client.models import enum
@@ -13,7 +13,7 @@ class ItemSchema(base.BaseSchema):
 
 
 class InvoiceSchema(base.BaseSchema):
-    id = fields.Str(required=False, default=None)
+    id = fields.Str(required=False, default=None, validate=(Length(min=8, max=127)))
     order_id = fields.Str(required=True)
     store_id = fields.Str(required=True)
     currency = fields.Str(required=True, validate=OneOf(enum.CURRENCY_ENUM), default="USD")

@@ -1,5 +1,5 @@
 from marshmallow import fields
-from client.schemas import base, InvoiceSchema
+from client.schemas import base
 from marshmallow.validate import Length
 
 
@@ -13,15 +13,15 @@ class VisaMasterSchema(base.BaseSchema):
     notify_by_phone = fields.Str()
 
 
-class PaymentSchema(base.BaseSchema):
-    card_number = fields.Str(required=True, validate=Length(min=12, max=24))
-    status = fields.Str(required=True, default="ACCEPTED")
-    notify_by_email = fields.Str()
-    notify_by_phone = fields.Str()
-    invoice = fields.Nested(InvoiceSchema, required=True)
+# TODO: Delete PaymentSchema if there will no necessity in it (don't delete until release!)
+# class PaymentSchema(base.BaseSchema):
+#     card_number = fields.Str(required=True, validate=Length(min=12, max=24))
+#     status = fields.Str(required=True, default="ACCEPTED")
+#     notify_by_email = fields.Str()
+#     notify_by_phone = fields.Str()
+#     invoice = fields.Nested(InvoiceSchema, required=True)
 
 
 class PaymentResponceSchema(base.BaseSchema):
-    id = fields.Str(required=True)
+    id = fields.Str(required=True, validate=(Length(min=8, max=127)))
     status = fields.Str(required=True, default="ACCEPTED")
-
