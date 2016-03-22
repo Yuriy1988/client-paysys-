@@ -30,6 +30,7 @@ def payment_create(invoice_id):
     }
     < 400 Bad Request
     < 404 Not Found
+    :param invoice_id: Invoice custom (uuid) id.
     """
     # 1. Catch JSON with card info
     visa_master_schema = VisaMasterSchema()
@@ -57,11 +58,6 @@ def payment_create(invoice_id):
     store_json_info = get_store_by_store_id(invoice.store_id)
     store_data = json.loads(store_json_info)
 
-    # store_schema = StoreSchema()
-    # store_data, store_errors = store_schema.load(store_json_info)
-    # if store_errors:
-    #     raise ValidationError(errors=store_errors)
-
     # 3.2 Get Helper result
     merchant_id = store_data['merchant_id']
     amount = get_amount(invoice.items)
@@ -78,7 +74,7 @@ def payment_create(invoice_id):
     queue_status = put_to_queue(transaction_json)
 
     # 5. Write payment status to DB
-    payment['status'] = queue_status
+    payment.status = queue_status["status"]
     db.session.commit()
 
     # 6. Return a status JSON to client

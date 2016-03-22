@@ -48,10 +48,10 @@ def get_amount(items_list):
 
 def make_transaction_json(invoice, bank_contract, merchant_contract, amount, source):
     transaction = {
-        'invoice': invoice,
+        'invoice': str(invoice),
         'bank_contract': bank_contract,
         'merchant_contract': merchant_contract,
-        'amount': amount * 100,
+        'amount': str(amount * 100),
         'source': source
     }
-    return json.dump(transaction)
+    return json.dumps(transaction)

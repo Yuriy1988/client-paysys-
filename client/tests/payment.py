@@ -15,7 +15,7 @@ class TestPayment(base.BaseTestCase):
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
             invoice_id=invoice_body['id']), card_info)
 
-        #self.assertEqual(payment_status, 200)
+        self.assertEqual(payment_status, 200)
         # payment id generated:
         self.assertIn('id', payment_body)
         # status added:

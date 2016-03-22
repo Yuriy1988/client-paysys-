@@ -3,12 +3,11 @@ import string
 import json
 from copy import deepcopy
 
-from flask import jsonify
 from flask.ext.testing import TestCase
 
 from unittest.mock import MagicMock
 import client.handlers.client_utils
-from client.schemas import StoreSchema
+
 
 from client import app, db as app_db
 
@@ -86,7 +85,28 @@ class BaseTestCase(TestCase):
         store_json = json.dumps(_store)
 
         client.handlers.payment.get_store_by_store_id = MagicMock(return_value=store_json)
-        client.handlers.payment.put_to_queue = MagicMock(return_value=["ACCEPTED"])
+        client.handlers.payment.put_to_queue = MagicMock(return_value={"status": "ACCEPTED"})
+
+        client.handlers.payment.get_route = MagicMock(return_value={
+            "bank_contract": {
+                "id": 10,
+                "commission_fixed": 10.01,
+                "commission_pct": 10,
+                "contract_doc_url": "http://www.link10.com",
+                "currency": "USD",
+                "active": True,
+                "filter": "*"
+            },
+            "merchant_contract": {
+                "id": 11,
+                "commission_fixed": 11.01,
+                "commission_pct": 11,
+                "contract_doc_url": "http://www.link11.com",
+                "currency": "USD",
+                "active": True,
+                "filter": "*"
+            }
+        })
 
     def tearDown(self):
         """ Teardown after test case """
