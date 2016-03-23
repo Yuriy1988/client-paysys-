@@ -5,13 +5,13 @@ from client import app, db
 from client.models import Invoice, Payment
 from client.schemas import VisaMasterSchema, PaymentResponceSchema, StoreSchema
 from client.errors import ValidationError, NotFoundError
-from config import CURRENT_API_VERSION
+from config import CURRENT_CLIENT_SERVER_VERSION
 from helper.main import get_route
 import json
 
 
 @app.route('/api/client/{version}/invoices/<invoice_id>/payments/visa_master'.format(
-    version=CURRENT_API_VERSION),
+    version=CURRENT_CLIENT_SERVER_VERSION),
     methods=['POST']
 )
 def payment_create(invoice_id):

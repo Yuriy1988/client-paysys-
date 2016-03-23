@@ -1,9 +1,9 @@
-from flask import Response, request, jsonify, render_template
+from flask import request, jsonify, render_template
 from client import app, db
 from client.models import Invoice, Payment
-from client.schemas import InvoiceSchema, StoreSchema
+from client.schemas import InvoiceSchema, StoreSchema, VersionSchema
 from client.handlers.client_utils import get_store_by_store_id
-from config import CURRENT_API_VERSION
+from config import CURRENT_CLIENT_SERVER_VERSION, API_VERSION, BUILD_DATE
 from client.errors import NotFoundError, ValidationError
 from client.forms import VisaMasterPaymentForm
 
@@ -22,12 +22,19 @@ def home():
 @app.route('/api/client/version', methods=['GET'])
 def get_version():
     """
-    Return a current server version.
+    Return a current server and API versions.
     """
-    return Response(status=200), CURRENT_API_VERSION
+    responce = {
+        "api_version": API_VERSION,
+        "server_version": CURRENT_CLIENT_SERVER_VERSION,
+        "build_date": BUILD_DATE
+    }
+    version_schema = VersionSchema()
+    result = version_schema.dump(responce)
+    return jsonify(result.data)
 
 
-@app.route('/api/client/{version}/invoices'.format(version=CURRENT_API_VERSION), methods=['POST'])
+@app.route('/api/client/{version}/invoices'.format(version=CURRENT_CLIENT_SERVER_VERSION), methods=['POST'])
 def invoice_create():
     """
     Create invoice using an incoming JSON.
@@ -54,7 +61,7 @@ def invoice_create():
     return jsonify(result.data)
 
 
-@app.route('/api/client/{version}/invoices/<invoice_id>'.format(version=CURRENT_API_VERSION), methods=['GET'])
+@app.route('/api/client/{version}/invoices/<invoice_id>'.format(version=CURRENT_CLIENT_SERVER_VERSION), methods=['GET'])
 def invoice_get_info(invoice_id):
     """
     Get invoice info by invoice id.

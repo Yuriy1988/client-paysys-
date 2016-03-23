@@ -1,4 +1,4 @@
-from config import ADMIN_URL, CURRENT_ADMIN_API_VERSION, QUEUE_HOST_ADDRESS, QUEUE_NAME
+from config import ADMIN_URL, CURRENT_ADMIN_SERVER_VERSION, QUEUE_HOST_ADDRESS, QUEUE_NAME
 import requests
 import decimal
 import json
@@ -22,7 +22,7 @@ def put_to_queue(body):
 def get_store_by_store_id(store_id):
     url = '{admin_url}/api/admin/{current_admin_api_version}/info/stores/{store_id}'.format(
         admin_url=ADMIN_URL,
-        current_admin_api_version=CURRENT_ADMIN_API_VERSION,
+        current_admin_api_version=CURRENT_ADMIN_SERVER_VERSION,
         store_id=store_id
     )
     return requests.get(url)

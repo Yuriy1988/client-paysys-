@@ -5,6 +5,12 @@ from client.schemas import base
 from client.models import enum
 
 
+class VersionSchema(base.BaseSchema):
+    api_version = fields.Str(required=True)
+    server_version = fields.Str(required=True)
+    build_date = fields.DateTime(required=True)
+
+
 class ItemSchema(base.BaseSchema):
     store_item_id = fields.Str(required=True)
     quantity = fields.Int(required=True, validate=Range(min=1))
