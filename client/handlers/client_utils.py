@@ -1,28 +1,50 @@
 from config import ADMIN_URL, CURRENT_ADMIN_SERVER_VERSION, QUEUE_HOST_ADDRESS, QUEUE_NAME
 import requests
 import decimal
-import json
 import pika
 
 
 def put_to_queue(body):
+    # Connect to the queue server
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST_ADDRESS))
+    channel = connection.channel()
+
+    # Create a queue with QUEUE_NAME name
+    channel.queue_declare(queue=QUEUE_NAME)
+
+    # Add "body" to QUEUE_NAME queue
+    channel.basic_publish(exchange='',
+                          routing_key=QUEUE_NAME,
+                          body=body)
+    print(" [x] Sent body", body)
+
+    # Close connection
+    connection.close()
+    return "ACCEPTED"
+
+
+def reсeive_from_queue():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST_ADDRESS))
     channel = connection.channel()
 
     channel.queue_declare(queue=QUEUE_NAME)
 
-    channel.basic_publish(exchange='',
-                          routing_key=QUEUE_NAME,
-                          body=body)
-    print(" [x] Sent 'Hello World!'")
-    connection.close()
-    return "ACCEPTED"
+    def callback(ch, method, properties, body):
+        print(" [x] Received %r" % body)
+
+    channel.basic_consume(callback,
+                          queue=QUEUE_NAME,
+                          no_ack=True)
+
+    print(' [*] Waiting for messages. To exit press CTRL+C')
+    channel.start_consuming()
+    pass
 
 
 def get_store_by_store_id(store_id):
-    url = '{admin_url}/api/admin/{current_admin_api_version}/info/stores/{store_id}'.format(
+    url = '{admin_url}/api/admin/{current_admin_server_version}/stores/{store_id}'.format(
         admin_url=ADMIN_URL,
-        current_admin_api_version=CURRENT_ADMIN_SERVER_VERSION,
+        current_admin_server_version=CURRENT_ADMIN_SERVER_VERSION,
         store_id=store_id
     )
     return requests.get(url)

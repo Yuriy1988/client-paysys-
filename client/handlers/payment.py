@@ -1,9 +1,8 @@
-from client.handlers.client_utils import mask_card_number, get_store_by_store_id, get_amount, \
-    put_to_queue
+from client.handlers.client_utils import mask_card_number, get_store_by_store_id, get_amount, put_to_queue
 from flask import request, jsonify
 from client import app, db
 from client.models import Invoice, Payment
-from client.schemas import VisaMasterSchema, PaymentResponceSchema, StoreSchema
+from client.schemas import VisaMasterSchema, PaymentResponceSchema
 from client.errors import ValidationError, NotFoundError
 from config import CURRENT_CLIENT_SERVER_VERSION
 from helper.main import get_route

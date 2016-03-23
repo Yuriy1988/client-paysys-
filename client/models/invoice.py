@@ -23,6 +23,7 @@ class Invoice(base.BaseModel):
     __tablename__ = 'invoice'
 
     id = db.Column(db.String, nullable=True, unique=True, primary_key=True)
+    payment_url = db.Column(db.String(255))
     order_id = db.Column(db.String)
     store_id = db.Column(db.String, nullable=False)
     currency = db.Column(db.Enum(*enum.CURRENCY_ENUM, name='enum_currency'))

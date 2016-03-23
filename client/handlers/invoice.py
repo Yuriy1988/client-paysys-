@@ -1,7 +1,9 @@
+import json
+
 from flask import request, jsonify, render_template
 from client import app, db
 from client.models import Invoice, Payment
-from client.schemas import InvoiceSchema, StoreSchema, VersionSchema
+from client.schemas import InvoiceSchema, VersionSchema
 from client.handlers.client_utils import get_store_by_store_id
 from config import CURRENT_CLIENT_SERVER_VERSION, API_VERSION, BUILD_DATE
 from client.errors import NotFoundError, ValidationError
@@ -88,11 +90,11 @@ def get_payment_form(invoice_id):
 
     # Getting custom layout store info from Admin (logo, etc):
     store_json_info = get_store_by_store_id(invoice.store_id)
+    if not store_json_info:
+        raise NotFoundError
 
-    store_schema = StoreSchema()
-    store_data, store_errors = store_schema.load(store_json_info)
-    if store_errors:
-        raise ValidationError(errors=store_errors)
+    store_data = json.loads(store_json_info)
+
     store_info = {
         'store_name': store_data['store_name'],
         'store_url': store_data['store_url'],
