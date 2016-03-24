@@ -21,9 +21,11 @@ SECRET_KEY = "ugGB0uH1cJTW=1L9Vs|8roMlFfFgsWD%NA|*WBpYQ3Uytr-6rImVk2Rp%BJ+"
 HELPER_URL = 'http://192.168.1.122:8888'  # TODO: Write down the right Helper-server address.
 PROCESSING_URL = 'http://192.168.1.122:8888'  # TODO: Write down the right Processing-server address.
 ADMIN_URL = 'http://127.0.0.1:7128' # TODO: Write down the right Admin-server address.
+NOTIFICATION_SERVER_URL = 'amqp://remote:remote@192.168.1.113:5672//'  # TODO: Write down the right Admin-server address.
 
 # Queue:
-QUEUE_HOST_ADDRESS = 'localhost'  # TODO: Write down the right queue-server address (without port).
+QUEUE_HOST_ADDRESS = 'amqp://guest:guest@192.168.1.118:5672//'  # TODO: Write down the right queue-server address (without port).
+# 'amqp://guest:guest@192.168.1.122:5672//'
 QUEUE_NAME = 'hello'  # TODO: Write down the right queue name.
 
 # Current versions:

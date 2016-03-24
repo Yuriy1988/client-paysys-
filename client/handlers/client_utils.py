@@ -1,7 +1,20 @@
-from config import ADMIN_URL, CURRENT_ADMIN_SERVER_VERSION, QUEUE_HOST_ADDRESS, QUEUE_NAME
+from config import ADMIN_URL, CURRENT_ADMIN_SERVER_VERSION, QUEUE_HOST_ADDRESS, QUEUE_NAME, NOTIFICATION_SERVER_URL
 import requests
 import decimal
 import pika
+from celery import Celery
+
+
+def send_email(email, subject, message):
+    Celery(broker=NOTIFICATION_SERVER_URL).send_task(
+    'notify.send_mail',
+    (
+        email,
+        subject,
+        message
+    )
+)
+    return "Message sent to {email}".format(email=email)
 
 
 def put_to_queue(body):
@@ -23,7 +36,7 @@ def put_to_queue(body):
     return "ACCEPTED"
 
 
-def reсeive_from_queue():
+def get_from_queue():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST_ADDRESS))
     channel = connection.channel()
 

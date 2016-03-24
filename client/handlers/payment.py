@@ -1,4 +1,4 @@
-from client.handlers.client_utils import mask_card_number, get_store_by_store_id, get_amount, put_to_queue
+from client.handlers.client_utils import mask_card_number, get_store_by_store_id, get_amount, put_to_queue, send_email
 from flask import request, jsonify
 from client import app, db
 from client.models import Invoice, Payment
@@ -81,6 +81,14 @@ def payment_create(invoice_id):
         'id': payment.id,
         'status': payment.status
     }
+
+    # Send an email to user (if user sent email with form)
+    if visa_master_data['notify_by_email']:
+        email_responce = send_email(
+            visa_master_data['notify_by_email'],
+            "XOPAY",
+            "Thank you for your payment! Transaction status is: {status}".format(status=payment.status)
+        )
 
     payment_responce_schema = PaymentResponceSchema()
     result = payment_responce_schema.dump(payment_responce_dict)
