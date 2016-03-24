@@ -7,7 +7,6 @@ from client.schemas import InvoiceSchema, VersionSchema
 from client.handlers.client_utils import get_store_by_store_id
 from config import CURRENT_CLIENT_SERVER_VERSION, API_VERSION, BUILD_DATE
 from client.errors import NotFoundError, ValidationError
-from client.forms import VisaMasterPaymentForm
 
 
 @app.route('/', methods=['GET'])
@@ -103,13 +102,7 @@ def get_payment_form(invoice_id):
         'show_logo': store_data['show_logo']
     }
 
-    # Getting forms:
-    visa_master_form = VisaMasterPaymentForm()
-    # paypal_form = PayPalForm() TODO: write me.
-    # bitcoin_form = BitCoinForm() TODO: write me.
-
     return render_template('payment_form.html',
-                           store_info=store_info,
-                           visa_master_form=visa_master_form)
+                           store_info=store_info)
 
 

@@ -86,7 +86,7 @@ def payment_create(invoice_id):
     if visa_master_data['notify_by_email']:
         email_responce = send_email(
             visa_master_data['notify_by_email'],
-            "XOPAY",
+            "XOPAY transaction status",
             "Thank you for your payment! Transaction status is: {status}".format(status=payment.status)
         )
 
