@@ -86,6 +86,8 @@ class BaseTestCase(TestCase):
 
         client.handlers.payment.get_store_by_store_id = MagicMock(return_value=store_json)
         client.handlers.payment.put_to_queue = MagicMock(return_value={"status": "ACCEPTED"})
+        client.handlers.payment.send_email = MagicMock(return_value="Message sent to {email}".format(
+            email=self._card_info["notify_by_email"]))
 
         client.handlers.payment.get_route = MagicMock(return_value={
             "bank_contract": {

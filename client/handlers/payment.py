@@ -82,7 +82,7 @@ def payment_create(invoice_id):
         'status': payment.status
     }
 
-    # Send an email to user (if user sent email with form)
+    # 7. Send an email to user (if user wrote his email in form)
     if visa_master_data['notify_by_email']:
         email_responce = send_email(
             visa_master_data['notify_by_email'],
