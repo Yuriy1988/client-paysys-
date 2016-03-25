@@ -12,20 +12,18 @@ def send_email(email, subject, message):
 
 def put_to_queue(body):
     # Connect to the queue server
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST_ADDRESS))
-    channel = connection.channel()
+    with pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST_ADDRESS)) as connection:
+        channel = connection.channel()
 
-    # Create a queue with QUEUE_NAME name
-    channel.queue_declare(queue=QUEUE_NAME)
+        # Create a queue with QUEUE_NAME name
+        channel.queue_declare(queue=QUEUE_NAME)
 
-    # Add "body" to QUEUE_NAME queue
-    channel.basic_publish(exchange='',
-                          routing_key=QUEUE_NAME,
-                          body=body)
-    print(" [x] Sent body", body)
+        # Add "body" to QUEUE_NAME queue
+        channel.basic_publish(exchange='',
+                              routing_key=QUEUE_NAME,
+                              body=body)
+        # print(" [x] Sent body: ", body)
 
-    # Close connection
-    connection.close()
     return "ACCEPTED"
 
 
