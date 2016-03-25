@@ -19,7 +19,6 @@ class BaseTestCase(TestCase):
     SQLALCHEMY_DATABASE_URI = "postgresql://xopclienttest:test123@localhost/xopclienttestdb"
 
     api_base = '/api/client/dev'
-    payment_change_status_url = '/payment/{payment_id}/status/'
 
     # defaults
     _invoice = {
@@ -58,7 +57,7 @@ class BaseTestCase(TestCase):
     }
 
     _new_status = {
-        "status": "UPDATED"
+        "status": "SUCCESS"
     }
 
     def setUp(self):

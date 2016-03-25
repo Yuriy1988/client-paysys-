@@ -1,6 +1,7 @@
 from marshmallow import fields
 from client.schemas import base
-from marshmallow.validate import Length
+from marshmallow.validate import OneOf, Length
+from client.models import enum
 
 
 class VisaMasterSchema(base.BaseSchema):
@@ -16,7 +17,7 @@ class VisaMasterSchema(base.BaseSchema):
 # TODO: Delete PaymentSchema if there will no necessity in it (don't delete until release!)
 # class PaymentSchema(base.BaseSchema):
 #     card_number = fields.Str(required=True, validate=Length(min=12, max=24))
-#     status = fields.Str(required=True, default="ACCEPTED")
+#     status = fields.Str(required=True, validate=OneOf(enum.PAYMENT_STATUS_ENUM), default="ACCEPTED")
 #     notify_by_email = fields.Str()
 #     notify_by_phone = fields.Str()
 #     invoice = fields.Nested(InvoiceSchema, required=True)
@@ -24,4 +25,4 @@ class VisaMasterSchema(base.BaseSchema):
 
 class PaymentResponceSchema(base.BaseSchema):
     id = fields.Str(required=True, validate=(Length(min=8, max=127)))
-    status = fields.Str(required=True, default="ACCEPTED")
+    status = fields.Str(required=True, validate=OneOf(enum.PAYMENT_STATUS_ENUM))

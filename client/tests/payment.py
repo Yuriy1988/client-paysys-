@@ -196,12 +196,12 @@ class TestPayment(base.BaseTestCase):
 
         payment_change = self.client.put(
             self.api_base + '/payment/{payment_id}/status'.format(payment_id=payment.id),
-                data=new_status,
+            data=new_status,
             headers={"Content-Type": "application/json"}
         )
         updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
-        self.assertEqual(updated_payment.status, "UPDATED")
+        self.assertEqual(updated_payment.status, status['status'])
         self.assertEqual(payment_change.status, '200 OK')
 
     def test_payment_change_status_upgrade_time(self):
@@ -278,7 +278,7 @@ class TestPayment(base.BaseTestCase):
 
         payment_change = self.client.put(
             self.api_base + '/payment/{payment_id}/status'.format(payment_id=payment.id),
-                data=new_status,
+            data=new_status,
             headers={"Content-Type": "application/json"}
         )
         updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
@@ -301,7 +301,7 @@ class TestPayment(base.BaseTestCase):
 
         payment_change = self.client.put(
             self.api_base + '/payment/{payment_id}/status'.format(payment_id='97f65e39-e5cb-4b28-841d-8420f693bdbd'),
-                data=new_status,
+            data=new_status,
             headers={"Content-Type": "application/json"}
         )
         updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
@@ -323,7 +323,7 @@ class TestPayment(base.BaseTestCase):
 
         payment_change = self.client.put(
             self.api_base + '/payment/{payment_id}/status'.format(payment_id='lol'),
-                data=new_status,
+            data=new_status,
             headers={"Content-Type": "application/json"}
         )
         updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
@@ -345,7 +345,7 @@ class TestPayment(base.BaseTestCase):
 
         payment_change = self.client.put(
             self.api_base + '/payment/{payment_id}/status'.format(payment_id='nothing'),
-                data=new_status,
+            data=new_status,
             headers={"Content-Type": "application/json"}
         )
         updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
