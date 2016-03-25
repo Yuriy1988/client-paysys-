@@ -97,7 +97,7 @@ def payment_create(invoice_id):
     return jsonify(result.data), 202
 
 
-@app.route('/api/client/{version}/payment/<payment_id>/'.format(
+@app.route('/api/client/{version}/payment/<payment_id>/status'.format(
     version=CURRENT_CLIENT_SERVER_VERSION),
     methods=['PUT']
 )
