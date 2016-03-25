@@ -1,3 +1,5 @@
+import json
+
 from client.tests import base
 from client.models import Payment, Invoice
 
@@ -177,9 +179,9 @@ class TestPayment(base.BaseTestCase):
                          ['Length must be between 7 and 7.',
                           'Wrong card expiry date format. Required format: "11/1111"'])
 
-    # Change Payment status
+    # Change Payment status API
 
-    def test_change_status_payment(self):
+    def test_payment_change_status_responce(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
@@ -189,14 +191,210 @@ class TestPayment(base.BaseTestCase):
 
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
-        new_status = self.get_status()
+        status = self.get_new_status()
+        new_status = json.dumps(status)
+
+        payment_change = self.client.put(
+            self.api_base + '/payment/{payment_id}/'.format(payment_id=payment.id),
+                data=new_status,
+            headers={"Content-Type": "application/json"}
+        )
+        updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        self.assertEqual(updated_payment.status, "UPDATED")
+        self.assertEqual(payment_change.status, '200 OK')
+
+    def test_payment_change_status_upgrade_time(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+            invoice_id=invoice_body['id']), card_info)
+
+        payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+        updated_time = payment.updated
+
+        status = self.get_new_status()
+        new_status = json.dumps(status)
 
         payment_change = self.client.put(
             self.api_base + '/payment/{payment_id}/'.format(payment_id=payment.id),
             data=new_status,
             headers={"Content-Type": "application/json"}
         )
-        payment = Payment.query.get(payment_change.id)
+        updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
-        self.assertEqual(payment.status, "UPDATED")
-        self.assertEqual(payment_change.status, 200)
+        self.assertNotEqual(updated_payment.updated, updated_time)
+
+    def test_payment_change_status_no_request_json(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+            invoice_id=invoice_body['id']), card_info)
+
+        payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        payment_change = self.client.put(
+            self.api_base + '/payment/{payment_id}/'.format(payment_id=payment.id),
+            headers={"Content-Type": "application/json"}
+        )
+
+        self.assertEqual(payment_change.status, '400 BAD REQUEST')
+
+    def test_payment_change_status_empty_request_json(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+            invoice_id=invoice_body['id']), card_info)
+
+        payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        new_status = json.dumps("")
+        payment_change = self.client.put(
+            self.api_base + '/payment/{payment_id}/'.format(payment_id=payment.id),
+            data=new_status,
+            headers={"Content-Type": "application/json"}
+        )
+
+        self.assertEqual(payment_change.status, '400 BAD REQUEST')
+
+    def test_payment_change_status_responce_bad_json(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+            invoice_id=invoice_body['id']), card_info)
+
+        payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        status = self.get_new_status()
+        status["status"] = ""
+        new_status = json.dumps(status)
+
+        payment_change = self.client.put(
+            self.api_base + '/payment/{payment_id}/'.format(payment_id=payment.id),
+                data=new_status,
+            headers={"Content-Type": "application/json"}
+        )
+        updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        self.assertNotEqual(updated_payment.status, "UPDATED")
+        self.assertEqual(payment_change.status, '400 BAD REQUEST')
+
+    def test_payment_change_status_responce_bad_json(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+            invoice_id=invoice_body['id']), card_info)
+
+        payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        status = {"s": "UPDATED"}
+        new_status = json.dumps(status)
+
+        payment_change = self.client.put(
+            self.api_base + '/payment/{payment_id}/'.format(payment_id=payment.id),
+                data=new_status,
+            headers={"Content-Type": "application/json"}
+        )
+        updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        self.assertNotEqual(updated_payment.status, "UPDATED")
+        self.assertEqual(payment_change.status, '400 BAD REQUEST')
+
+    # def test_payment_change_status_responce_bad_json2(self):
+    #     invoice = self.get_invoice()
+    #     invoice_status, invoice_body = self.post('/invoices', invoice)
+    #
+    #     card_info = self.get_card_info()
+    #     payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+    #         invoice_id=invoice_body['id']), card_info)
+    #
+    #     payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+    #
+    #     status = {"status": 1}
+    #     new_status = json.dumps(status)
+    #
+    #     payment_change = self.client.put(
+    #         self.api_base + '/payment/{payment_id}/'.format(payment_id=payment.id),
+    #             data=new_status,
+    #         headers={"Content-Type": "application/json"}
+    #     )
+    #     updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+    #
+    #     self.assertNotEqual(updated_payment.status, 1)
+    #     self.assertEqual(payment_change.status, '400 BAD REQUEST')
+
+    def test_payment_change_status_bad_payment_id(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+            invoice_id=invoice_body['id']), card_info)
+
+        payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        status = self.get_new_status()
+        new_status = json.dumps(status)
+
+        payment_change = self.client.put(
+            self.api_base + '/payment/{payment_id}/'.format(payment_id='97f65e39-e5cb-4b28-841d-8420f693bdbd'),
+                data=new_status,
+            headers={"Content-Type": "application/json"}
+        )
+        updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        self.assertEqual(payment_change.status, '404 NOT FOUND')
+
+    def test_payment_change_status_bad_payment_id2(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+            invoice_id=invoice_body['id']), card_info)
+
+        payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        status = self.get_new_status()
+        new_status = json.dumps(status)
+
+        payment_change = self.client.put(
+            self.api_base + '/payment/{payment_id}/'.format(payment_id='lol'),
+                data=new_status,
+            headers={"Content-Type": "application/json"}
+        )
+        updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        self.assertEqual(payment_change.status, '404 NOT FOUND')
+
+    def test_payment_change_status_bad_payment_id3(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+            invoice_id=invoice_body['id']), card_info)
+
+        payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        status = self.get_new_status()
+        new_status = json.dumps(status)
+
+        payment_change = self.client.put(
+            self.api_base + '/payment/{payment_id}/'.format(payment_id='nothing'),
+                data=new_status,
+            headers={"Content-Type": "application/json"}
+        )
+        updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        self.assertEqual(payment_change.status, '404 NOT FOUND')

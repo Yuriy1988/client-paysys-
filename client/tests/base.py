@@ -56,7 +56,7 @@ class BaseTestCase(TestCase):
         "invoice_id": ""  # invoice_id does not exist yet.
     }
 
-    _status = {
+    _new_status = {
         "status": "UPDATED"
     }
 
@@ -173,5 +173,5 @@ class BaseTestCase(TestCase):
     def get_card_info(self):
         return deepcopy(self._card_info)
 
-    def get_status(self):
-        return deepcopy(self._status)
+    def get_new_status(self):
+        return deepcopy(self._new_status)

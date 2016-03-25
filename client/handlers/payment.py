@@ -104,13 +104,19 @@ def payment_create(invoice_id):
 def payment_update_status(payment_id):
     status = request.get_json()
     if not status:
-        raise BaseApiError('Incorrect request')
+        raise BaseApiError('No JSON in request')
 
     payment = Payment.query.get(payment_id)
     if not payment:
         raise NotFoundError('There is no payment with such id')
 
+    try:
+        status["status"]
+    except:
+        raise ValidationError("No 'status' in request JSON")
+
     payment.status = status["status"]
+
     payment.updated = datetime.datetime.utcnow()
     db.session.commit()
 
