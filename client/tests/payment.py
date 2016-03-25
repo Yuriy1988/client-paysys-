@@ -1,3 +1,5 @@
+from flask import json
+
 from client.tests import base
 from client.models import Payment, Invoice
 
@@ -176,3 +178,27 @@ class TestPayment(base.BaseTestCase):
         self.assertEqual(payment_body['error']['errors']['expiry_date'],
                          ['Length must be between 7 and 7.',
                           'Wrong card expiry date format. Required format: "11/1111"'])
+
+    # Change Payment status
+
+    def test_change_status_payment(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        card_info = self.get_card_info()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
+            invoice_id=invoice_body['id']), card_info)
+
+        payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
+
+        new_status = self.get_status()
+
+        payment_change = self.client.put(
+            self.api_base + '/payment/{payment_id}/'.format(payment_id=payment.id),
+            data=new_status,
+            headers={"Content-Type": "application/json"}
+        )
+        payment = Payment.query.get(payment_change.id)
+
+        self.assertEqual(payment.status, "UPDATED")
+        self.assertEqual(payment_change.status, 200)

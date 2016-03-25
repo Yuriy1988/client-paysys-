@@ -1,9 +1,9 @@
 from client.handlers.client_utils import mask_card_number, get_store_by_store_id, get_amount, put_to_queue, send_email
-from flask import request, jsonify
+from flask import request, jsonify, Response
 from client import app, db
 from client.models import Invoice, Payment
 from client.schemas import VisaMasterSchema, PaymentResponceSchema
-from client.errors import ValidationError, NotFoundError
+from client.errors import ValidationError, NotFoundError, BaseApiError
 from config import CURRENT_CLIENT_SERVER_VERSION
 from helper.main import get_route
 import json
@@ -94,3 +94,22 @@ def payment_create(invoice_id):
     result = payment_responce_schema.dump(payment_responce_dict)
 
     return jsonify(result.data), 202
+
+
+@app.route('/api/client/{version}/payment/<payment_id>/'.format(
+    version=CURRENT_CLIENT_SERVER_VERSION),
+    methods=['PUT']
+)
+def payment_update_status(payment_id):
+    status = request.get_json()
+    if not status:
+        raise BaseApiError('Incorrect request')
+
+    payment = Payment.query.get(payment_id)
+    if not payment:
+        raise NotFoundError('There is no payment with such id')
+
+    payment.status = status["status"]
+    db.session.commit()
+
+    return Response(status=200)

@@ -56,6 +56,10 @@ class BaseTestCase(TestCase):
         "invoice_id": ""  # invoice_id does not exist yet.
     }
 
+    _status = {
+        "status": "UPDATED"
+    }
+
     def setUp(self):
         """ Setup before test case """
         app_db.session.close()
@@ -151,6 +155,11 @@ class BaseTestCase(TestCase):
         response = self.client.post(self.api_base + url, data=json.dumps(body), headers=headers)
         return response.status_code, response.json
 
+    def put(self, url, body):
+        headers = {"Content-Type": "application/json"}
+        response = self.client.put(self.api_base + url, data=json.dumps(body), headers=headers)
+        return response.status_code, response.json
+
     def delete(self, url):
         response = self.client.delete(self.api_base + url)
         return response.status_code, response.json if response.status_code >= 400 else None
@@ -163,3 +172,6 @@ class BaseTestCase(TestCase):
 
     def get_card_info(self):
         return deepcopy(self._card_info)
+
+    def get_status(self):
+        return deepcopy(self._status)
