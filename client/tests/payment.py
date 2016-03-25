@@ -1,5 +1,3 @@
-from flask import json
-
 from client.tests import base
 from client.models import Payment, Invoice
 

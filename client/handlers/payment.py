@@ -7,6 +7,7 @@ from client.errors import ValidationError, NotFoundError, BaseApiError
 from config import CURRENT_CLIENT_SERVER_VERSION
 from helper.main import get_route
 import json
+import datetime
 
 
 @app.route('/api/client/{version}/invoices/<invoice_id>/payments/visa_master'.format(
@@ -110,6 +111,7 @@ def payment_update_status(payment_id):
         raise NotFoundError('There is no payment with such id')
 
     payment.status = status["status"]
+    payment.updated = datetime.datetime.utcnow()
     db.session.commit()
 
     return Response(status=200)

@@ -17,7 +17,8 @@ class Payment(base.BaseModel):
     notify_by_phone = db.Column(db.String(120))
     invoice_id = db.Column(db.String, db.ForeignKey('invoice.id'))
     invoice = db.relationship('Invoice')
-    creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    updated = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, id, card_number, status, notify_by_email, notify_by_phone, invoice_id):
         self.id = id

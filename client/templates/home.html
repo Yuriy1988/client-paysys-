@@ -15,7 +15,7 @@
                 {% for item in invoice.items %}
                     -(id: {{ item.store_item_id }}/quantity: {{ item.quantity }}/ unit_price: {{ item.unit_price }})-
                 {% endfor %})
-            <br>(creation_date): {{ invoice.creation_date }}
+            <br>(created): {{ invoice.created }}
             <br>(payment): {{ invoice.payment.payment_id }}
         {% endfor %}
     {% endif %}
@@ -30,7 +30,8 @@
             {% if payment.notify_by_email %}(notify_by_email): {{ payment.notify_by_email }}<br>{% endif %}
             {% if payment.notify_by_phone %}(notify_by_phone): {{ payment.notify_by_phone }}<br>{% endif %}
             {% if payment.invoice_id %}(invoice_id): {{ payment.invoice_id }}<br>{% endif %}
-            {% if payment.creation_date %}(creation_date): {{ payment.creation_date }}<br>{% endif %}
+            {% if payment.created %}(created): {{ payment.created }}<br>{% endif %}
+            {% if payment.updated %}(updated): {{ payment.updated }}<br>{% endif %}
         {% endfor %}
     {% endif %}
 
