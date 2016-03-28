@@ -72,6 +72,7 @@ def payment_create(invoice_id):
         'status': queue_status["status"],
         'notify_by_email': visa_master_data['notify_by_email'],
         'notify_by_phone': visa_master_data['notify_by_phone'],
+        'paysys_id': 'VISA_MASTER',
         'invoice_id': invoice_id
     }
     payment = Payment.create(payment)

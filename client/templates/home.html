@@ -32,6 +32,7 @@
             {% if payment.invoice_id %}(invoice_id): {{ payment.invoice_id }}<br>{% endif %}
             {% if payment.created %}(created): {{ payment.created }}<br>{% endif %}
             {% if payment.updated %}(updated): {{ payment.updated }}<br>{% endif %}
+            {% if payment.paysys_id %}(paysys_id): {{ payment.paysys_id }}<br>{% endif %}
         {% endfor %}
     {% endif %}
 

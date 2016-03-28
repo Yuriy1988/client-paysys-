@@ -1,5 +1,5 @@
 from marshmallow import fields
-from client.schemas import base
+from client.schemas import base, InvoiceSchema
 from marshmallow.validate import OneOf, Length
 from client.models import enum
 
@@ -14,13 +14,17 @@ class VisaMasterSchema(base.BaseSchema):
     notify_by_phone = fields.Str()
 
 
-# TODO: Delete PaymentSchema if there will no necessity in it (don't delete until release!)
-# class PaymentSchema(base.BaseSchema):
-#     card_number = fields.Str(required=True, validate=Length(min=12, max=24))
-#     status = fields.Str(required=True, validate=OneOf(enum.PAYMENT_STATUS_ENUM), default="ACCEPTED")
-#     notify_by_email = fields.Str()
-#     notify_by_phone = fields.Str()
-#     invoice = fields.Nested(InvoiceSchema, required=True)
+class PaymentSchema(base.BaseSchema):
+    id = fields.Str(required=True)
+    card_number = fields.Str(required=True, validate=Length(min=12, max=24))
+    status = fields.Str(required=True, validate=OneOf(enum.PAYMENT_STATUS_ENUM), default="ACCEPTED")
+    notify_by_email = fields.Str()
+    notify_by_phone = fields.Str()
+    paysys_id = fields.Str(required=True, validate=OneOf(enum.PAYMENT_SYSTEMS_ID_ENUM), default="USD")
+    # invoice_id = fields.Nested(InvoiceSchema.id, required=True)
+    invoice = fields.Nested(InvoiceSchema, required=True)
+    created = fields.DateTime(required=True)
+    updated = fields.DateTime()
 
 
 class PaymentResponceSchema(base.BaseSchema):
