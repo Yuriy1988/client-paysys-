@@ -1,20 +1,145 @@
 {% extends "__main.html" %}
 
-{% block content %}
-
-    <br>{{ store_info.store_name }}
-    <br>{{ store_info.store_url }}
-    <br>{{ store_info.description }}
-    <br>{{ store_info.logo }}
-    <br>{{ store_info.show_logo }}
-
-    <form action="/" method='post'>
-
-        {% for field in visa_master_form %}
-            <br>{{ field }} {{ field.label }}
-        {% endfor %}
-
-        <br><input type="submit" value="Go">
-    </form>
-
+{% block scripts %}
+<script src="{{ url_for('.static', filename='js/payment_form.js') }}"></script>
 {% endblock %}
+
+
+{% block content %}
+<div class="login-box">
+    <div class="login-logo">
+        <a href="/"><b>XOP</b>ay</a>
+    </div>
+    <div class="login-box-body">
+        <p class="login-box-msg">Sign in to start your session</p>
+        <h1>{{ store_info.store_name }}</h1>
+        <br>{{ store_info.store_url }}
+        <br>{{ store_info.description }}
+        <br>{{ store_info.logo }}
+        <br>{{ store_info.show_logo }}
+        <div>
+            <!--
+
+                {
+                    card_number: string,		// {required, digits only, len 12-24} номер карточки
+                    cardholder_name: string,	// {required, english letters} имя владельца карты
+                    cvv: string(3),			// {required, digits only, fix len} CVV код
+                    expiry_date: string,		// {required, format "mm/yyyy"} дата действия карты
+                    notify_by_email: email,	// уведомить о результате платежа по email (если null или отсутствует - не уведомлять)
+                    notify_by_phone: phone	// уведомить о результате платежа по sms (если null или отсутствует - не уведомлять)
+                }
+                < 202 Accepted
+                {
+                    id: string,	// payment_id - идентификатор для запроса состояния платежа
+                    status: string	// статус платежа (default=ACCEPTED - принят в обработку)
+                }
+
+            -->
+            <div class="form-group has-feedback">
+                <input type="text" data-name="card_number" class="form-control" placeholder="0123456789123456">
+                <span class="fa fa-credit-card form-control-feedback"></span>
+                <span class="fa fa-cc-amex form-control-feedback"></span>
+                <span class="fa fa-cc-mastercard form-control-feedback"></span>
+                <span class="fa fa-cc-visa form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" placeholder="Password">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input data-name="name" class="form-control" placeholder="name">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input data-name="login" class="form-control" placeholder="login">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-offset-8 col-xs-4">
+                    <button type="button" class="btn btn-success btn-flat pull-right">
+                        <i class="fa fa-credit-card"></i> Submit Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    var state = {
+        card_number: "",
+        name: "",
+        login: ""
+    };
+
+    var handlers = {
+        card_number: [checkLuhn, onChangeHandler],
+        name: onChangeHandler,
+        login: onChangeHandler
+    };
+
+    function checkLuhn(e) {
+        if (e.target.value.length == "16") {
+            return checkLuhn(e.target.value);
+        } else {
+            return true;
+        }
+    }
+
+    function onChangeHandler(e) {
+        var updates = {};
+        updates[e.target.dataset.name] = e.target.value;
+        setState(updates);
+    }
+
+    function onChangeHandler(e) {
+        var updates = {};
+        updates[e.target.dataset.name] = e.target.value;
+        setState(updates);
+    }
+
+    var inputs = document.querySelectorAll("input[data-name]");
+
+    for (var i = 0; i < inputs.length; i++) {
+        var input = inputs[i];
+        input.addEventListener("input", function (e) {
+            if (typeof handlers[e.target.dataset.name] == "function") {
+                handlers[e.target.dataset.name](e);
+            } else if (handlers[e.target.dataset.name] instanceof Array) {
+                for (var j = 0; j < handlers[e.target.dataset.name].length; j++) {
+                    if (!handlers[e.target.dataset.name][j](e)) break;
+                }
+            }
+        })
+    }
+
+    function update(state) {
+        for (var key in state) {
+            var target = document.querySelector("input[data-name=" + key + "]");
+            if (target) {
+                target.value = state[key];
+            }
+        }
+    }
+
+    function setState(newState) {
+        state = _.merge({}, state, newState);
+        update(state);
+        console.log("NS", state);
+    }
+
+    function luhn(card) {
+        card = card.replace(/\s/g, "");
+        var offset = ((card.length % 2) == 0) ? 1 : 0;
+        return card.split("").map(function (item, i) {
+                    return (((i + offset) % 2 + 1) * parseInt(item))
+                }).map(function (item) {
+                    return (item > 9) ? item - 9 : item;
+                }).reduce(function (prev, cur) {
+                    return prev + cur
+                }, 0) % 10 == 0;
+    }
+</script>
+{% endblock %}
+

@@ -1,0 +1,143 @@
+/*.tooltip-inner {
+    max-width: none;
+    white-space: nowrap;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.main-header .sidebar-toggle:before {
+    content: "\f0c9";
+}
+
+.content-wrapper {
+    padding-bottom: 50px;
+    margin-left: 0;
+}
+
+.content-maximizer {
+    min-height: 100% !important;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-left: 0;
+}
+
+html, body, .wrapper, .components {
+    min-height: 100%;
+}
+
+.move-icon {
+    padding-right: 5px;
+}
+
+.dropdown-menu > .divider {
+    background-color: #eee !important;
+}
+
+.dropdown-menu {
+    right: 0 !important;
+}
+
+.dropdown-menu > li > a {
+    color: #000 !important;
+}
+
+.dropdown-menu > li > a:hover {
+    background-color: #e1e3e9 !important;
+    color: #333 !important;
+}
+
+
+.treeview-menu {
+    overflow: hidden;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    max-height:0 !important;
+    display:block !important;
+}
+.sidebar-menu li.active>.treeview-menu{
+    max-height: none !important;
+}
+
+.content {
+    min-height: 200px;
+}
+.content-wrapper{
+    padding-bottom: 60px;
+}*/
+hr, .mv {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.mp-0 {
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-toggle {
+    cursor: pointer;
+}
+
+@media (max-width: 767px) {
+    .skin-green-light .main-header .navbar .dropdown-menu li a {
+        color: #333;
+    }
+}
+
+@media (max-width: 991px) {
+    .navbar-custom-menu > .navbar-nav > li > .dropdown-menu {
+        right: 0;
+    }
+}
+
+.fa-spin {
+    animation-duration: 0.7s !important;
+}
+
+/**** CHART *****/
+.animated {
+    transition: 0.15s ease all;
+    cursor: pointer;
+}
+
+.animated:hover {
+    transform: scale(1.1, 1.1);
+    z-index: 1000;
+    -webkit-filter: drop-shadow(-5px -5px 15px #000);
+    filter: drop-shadow(-5px -5px 15px #000);
+}
+
+/***END CHART *****/
+
+.contract-filter {
+    /*font-size: 16pt;*/
+}
+
+html, body {
+    background-color: #d2d6de;
+}
+
+/*
+@media (min-width: 768px) {
+    .sidebar-mini.sidebar-collapse .sidebar-menu > li:not(.active):hover > a > span,
+    .sidebar-menu > li:hover > ul {
+        box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.5);
+        z-index: -100;
+    }
+}
+
+.sidebar-menu > li:hover {
+    z-index: 2100;
+}
+
+.sidebar-mini.sidebar-collapse .sidebar-menu > li > a > .pull-right {
+    display: inline-block !important;
+}
+*/
