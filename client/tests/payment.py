@@ -7,6 +7,7 @@ __author__ = 'Andrey Kupriy'
 
 
 class TestPayment(base.BaseTestCase):
+
     # POST invoices/<invoice_id>/payments/visa_master
 
     def test_post_payment_valid_response(self):
