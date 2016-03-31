@@ -14,9 +14,9 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         self.assertEqual(payment_status, 202)
         # payment id generated:
@@ -25,8 +25,8 @@ class TestPayment(base.BaseTestCase):
         self.assertIn('status', payment_body)
 
     def test_post_payment_response_wrong_invoice_id(self):
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/4k3k-kde3-ofkl-3345-sdada2-2a/payments/visa_master', card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/4k3k-kde3-ofkl-3345-sdada2-2a/payments/visa_master', payment_request)
 
         self.assertEqual(payment_status, 404)
 
@@ -34,151 +34,84 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         invoice = Invoice.query.get(invoice_body['id'])
         payment = Payment.query.filter_by(invoice_id=invoice.id).one()
 
         self.assertIsNotNone(payment)
         self.assertIsNotNone(payment.id)
-        self.assertEqual(payment.card_number, "111111******1111")
+        self.assertEqual(payment.payment_account, "111111******1111")
         self.assertEqual(payment.status, "ACCEPTED")
         self.assertEqual(payment.notify_by_email, "email@email.com")
         self.assertEqual(payment.notify_by_phone, "111111111111")
         self.assertEqual(payment.invoice_id, invoice_body['id'])
 
-    # card_number validation
-
-    def test_card_number_must_have_digits_only(self):
+    def test_payment_account_required(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        card_info['card_number'] = '11111dddddd11111111'
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        del payment_request['payment_account']
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['card_number'], ['Card number must contain digits only'])
-
-    def test_card_number_must_have_12_24_length(self):
-        invoice = self.get_invoice()
-        invoice_status, invoice_body = self.post('/invoices', invoice)
-
-        card_info = self.get_card_info()
-        card_info['card_number'] = '1'
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
-
-        self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['card_number'], ['Length must be between 12 and 24.'])
-
-    def test_card_number_must_not_be_none(self):
-        invoice = self.get_invoice()
-        invoice_status, invoice_body = self.post('/invoices', invoice)
-
-        card_info = self.get_card_info()
-        card_info['card_number'] = None
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
-
-        self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['card_number'], ['Field may not be null.'])
+        self.assertEqual(payment_body['error']['errors']['payment_account'], ['Missing data for required field.'])
 
     # cardholder_name validation
 
-    def test_cardholder_name_must_not_be_none(self):
+    def test_crypted_payment_required(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        card_info['cardholder_name'] = None
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        del payment_request['crypted_payment']
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['cardholder_name'], ['Field may not be null.'])
+        self.assertEqual(payment_body['error']['errors']['crypted_payment'], ['Missing data for required field.'])
 
     # cvv validation
 
-    def test_cvv_must_not_be_none(self):
+    def test_paysys_id_must_not_be_none(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        card_info['cvv'] = None
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_request['paysys_id'] = None
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['cvv'], ['Field may not be null.'])
+        self.assertEqual(payment_body['error']['errors']['paysys_id'], ['Field may not be null.'])
 
-    def test_cvv_must_have_digits_only(self):
+    def test_paysys_id_must_be_enum(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        card_info['cvv'] = 'ddd'
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_request['paysys_id'] = 'ddd'
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['cvv'], ['Card number must contain digits only'])
+        self.assertEqual(payment_body['error']['errors']['paysys_id'], ['Not a valid choice.'])
 
-    def test_cvv_must_have_3_length(self):
+    def test_crypted_payment_not_none(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        card_info['cvv'] = '1'
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_request['crypted_payment'] = None
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['cvv'], ['Length must be between 3 and 3.'])
-
-    # expiry_date validation
-
-    def test_card_expiry_date_must_not_be_none(self):
-        invoice = self.get_invoice()
-        invoice_status, invoice_body = self.post('/invoices', invoice)
-
-        card_info = self.get_card_info()
-        card_info['expiry_date'] = None
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
-
-        self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['expiry_date'], ['Field may not be null.'])
-
-    def test_card_expiry_date_format_validation(self):
-        invoice = self.get_invoice()
-        invoice_status, invoice_body = self.post('/invoices', invoice)
-
-        card_info = self.get_card_info()
-        card_info['expiry_date'] = 'ddddddd'
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
-
-        self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['expiry_date'],
-                         ['Wrong card expiry date format. Required format: "11/1111"'])
-
-    def test_cvv_must_have_7_length(self):
-        invoice = self.get_invoice()
-        invoice_status, invoice_body = self.post('/invoices', invoice)
-
-        card_info = self.get_card_info()
-        card_info['expiry_date'] = '1'
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
-
-        self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['expiry_date'],
-                         ['Length must be between 7 and 7.',
-                          'Wrong card expiry date format. Required format: "11/1111"'])
+        self.assertEqual(payment_body['error']['errors']['crypted_payment'], ['Field may not be null.'])
 
     # Change Payment status API
 
@@ -186,9 +119,9 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
@@ -209,9 +142,9 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
         updated_time = payment.updated
@@ -232,9 +165,9 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
@@ -249,9 +182,9 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
@@ -268,9 +201,9 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
@@ -291,9 +224,9 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
@@ -313,9 +246,9 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
@@ -335,9 +268,9 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        card_info = self.get_card_info()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments/visa_master'.format(
-            invoice_id=invoice_body['id']), card_info)
+        payment_request = self.get_payment_request()
+        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
+            invoice_id=invoice_body['id']), payment_request)
 
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 

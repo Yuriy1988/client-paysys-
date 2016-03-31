@@ -15,8 +15,8 @@ class VisaMasterSchema(base.BaseSchema):
 
 
 class PaymentSchema(base.BaseSchema):
-    id = fields.Str(required=True)
-    card_number = fields.Str(required=True, validate=Length(min=12, max=24))
+    id = fields.Str(dump_only=True)
+    payment_account = fields.Str(required=True, validate=Length(min=12, max=24))
     status = fields.Str(required=True, validate=OneOf(enum.PAYMENT_STATUS_ENUM), default="ACCEPTED")
     notify_by_email = fields.Str()
     notify_by_phone = fields.Str()
@@ -25,6 +25,14 @@ class PaymentSchema(base.BaseSchema):
     invoice = fields.Nested(InvoiceSchema, required=True)
     created = fields.DateTime(required=True)
     updated = fields.DateTime()
+
+
+class PaymentRequestSchema(base.BaseSchema):
+    paysys_id = fields.Str(required=True, validate=OneOf(enum.PAYMENT_SYSTEMS_ID_ENUM), default="USD")
+    crypted_payment = fields.Str(required=True)
+    payment_account = fields.Str(required=True)
+    notify_by_email = fields.Str()
+    notify_by_phone = fields.Str()
 
 
 class PaymentResponceSchema(base.BaseSchema):

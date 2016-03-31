@@ -48,6 +48,14 @@ class BaseTestCase(TestCase):
         "notify_by_phone": "111111111111"
     }
 
+    _payment_request = {
+        "paysys_id": "VISA_MASTER",
+        "crypted_payment": "ssadadjkfskjashcjkahcu3hd83hdwdh28d283h2e323eu823eufdsjiosjf39u9ejsod0r38u289u28uediweduw",
+        "payment_account": "111111******1111",
+        "notify_by_email": "email@email.com",
+        "notify_by_phone": "111111111111"
+    }
+
     _payment = {
         "card_number": "1111111111111111",
         "status": "ACCEPTED",
@@ -175,3 +183,6 @@ class BaseTestCase(TestCase):
 
     def get_new_status(self):
         return deepcopy(self._new_status)
+
+    def get_payment_request(self):
+        return deepcopy(self._payment_request)

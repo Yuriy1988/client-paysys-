@@ -22,7 +22,7 @@ class Invoice(base.BaseModel):
 
     __tablename__ = 'invoice'
 
-    id = db.Column(db.String, nullable=True, unique=True, primary_key=True)
+    id = db.Column(db.String, nullable=True, primary_key=True, default=lambda: str(uuid.uuid4()))
     payment_url = db.Column(db.String(255), nullable=True, default=None)
     order_id = db.Column(db.String)
     store_id = db.Column(db.String, nullable=False)
@@ -32,8 +32,7 @@ class Invoice(base.BaseModel):
     payment = db.relationship('Payment', lazy='dynamic')
     # transactions = db.relationship('Transaction', backref='transaction', lazy='dynamic')
 
-    def __init__(self, id, order_id, store_id, currency, items):
-        self.id = id
+    def __init__(self, order_id, store_id, currency, items):
         self.order_id = order_id
         self.store_id = store_id
         self.currency = currency
@@ -45,9 +44,6 @@ class Invoice(base.BaseModel):
     @classmethod
     def create(cls, data, add_to_db=True):
         data = deepcopy(data)
-
-        # Generating a unique Invoice id:
-        data['id'] = str(uuid.uuid4())
 
         items_data = data.pop('items', {})
 

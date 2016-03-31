@@ -19,7 +19,7 @@ class ItemSchema(base.BaseSchema):
 
 
 class InvoiceSchema(base.BaseSchema):
-    id = fields.Str(required=False, default=None, validate=(Length(min=8, max=127)))
+    id = fields.Str(dump_only=True)
     payment_url = fields.Url(allow_none=True, default=None)
     order_id = fields.Str(required=True)
     store_id = fields.Str(required=True)
