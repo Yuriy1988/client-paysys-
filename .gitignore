@@ -7,3 +7,4 @@ dump_
 .DS_Store?
 .idea
 venv
+*.pem
