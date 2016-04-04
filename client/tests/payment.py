@@ -129,7 +129,7 @@ class TestPayment(base.BaseTestCase):
         new_status = json.dumps(status)
 
         payment_change = self.client.put(
-            self.api_base + '/payment/{payment_id}/status'.format(payment_id=payment.id),
+            self.api_base + '/payment/{payment_id}'.format(payment_id=payment.id),
             data=new_status,
             headers={"Content-Type": "application/json"}
         )
@@ -153,7 +153,7 @@ class TestPayment(base.BaseTestCase):
         new_status = json.dumps(status)
 
         payment_change = self.client.put(
-            self.api_base + '/payment/{payment_id}/status'.format(payment_id=payment.id),
+            self.api_base + '/payment/{payment_id}'.format(payment_id=payment.id),
             data=new_status,
             headers={"Content-Type": "application/json"}
         )
@@ -172,7 +172,7 @@ class TestPayment(base.BaseTestCase):
         payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
         payment_change = self.client.put(
-            self.api_base + '/payment/{payment_id}/status'.format(payment_id=payment.id),
+            self.api_base + '/payment/{payment_id}'.format(payment_id=payment.id),
             headers={"Content-Type": "application/json"}
         )
 
@@ -190,7 +190,7 @@ class TestPayment(base.BaseTestCase):
 
         new_status = json.dumps("")
         payment_change = self.client.put(
-            self.api_base + '/payment/{payment_id}/status'.format(payment_id=payment.id),
+            self.api_base + '/payment/{payment_id}'.format(payment_id=payment.id),
             data=new_status,
             headers={"Content-Type": "application/json"}
         )
@@ -211,7 +211,7 @@ class TestPayment(base.BaseTestCase):
         new_status = json.dumps(status)
 
         payment_change = self.client.put(
-            self.api_base + '/payment/{payment_id}/status'.format(payment_id=payment.id),
+            self.api_base + '/payment/{payment_id}'.format(payment_id=payment.id),
             data=new_status,
             headers={"Content-Type": "application/json"}
         )
@@ -234,7 +234,7 @@ class TestPayment(base.BaseTestCase):
         new_status = json.dumps(status)
 
         payment_change = self.client.put(
-            self.api_base + '/payment/{payment_id}/status'.format(payment_id='97f65e39-e5cb-4b28-841d-8420f693bdbd'),
+            self.api_base + '/payment/{payment_id}'.format(payment_id='97f65e39-e5cb-4b28-841d-8420f693bdbd'),
             data=new_status,
             headers={"Content-Type": "application/json"}
         )
@@ -256,7 +256,7 @@ class TestPayment(base.BaseTestCase):
         new_status = json.dumps(status)
 
         payment_change = self.client.put(
-            self.api_base + '/payment/{payment_id}/status'.format(payment_id='lol'),
+            self.api_base + '/payment/{payment_id}'.format(payment_id='lol'),
             data=new_status,
             headers={"Content-Type": "application/json"}
         )
@@ -278,7 +278,7 @@ class TestPayment(base.BaseTestCase):
         new_status = json.dumps(status)
 
         payment_change = self.client.put(
-            self.api_base + '/payment/{payment_id}/status'.format(payment_id='nothing'),
+            self.api_base + '/payment/{payment_id}'.format(payment_id='nothing'),
             data=new_status,
             headers={"Content-Type": "application/json"}
         )
