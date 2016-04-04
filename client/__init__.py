@@ -22,18 +22,19 @@ manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 # Logging:
-file_handler = FileHandler('./error.log')
-file_handler.setLevel(logging.WARNING)
-file_handler.setFormatter(Formatter(
-    '''
-    NEW_LOG:
-    Time:        %(asctime)s
-    Level Name:  %(levelname)s:
-    Message:     %(message)s
-    Pass:        [in %(pathname)s:%(lineno)d]
-    '''
-))
-app.logger.addHandler(file_handler)
+# FIXME: write correct log configuration and add logs
+# file_handler = FileHandler('./error.log')
+# file_handler.setLevel(logging.WARNING)
+# file_handler.setFormatter(Formatter(
+#     '''
+#     NEW_LOG:
+#     Time:        %(asctime)s
+#     Level Name:  %(levelname)s:
+#     Message:     %(message)s
+#     Pass:        [in %(pathname)s:%(lineno)d]
+#     '''
+# ))
+# app.logger.addHandler(file_handler)
 
 
 # Decimal-to-json fix:

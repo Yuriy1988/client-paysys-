@@ -14,4 +14,4 @@ flask-sqlalchemy==2.1
 flask-testing==0.4.2
 flask-migrate==1.8.0
 flask-script==2.0.5
-
+flask-cors==2.1.2
