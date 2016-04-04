@@ -5,17 +5,15 @@ from datetime import datetime
 DEBUG = True
 
 BASE_FOLDER = os.path.abspath(os.path.dirname(__file__))
-FRONTEND_FOLDER = os.path.join(BASE_FOLDER, 'frontend')
-STATIC_FOLDER = os.path.join(FRONTEND_FOLDER, 'static')
 
 # Define the database
-SQLALCHEMY_DATABASE_URI = 'postgresql://xopclientadmin:xopclient@localhost/xopclientdb'
+SQLALCHEMY_DATABASE_URI = 'postgresql://xopclient:G5MuJkzyAXQhslCQ@localhost/xopclientdb'
 SQLALCHEMY_TRACK_MODIFICATIONS = False      # flask-sql signaling not used now
 
 CSRF_ENABLED = True
-CSRF_SESSION_KEY = "mhe=d4#2xvb1348j%m+sn0d8ssdbjv18yi+f_w#&yd!+&4ic4)"
+CSRF_SESSION_KEY = "rx$iyDi~~ztvGj$q|pUVQSmBD07gSWTPswP{H3vKQ0HkvSKnzj"
 
-SECRET_KEY = "ugGB0uH1cJTW=1L9Vs|8roMlFfFgsWD%NA|*WBpYQ3Uytr-6rImVk2Rp%BJ+"
+SECRET_KEY = "twuDcr%V#QQ8i*J8DW3k9XNG{~|266~0I?5ek1Zy4HMF4w{KPwfsddf4456"
 
 # Current links:
 HELPER_URL = 'http://192.168.1.122:8888'  # TODO: Write down the right Helper-server address.
@@ -35,4 +33,4 @@ CURRENT_ADMIN_SERVER_VERSION = 'dev'
 BUILD_DATE = datetime(2016, 3, 22, 18, 55, 42, 768858)
 
 # Hostname
-ROOT = 'http://localhost:5000'
+ROOT = 'http://127.0.0.1:7254'
