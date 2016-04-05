@@ -31,15 +31,15 @@ def get_public_key():
     version=CURRENT_CLIENT_SERVER_VERSION), methods=['POST']
 )
 def upload_public_key():
-    key_info = request.get_json()
-    if 'key' not in key_info:
-        raise ValidationError("'key' is required.")
-    key = str(key_info['key'])
-
-    if not _is_valid_rsa_key(key):
-        raise ValidationError("Invalid key format.")
-
-    with open(PUBLIC_KEY_FILE_NAME, 'w') as f:
-        f.write(key)
-
+    try:
+        key_info = request.get_json()
+        if 'key' not in key_info:
+            raise ValidationError("'key' is required.")
+        key = str(key_info['key'])
+        if not _is_valid_rsa_key(key):
+            raise ValidationError("Invalid key format.")
+        with open(PUBLIC_KEY_FILE_NAME, 'w') as f:
+            f.write(key)
+    except TypeError:
+        raise ValidationError("Set header. Content-Type: application/json")
     return Response(status=200)
