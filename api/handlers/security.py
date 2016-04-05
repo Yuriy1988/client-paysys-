@@ -42,4 +42,4 @@ def upload_public_key():
             f.write(key)
     except TypeError:
         raise ValidationError("Set header. Content-Type: application/json")
-    return Response(status=200)
+    return jsonify({})
