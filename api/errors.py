@@ -92,6 +92,13 @@ class NotFoundError(BaseApiError):
     default_message = 'Not Found'
 
 
+@_handle_api_error
+class ServiceUnavailable(BaseApiError):
+
+    default_status_code = 503
+    default_message = 'Service Unavailable'
+
+
 # Default Errors
 
 
