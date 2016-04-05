@@ -5,6 +5,7 @@ from datetime import datetime
 DEBUG = True
 
 BASE_FOLDER = os.path.abspath(os.path.dirname(__file__))
+STATIC_FOLDER = os.path.join(BASE_FOLDER, 'frontend', 'static')
 
 # Define the database
 SQLALCHEMY_DATABASE_URI = 'postgresql://xopclient:G5MuJkzyAXQhslCQ@localhost/xopclientdb'

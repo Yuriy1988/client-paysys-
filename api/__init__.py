@@ -7,8 +7,9 @@ from flask.ext.cors import CORS
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
+from config import STATIC_FOLDER
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=STATIC_FOLDER)
 app.config.from_object('config')
 
 # allow cross-origin ajax
