@@ -124,6 +124,57 @@ html, body {
     background-color: #d2d6de;
 }
 
+.has-error .input-group-addon {
+    color: #dd4b39 !important;
+    background-color: #ffeeee !important;
+    border-color: #dd4b39 !important;
+}
+
+.shop-logo-container {
+
+}
+
+.shop-logo {
+    width: 100%;
+}
+
+.cc-icon-wrapper {
+    width: 60px;
+    height: 65px;
+    padding: 15px 0 0 10px;
+}
+
+.cc-icon-wrapper img {
+    width: 100%;
+    height: 100%;
+}
+
+.cvv-btns-wrapper {
+    width: 144px;
+    position: absolute;
+    background: #ebebeb;
+    border: 1px solid #b6b6b6;
+    z-index: 10000;
+    box-sizing: content-box;
+}
+
+.cvv-btns-wrapper .cvv-btn {
+    border: 2px solid #00a65a;
+    color: #00a157;
+    background: #ffffff;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    float:left;
+    margin: 3px;
+    font-size: 14pt;
+    text-align: center;
+}
+.cvv-btns-wrapper .cvv-btn:hover{
+    background: #e2e2e2;
+    border-color: #13cf55;
+}
+
 /*
 @media (min-width: 768px) {
     .sidebar-mini.sidebar-collapse .sidebar-menu > li:not(.active):hover > a > span,

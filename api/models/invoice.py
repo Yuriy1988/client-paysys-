@@ -41,6 +41,12 @@ class Invoice(base.BaseModel):
     def __repr__(self):
         return '<Invoice id: %r>' % self.id
 
+    def get_amount(self):
+        invoice_amount = 0
+        for item in self.items:
+            invoice_amount += item.quantity * item.unit_price
+        return invoice_amount
+
     @classmethod
     def create(cls, data, add_to_db=True):
         data = deepcopy(data)

@@ -6,21 +6,26 @@ const path = require('path');
 const webpack = require('webpack');
 
 const DEV_MODE = process.env.DEV_MODE == 'true' || false;
+const XOPAY_CLIENT_HOST = "http://www.xopay.com";
+const XOPAY_CLIENT_API_VERSION = "dev";
 
 var config = {
     DEV_MODE: DEV_MODE,
-    entry: [
-        './src/index'
-    ],
+    entry: {
+        "payment_form": './src/payment_form.js',
+        "get_button": './src/get_button.js'
+    },
     output: {
         path: path.join(__dirname, '../static/js'),
-        filename: 'payment_form.js'
+        filename: '[name].js'
     },
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.NoErrorsPlugin(),
         new webpack.DefinePlugin({
-            DEV_MODE: DEV_MODE
+            DEV_MODE: DEV_MODE,
+            XOPAY_CLIENT_HOST: JSON.stringify(XOPAY_CLIENT_HOST),
+            XOPAY_CLIENT_API_VERSION: JSON.stringify(XOPAY_CLIENT_API_VERSION)
         })
     ],
     module: {
@@ -33,6 +38,10 @@ var config = {
                 },
                 exclude: /node_modules/,
                 include: __dirname
+            },
+            {
+                test: /\.json$/,
+                loader: 'json'
             }
         ]
     }
