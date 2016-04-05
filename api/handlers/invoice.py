@@ -5,7 +5,7 @@ from api import app, db
 from api.models import Invoice, Payment
 from api.schemas import InvoiceSchema, VersionSchema
 from api.handlers.client_utils import get_store_by_store_id
-from config import ROOT, CURRENT_CLIENT_SERVER_VERSION, API_VERSION, BUILD_DATE
+from config import CURRENT_CLIENT_SERVER_VERSION, API_VERSION, BUILD_DATE
 from api.errors import NotFoundError, ValidationError
 
 

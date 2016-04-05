@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "DEV_MODE=false node index",
-    "dev": "DEV_MODE=true node index"
+    "dev": "DEV_MODE=true webpack --watch"
   },
   "author": "",
   "license": "ISC",

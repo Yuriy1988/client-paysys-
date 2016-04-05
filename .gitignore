@@ -8,3 +8,4 @@ venv
 dist
 migrations
 *.pem
+node_modules
