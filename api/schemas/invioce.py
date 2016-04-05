@@ -1,8 +1,8 @@
 from marshmallow import fields
 from marshmallow.validate import OneOf, Range, Length
 
-from client.schemas import base
-from client.models import enum
+from api.schemas import base
+from api.models import enum
 
 
 class VersionSchema(base.BaseSchema):

@@ -1,6 +1,6 @@
 from flask import json
 import time
-import client.handlers
+import api.handlers
 import unittest
 from copy import deepcopy
 from datetime import datetime
@@ -18,7 +18,7 @@ class TestGetVersion(unittest.TestCase):
         self.API_VERSION = 'dev'
         self.CURRENT_CLIENT_SERVER_VERSION = 'dev'
         self.BUILD_DATE = datetime(2016, 3, 22, 18, 55, 42, 768858)
-        self.app = client.app.test_client()
+        self.app = api.app.test_client()
 
     # Tests:
 

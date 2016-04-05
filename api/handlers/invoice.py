@@ -1,12 +1,12 @@
 from flask import Response, request, jsonify, render_template
 import json
 from flask import request, jsonify, render_template
-from client import app, db
-from client.models import Invoice, Payment
-from client.schemas import InvoiceSchema, VersionSchema
-from client.handlers.client_utils import get_store_by_store_id
+from api import app, db
+from api.models import Invoice, Payment
+from api.schemas import InvoiceSchema, VersionSchema
+from api.handlers.client_utils import get_store_by_store_id
 from config import ROOT, CURRENT_CLIENT_SERVER_VERSION, API_VERSION, BUILD_DATE
-from client.errors import NotFoundError, ValidationError
+from api.errors import NotFoundError, ValidationError
 
 from datetime import timedelta
 from flask import make_response, request, current_app

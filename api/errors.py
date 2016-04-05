@@ -2,7 +2,7 @@ import sys
 from traceback import format_exception
 from flask import jsonify
 
-from client import app
+from api import app
 
 __author__ = 'Kostel Serhii'
 

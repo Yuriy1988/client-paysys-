@@ -48,4 +48,4 @@ class MyJSONEncoder(json.JSONEncoder):
 
 app.json_encoder = MyJSONEncoder
 
-from client import handlers
+from api import handlers

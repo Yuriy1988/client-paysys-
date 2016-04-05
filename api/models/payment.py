@@ -1,9 +1,9 @@
 import uuid
 from copy import deepcopy
 
-from client import db
+from api import db
 import datetime
-from client.models import base, enum
+from api.models import base, enum
 
 
 class Payment(base.BaseModel):

@@ -1,8 +1,8 @@
 import uuid
 
-from client import db
+from api import db
 import datetime
-from client.models import enum, base
+from api.models import enum, base
 from copy import deepcopy
 
 

@@ -1,7 +1,7 @@
 from marshmallow import fields
-from client.schemas import base, InvoiceSchema
+from api.schemas import base, InvoiceSchema
 from marshmallow.validate import OneOf, Length
-from client.models import enum
+from api.models import enum
 
 
 class VisaMasterSchema(base.BaseSchema):

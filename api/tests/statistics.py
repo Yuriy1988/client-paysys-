@@ -1,7 +1,7 @@
 import json
 
-from client.tests import base
-from client.models import Payment, Invoice
+from api.tests import base
+from api.models import Payment, Invoice
 
 __author__ = 'Andrey Kupriy'
 

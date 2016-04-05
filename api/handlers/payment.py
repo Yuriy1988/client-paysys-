@@ -1,9 +1,9 @@
-from client.handlers.client_utils import mask_card_number, get_store_by_store_id, get_amount, put_to_queue, send_email
+from api.handlers.client_utils import mask_card_number, get_store_by_store_id, get_amount, put_to_queue, send_email
 from flask import request, jsonify, Response
-from client import app, db
-from client.models import Invoice, Payment
-from client.schemas import PaymentResponceSchema, PaymentRequestSchema
-from client.errors import ValidationError, NotFoundError, BaseApiError
+from api import app, db
+from api.models import Invoice, Payment
+from api.schemas import PaymentResponceSchema, PaymentRequestSchema
+from api.errors import ValidationError, NotFoundError, BaseApiError
 from config import CURRENT_CLIENT_SERVER_VERSION
 from helper.main import get_route
 import json

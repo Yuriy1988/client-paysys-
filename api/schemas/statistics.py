@@ -1,7 +1,7 @@
 from marshmallow import fields
-from client.schemas import base
+from api.schemas import base
 from marshmallow.validate import OneOf
-from client.models import enum
+from api.models import enum
 
 
 class StatisticsArgsSchema(base.BaseSchema):

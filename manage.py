@@ -4,7 +4,7 @@ import unittest
 import flask_script as script
 import flask_migrate as migrate
 
-from client import app, db
+from api import app, db
 
 __author__ = 'Kostel Serhii'
 
@@ -19,7 +19,7 @@ manager.add_command('runserver', server)
 def test():
     base = os.path.dirname(os.path.realpath(__file__))
     print(base)
-    api_tests_path = os.path.join(base, 'client', 'tests')
+    api_tests_path = os.path.join(base, 'api', 'tests')
     api_suite = unittest.TestLoader().discover(api_tests_path, pattern='*.py')
 
     helper_tests_path = os.path.join(base, 'helper')

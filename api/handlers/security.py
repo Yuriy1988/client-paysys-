@@ -1,10 +1,10 @@
-from client import app
+from api import app
 from config import CURRENT_CLIENT_SERVER_VERSION
 from flask import jsonify, request, Response
 import re
 import os
 
-from client.errors import ValidationError, NotFoundError
+from api.errors import ValidationError, NotFoundError
 
 
 PUBLIC_KEY_FILE_NAME = 'public.pem'

@@ -3,11 +3,11 @@ import decimal
 import json
 
 from flask import request, jsonify
-from client import app, db
-from client.models import Invoice, Payment
-from client.errors import ValidationError, NotFoundError, BaseApiError
+from api import app, db
+from api.models import Invoice, Payment
+from api.errors import ValidationError, NotFoundError, BaseApiError
 from config import CURRENT_CLIENT_SERVER_VERSION
-from client.schemas import StatisticsArgsSchema, PaymentSchema
+from api.schemas import StatisticsArgsSchema, PaymentSchema
 
 
 def get_amount(items_list):

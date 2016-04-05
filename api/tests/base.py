@@ -6,10 +6,10 @@ from copy import deepcopy
 from flask.ext.testing import TestCase
 
 from unittest.mock import MagicMock
-import client.handlers.client_utils
+import api.handlers.client_utils
 
 
-from client import app, db as app_db
+from api import app, db as app_db
 
 __author__ = 'Andrey Kupriy'
 
@@ -96,12 +96,12 @@ class BaseTestCase(TestCase):
 
         store_json = json.dumps(_store)
 
-        client.handlers.payment.get_store_by_store_id = MagicMock(return_value=store_json)
-        client.handlers.payment.put_to_queue = MagicMock(return_value={"status": "ACCEPTED"})
-        client.handlers.payment.send_email = MagicMock(return_value="Message sent to {email}".format(
+        api.handlers.payment.get_store_by_store_id = MagicMock(return_value=store_json)
+        api.handlers.payment.put_to_queue = MagicMock(return_value={"status": "ACCEPTED"})
+        api.handlers.payment.send_email = MagicMock(return_value="Message sent to {email}".format(
             email=self._card_info["notify_by_email"]))
 
-        client.handlers.payment.get_route = MagicMock(return_value={
+        api.handlers.payment.get_route = MagicMock(return_value={
             "bank_contract": {
                 "id": 10,
                 "commission_fixed": 10.01,
