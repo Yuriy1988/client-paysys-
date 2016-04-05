@@ -16,7 +16,7 @@ var config = {
         "get_button": './src/get_button.js'
     },
     output: {
-        path: path.join(__dirname, '../static/js'),
+        path: path.join(__dirname, '/static/js'),
         filename: '[name].js'
     },
     plugins: [

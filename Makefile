@@ -68,6 +68,12 @@ venv_init:
 	bash -c "source venv/bin/activate && pip install --upgrade wheel && pip install -r requirements.txt"
 
 
+# ----- Build static -----
+
+build_static:
+	bash -c "cd frontend && make build"
+
+
 # ----- Setup -----
 
 setup: install venv_init db_create
@@ -82,6 +88,12 @@ update: venv_init db_update
 
 test: venv_init
 	./manage.py test
+
+
+# ----- Run Server -----
+
+runserver:
+	./manage.py runserver
 
 
 # ========== MacOS ==========
