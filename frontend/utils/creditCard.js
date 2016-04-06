@@ -38,7 +38,7 @@ export class CreditCard {
     static validator(number) {
         let errors = [];
         if (!(/^\d{12,24}$/.test(number))) {
-            errors.push("Card number must contain only 12-24 digits");
+            errors.push("Card number should contain only 12-24 digits");
         } else if (!CreditCard.checkLuhn(number)) {
             errors.push("Card number is not valid");
         }
@@ -51,6 +51,15 @@ export class CreditCard {
             errors.push("CVV should contain only 3 digits");
         }
         return errors;
+    }
+
+    static ownerValidator(owner) {
+        // let errors = [];
+        // if (!(/^[\w\s]{2,25}$/.test(owner))) {
+        //     errors.push("Cardholder name should contain only 2-25 latin characters");
+        // }
+        // return errors;
+        return [];
     }
 
     static prepareNumber(number) {

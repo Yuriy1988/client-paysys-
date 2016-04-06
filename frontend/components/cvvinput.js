@@ -42,6 +42,17 @@ export class CVVInput extends InputComponent {
         }
     }
 
+    componentWillUpdate(nextProps, nextState) {
+        if (nextState.value != this.state.value) {
+            this.props.onChange({
+                target: {
+                    value: nextState.value,
+                    name: this.props.name
+                }
+            });
+        }
+    }
+
     showControlHandler() {
         this.setState({
             visibility: true
@@ -73,14 +84,14 @@ export class CVVInput extends InputComponent {
         var self = this;
         return CVVInput.getRadnomArray().map(function (i, ind) {
             return (
-                <div className="cvv-btn"
+                <div className="btn btn-flat btn-warning cvv-btn"
                      onClick={self.handleClick.bind(self, i)}
                      key={ind}>
                     {i}
                 </div>
             );
         }).concat([
-            <div className="cvv-btn"
+            <div className="btn btn-flat btn-danger cvv-btn"
                  onClick={self.handleClick.bind(self, 'clear')}
                  key="clear">
                 <i className="fa fa-trash"/>
@@ -110,7 +121,6 @@ export class CVVInput extends InputComponent {
     }
 
     renderChild(props) {
-
         return (
             <div>
                 <input value={this.state.value}

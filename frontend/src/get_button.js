@@ -68,32 +68,3 @@ window.addEventListener("load", function () {
     "use strict";
     document.body.appendChild(render());
 });
-
-/**
- * CSSS
- *
- *
- * .xopay-get-button {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 100;
-    background-color: #00a65a;
-    color: white;
-    outline: 0;
-    margin: 0;
-    padding: 8px 18px;
-    font-size: 16pt;
-    cursor: pointer;
-    border: none;
-}
-
- .xopay-get-button:first-letter {
-    font-weight: 400;
-}
-
- .xopay-get-button:hover {
-    background-color: #008d4c;
-}
- *
- *
- *
- */

@@ -82,7 +82,8 @@ class PaymentForm extends Component {
     validateData(data, hard = false) {
         return Validator.validate({
             card_number: CreditCard.validator,
-            cvv: CreditCard.cvvValidator
+            cvv: CreditCard.cvvValidator,
+            cardholder_name: CreditCard.ownerValidator
         }, data, hard)
     }
 
