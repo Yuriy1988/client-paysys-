@@ -2,17 +2,16 @@
  * Created by gasya on 22.03.16. DigitalOutlooks corporation.
  */
 
-import { ajax } from 'jquery'
+import ajax from 'axios'
 
 var targetUrl = `${XOPAY_CLIENT_HOST}/api/client/${XOPAY_CLIENT_API_VERSION}/invoices`;
-//targetUrl = "http://192.168.1.160:7128/api/admin/version";
 
 function sendInvoice(invoice) {
     console.log("Request");
     return ajax({
         url: targetUrl,
         data: JSON.stringify(invoice),
-        method: "POST", //TODO POST
+        method: "POST",
         dataType: "json",
         headers: {
             "Content-Type": "application/json"
@@ -44,30 +43,20 @@ function dataPrepare(invoice) {
 document.onclick = function (event) {
     var el = event.target;
     if (el.dataset.xopay) {
-
-        /*
-         order_id: string,			// {required}
-         store_id: string,			// {required}, from $Store
-         currency: enum,			// {required}, one of Currency Enum
-         items: [
-         ____{
-         ________store_item_id: string,		// {required}
-         ________quantity: integer,	    // {required}
-         ________unit_price: decimal,	// {required}
-         ________item_name: string
-         ____},
-         ...
-         ]
-         */
-
         var invoice = dataPrepare(el.dataset);
         if (validateInvoice(invoice)) {
             sendInvoice(invoice)
-                .done(function (data) {
-                    location.href = `${XOPAY_CLIENT_HOST}/payment/${data.id}`;
+                .then(function (response) {
+                    switch (response.status) {
+                        case 200:
+                            location.href = `${XOPAY_CLIENT_HOST}/payment/${response.data.id}`;
+                            break;
+                        default:
+                            console.log(response); // TODO CATCH ERROR
+                    }
                 })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus);
+                .catch(function (response) {
+                    console.log(response); //TODO CATCH ERROR
                 });
         } else {
             alert("Invoice is invalid");
@@ -75,4 +64,36 @@ document.onclick = function (event) {
     }
 };
 
-document.body.appendChild(render());
+window.addEventListener("load", function () {
+    "use strict";
+    document.body.appendChild(render());
+});
+
+/**
+ * CSSS
+ *
+ *
+ * .xopay-get-button {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 100;
+    background-color: #00a65a;
+    color: white;
+    outline: 0;
+    margin: 0;
+    padding: 8px 18px;
+    font-size: 16pt;
+    cursor: pointer;
+    border: none;
+}
+
+ .xopay-get-button:first-letter {
+    font-weight: 400;
+}
+
+ .xopay-get-button:hover {
+    background-color: #008d4c;
+}
+ *
+ *
+ *
+ */

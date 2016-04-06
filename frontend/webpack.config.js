@@ -4,10 +4,19 @@
  */
 const path = require('path');
 const webpack = require('webpack');
+const argumentParser = require("node-argument-parser");
+
+const argv = argumentParser.parse("./arguments.json", process);
 
 const DEV_MODE = process.env.DEV_MODE == 'true' || false;
-const XOPAY_CLIENT_HOST = "http://www.xopay.com";
-const XOPAY_CLIENT_API_VERSION = "dev";
+const XOPAY_CLIENT_HOST = argv.clientHost || "http://www.xopay.com";
+const XOPAY_CLIENT_API_VERSION = argv.clientApiVersion || "dev";
+
+//Print info
+console.log("Configuration:");
+console.log("\tClient hostname:\t\t",XOPAY_CLIENT_HOST);
+console.log("\tClient api version:\t\t",XOPAY_CLIENT_API_VERSION);
+console.log("");
 
 var config = {
     DEV_MODE: DEV_MODE,

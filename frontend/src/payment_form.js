@@ -4,11 +4,11 @@
  */
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
-import { ajax } from 'jquery'
+import ajax from 'axios'
 
-import Utils, { Validator, CreditCard, Payment } from '../utils'
-import { Field, ComboBox, CVVInput } from '../components'
-import { PAYSYS, DEFAULT_PAYSYS } from '../configs'
+import Utils, {Validator, CreditCard, Payment} from '../utils'
+import {Field, ComboBox, CVVInput} from '../components'
+import {PAYSYS, DEFAULT_PAYSYS} from '../configs'
 
 class PaymentForm extends Component {
     constructor(props) {
@@ -16,25 +16,54 @@ class PaymentForm extends Component {
         this.handleDataChange = this.handleDataChange.bind(this);
         this.handleCardNumberChange = this.handleCardNumberChange.bind(this);
         this.handleSubmitForm = this.handleSubmitForm.bind(this);
+        this.hideError = this.hideError.bind(this);
+        this.hideInfo = this.hideInfo.bind(this);
+
+        this.initData.call(this);
+
         this.state = {
             data: {
                 card_number: "",
                 cardholder_name: "",
                 cvv: ""
             },
-            paySysId: DEFAULT_PAYSYS
+            paySysId: DEFAULT_PAYSYS,
+            error: "",
+            info: "",
+            hardValidation: false
         };
         this.publicKey = "";
+
+
         ajax({
             url: Utils.getPublicKeyUrl(),
             dataType: "json"
-        }).done((function (data) {
-            this.publicKey = data.key
+        }).then((function (response) {
+            switch (response.status) {
+                case 200:
+                    this.publicKey = response.data.key;
+                    break;
+                default:
+                    console.log(response); //TODO catch error
+            }
         }).bind(this));
     }
 
-    handleDataChange({target:{name,value}}) { // e.target.name, e.target.value
+    initData() {
+        const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        const currentYear = (new Date()).getFullYear();
+        const years = [];
+        for (var i = 0; i < 8; i++) {
+            years.push(currentYear + i);
+        }
+
+        this.months = months;
+        this.years = years;
+    }
+
+    handleDataChange({target:{name, value}}) { // e.target.name, e.target.value
         this.setState({
+            hardValidation: false,
             data: Object.assign({}, this.state.data, {
                 [name]: value
             })
@@ -43,36 +72,57 @@ class PaymentForm extends Component {
 
     handleCardNumberChange(e) {
         this.setState({
+            hardValidation: false,
             data: Object.assign({}, this.state.data, {
                 'card_number': (e.target.value).replace(/\s/g, "")
             })
         })
     }
 
-    validateData(data) {
+    validateData(data, hard = false) {
         return Validator.validate({
-            card_number: CreditCard.validator
-        }, data)
+            card_number: CreditCard.validator,
+            cvv: CreditCard.cvvValidator
+        }, data, hard)
     }
 
     handleSubmitForm(e) {
-        console.log("Submit");
-        Payment.create(this.state.data, this.state.paySysId, this.publicKey)
-            .done(function () {
-
-            })
-            .fail(function () {
-
-            });
         e.preventDefault();
+        const self = this;
+        const {data, paySysId} = this.state;
+        if (this.validateData(data, true).__count == 0) {
+            Payment.create(data, paySysId, this.publicKey)
+                .then(function (response) {
+                    self.setState({info: "Good"}); //TODO
+                    debugger;
+                })
+                .catch(function (response) {
+                    self.setState({error: "Something went wrong"});
+                    debugger;
+                });
+        } else {
+            this.setState({
+                hardValidation: true
+            })
+        }
+    }
+
+    hideError() {
+        this.setState({error: ""})
+    }
+
+    hideInfo() {
+        this.setState({info: ""})
     }
 
     render() {
-        const { data } = this.state;
-        const errors = this.validateData(data);
+        const {data, hardValidation} = this.state;
+        const errors = this.validateData(data, hardValidation);
 
         return (
             <div className="login-box">
+                {this.renderError(this.state.error, this.hideError)}
+                {this.renderInfo(this.state.info, this.hideInfo)}
 
                 <div className="login-box-body">
                     {
@@ -82,19 +132,13 @@ class PaymentForm extends Component {
                             </div>
                         ) : null
                     }
+
                     <h2>
-                        {store.storeName}
+                        <a href={store.storeUrl} target="_blank"
+                        >
+                            <i className="fa fa-home"/> {store.storeName}
+                        </a>
                     </h2>
-                    <div className="row">
-                        <div className="col-xs-12">
-                            <div className="form-group">
-                                <a href={store.storeUrl} target="_blank"
-                                   className="btn btn-warning btn-flat pull-right">
-                                    <i className="fa fa-home"/> Visit store
-                                </a>
-                            </div>
-                        </div>
-                    </div>
 
                     <p >{store.description}</p>
                     <h2><strong>{invoice.amount} {invoice.currency}</strong></h2>
@@ -131,53 +175,55 @@ class PaymentForm extends Component {
                                label="Cardholder name"
                         />
 
-                        <Field icon="key"
-                               name="cvv"
-                               onChange={this.handleDataChange}
-                               type="password"
-                               value={data.cvv}
-                               errors={errors.cvv}
-                               placeholder="123"
-                               label="CVV"
-                        />
-
-
-                        <CVVInput name="cvv"
-                                  onChange={this.handleDataChange}
-                                  type="password"
-                                  value={data.cvv}
-                                  errors={errors.cvv}
-                                  placeholder="123"
-                                  label="CVV"
-                        />
-
                         <div className="row">
-                            <div className="col-xs-6">
-                                <ComboBox name="month"
+                            <div className="col-xs-3">
+                                <CVVInput name="cvv"
                                           onChange={this.handleDataChange}
-                                          value={data.month}
-                                          errors={errors.month}
-                                          placeholder="01"
-                                          label="Month">
-                                    {
-                                        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(function (i) {
-                                            let val = i.toString();
-                                            val = (val.length < 2) ? ("0" + val) : val;
-                                            return <option key={i} value={val}>{val}</option>;
-                                        })
-                                    }
-                                </ComboBox>
-                            </div>
-                            <div className="col-xs-6">
-                                <Field icon="key"
-                                       name="year"
-                                       onChange={this.handleDataChange}
-                                       value={data.year}
-                                       errors={errors.year}
-                                       placeholder="2016"
-                                       label="Year"
+                                          type="password"
+                                          value={data.cvv}
+                                          errors={errors.cvv}
+                                          placeholder="123"
+                                          label="CVV"
                                 />
                             </div>
+                            <div className="col-xs-9">
+                                <div className="row">
+                                    <div className="col-xs-6">
+
+                                        <ComboBox name="month"
+                                                  onChange={this.handleDataChange}
+                                                  value={data.month}
+                                                  errors={errors.month}
+                                                  placeholder="01"
+                                                  label="Exp.Month">
+                                            {
+                                                this.months.map(function (i) {
+                                                    let val = i.toString();
+                                                    val = (val.length < 2) ? ("0" + val) : val;
+                                                    return <option key={i} value={val}>{val}</option>;
+                                                })
+                                            }
+                                        </ComboBox>
+                                    </div>
+                                    <div className="col-xs-6">
+                                        <ComboBox name="year"
+                                                  onChange={this.handleDataChange}
+                                                  value={data.year}
+                                                  errors={errors.year}
+                                                  placeholder="2016"
+                                                  label="Exp.Year">
+                                            {
+                                                this.years.map(function (i) {
+                                                    let val = i.toString();
+                                                    val = (val.length < 2) ? ("0" + val) : val;
+                                                    return <option key={i} value={val}>{val}</option>;
+                                                })
+                                            }
+                                        </ComboBox>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
 
@@ -216,6 +262,29 @@ class PaymentForm extends Component {
                 </div>
             </div>
         );
+    }
+
+    renderError(error, onClose = ()=>1) {
+
+        if (error) {
+            return (
+                <div className="alert alert-danger alert-dismissable form-group">
+                    <button type="button" className="close" onClick={onClose}>×</button>
+                    {error}
+                </div>
+            )
+        }
+    }
+
+    renderInfo(info, onClose = ()=>1) {
+        if (info) {
+            return (
+                <div className="alert alert-info alert-dismissable form-group">
+                    <button type="button" className="close" onClick={onClose}>×</button>
+                    {info}
+                </div>
+            )
+        }
     }
 }
 

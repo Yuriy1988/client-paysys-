@@ -16,8 +16,7 @@ export default class Utils {
     }
 
     static getPublicKeyUrl() {
-        return "http://192.168.1.118:5000/api/client/dev/public_key"; //TODO delete
-        //return `${XOPAY_CLIENT_HOST}/api/client/${XOPAY_CLIENT_API_VERSION}/public_key`;
+        return `${XOPAY_CLIENT_HOST}/api/client/${XOPAY_CLIENT_API_VERSION}/security/public_key`;
     }
 
     static generateSalt(size) {

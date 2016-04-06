@@ -1,0 +1,19 @@
+{
+  "arguments" : [
+    {
+      "full" : "client_host",
+      "short" : "h",
+      "value" : true,
+      "description" : "Xopay client hostname http:\/\/xopay.digitaloutlooks.com"
+    },
+    {
+      "full" : "client_api_version",
+      "short" : "a",
+      "value" : true,
+      "description" : "Xopay client API version e.g. dev"
+    }
+  ],
+  "defaults" : {
+    "help" : true // displays help on --help
+  }
+}

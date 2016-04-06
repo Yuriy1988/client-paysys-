@@ -5,9 +5,8 @@
     color: white;
     outline: 0;
     margin: 0;
-    width: 100px;
+    padding: 8px 18px;
     font-size: 16pt;
-    height: 42px;
     cursor: pointer;
     border: none;
 }

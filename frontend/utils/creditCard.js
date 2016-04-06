@@ -45,6 +45,14 @@ export class CreditCard {
         return errors;
     }
 
+    static cvvValidator(cvv) {
+        let errors = [];
+        if (!(/^\d{3}$/.test(cvv))) {
+            errors.push("CVV should contain only 3 digits");
+        }
+        return errors;
+    }
+
     static prepareNumber(number) {
         return number.replace(/(\d{4})/g, (matches, match1, offset, str) => {
             if (offset + match1.length < str.length) {

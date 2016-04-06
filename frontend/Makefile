@@ -1,3 +1,5 @@
+CLIENT_HOST="http://xopay.digitaloutlooks.com"
+CLIENT_API_VERSION="dev"
 
 install:
 	sudo apt-get install wget curl
@@ -7,4 +9,4 @@ install:
 
 build:
 	npm install
-	npm run build
+	npm run build -- --client_host $(CLIENT_HOST) --client_api_version $(CLIENT_API_VERSION)

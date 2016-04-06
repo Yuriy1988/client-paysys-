@@ -11,9 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.9.1",
     "babel-polyfill": "^6.3.14",
     "isomorphic-fetch": "^2.1.1",
-    "jquery": "^2.2.2",
     "lodash": "^4.0.0",
     "node-rsa": "^0.3.2",
     "react": "^0.14.7",
@@ -26,6 +26,7 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "json-loader": "^0.5.4",
+    "node-argument-parser": "^0.1.0",
     "webpack": "^1.9.11"
   }
 }

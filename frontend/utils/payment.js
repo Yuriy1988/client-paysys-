@@ -2,19 +2,20 @@
  * Created by gasya on 30.03.16.
  * DigitalOutlooks corporation.
  */
-import { ajax } from 'jquery'
-
-import Utils, { CreditCard } from '../utils'
-
+import ajax from 'axios'
+import Utils, {CreditCard} from '../utils'
 import RSA from 'node-rsa'
 
 export class Payment {
     static create(data, paySysId, publicKey) {
         return ajax({
-            url: Utils.createPaymentUrl(this.state.paySysId, invoice.id),
+            url: Utils.createPaymentUrl(invoice.id),
             data: Payment.prepareData(data, paySysId, publicKey),
             method: "POST",
-            dataType: "json"
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json"
+            }
         })
     }
 
