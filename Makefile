@@ -90,6 +90,15 @@ test: venv_init
 	./manage.py test
 
 
+# ----- Demo Server -----
+
+setup_demo:
+	fab setenv:demo setup
+
+deploy:
+	fab setenv:demo update
+
+
 # ----- Run Server -----
 
 runserver:
