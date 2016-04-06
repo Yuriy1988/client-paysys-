@@ -1,5 +1,6 @@
 stages:
   - test
+  - deploy_demo
 
 test_task:
   stage: test
@@ -10,3 +11,13 @@ test_task:
   cache:
     paths:
       - venv/
+
+deploy_demo_task:
+  stage: deploy_demo
+  script:
+    - fab setenv:demo update
+  only:
+    - master
+  cache:
+    paths:
+      - frontend/node_modules/
