@@ -27,7 +27,7 @@ function validateInvoice(invoice) {
 function render() {
     var root = document.createElement("link");
     root.rel = "stylesheet";
-    root.href = `${XOPAY_CLIENT_HOST}/static/css/get-button.css`;
+    root.href = `${XOPAY_CLIENT_HOST}/static/client/css/get-button.css`;
     return root;
 }
 

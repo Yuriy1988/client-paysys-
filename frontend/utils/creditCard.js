@@ -7,19 +7,19 @@ export class CreditCard {
     static getIconByNumber(number) {
         switch (number[0]) {
             case "3":
-                return "/static/img/cc-aexpress-icon.png";
+                return "/static/client/img/cc-aexpress-icon.png";
                 break;
             case "4":
-                return "/static/img/cc-visa-icon.png";
+                return "/static/client/img/cc-visa-icon.png";
                 break;
             case "5":
-                return "/static/img/cc-mastercard-icon.png";
+                return "/static/client/img/cc-mastercard-icon.png";
                 break;
             case "6":
-                return "/static/img/cc-maestro-icon.png";
+                return "/static/client/img/cc-maestro-icon.png";
                 break;
             default:
-                return "/static/img/cc-card-icon.png"
+                return "/static/client/img/cc-card-icon.png"
         }
     }
 

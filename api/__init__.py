@@ -59,4 +59,4 @@ from api import handlers
 @app.route('/')
 def index():
     """ Redirect from root to admin page """
-    return app.send_static_file('home.html')
+    return app.send_static_file('client/home.html')
