@@ -1,4 +1,4 @@
-from api.handlers.client_utils import mask_card_number, get_store_by_store_id, get_amount, put_to_queue, send_email
+from api.handlers.client_utils import get_store_by_store_id, get_amount, put_to_queue, send_email
 from flask import request, jsonify, Response
 from api import app, db
 from api.models import Invoice, Payment
@@ -40,15 +40,27 @@ def payment_create(invoice_id):
     if payment_request_errors:
         raise ValidationError(errors=payment_request_errors)
 
+    ####
+    payment = process_payment(invoice, payment_request_data)
+
+    payment_request_data['notify_by_email'] and notify(payment_request_data['notify_by_email'], payment)
+
+    payment_status = {'id': payment.id, 'status': payment.status}
+    return jsonify(json.dumps(payment_status)), 202
+
+
+def process_payment(invoice, payment_request_data):
     # 3.1. Get merchant_id from Admin (using store API)
-    store_json_info = get_store_by_store_id(invoice.store_id)
-    store_data = json.loads(store_json_info)
+    store_data = get_store_by_store_id(invoice.store_id)
 
     # 3.2. Get Helper result
-    merchant_id = store_data['merchant_id']
     amount = get_amount(invoice.items)
-    currency = invoice.currency
-    helper_responce = get_route(payment_request_data["paysys_id"], merchant_id, amount, currency)
+    helper_responce = get_route(
+        payment_request_data["paysys_id"],
+        store_data['merchant_id'],
+        amount,
+        invoice.currency
+    )
 
     # 4.1. Create a JSON for Transaction queue
     transaction_json = json.dumps({
@@ -69,45 +81,33 @@ def payment_create(invoice_id):
         'notify_by_email': payment_request_data['notify_by_email'],
         'notify_by_phone': payment_request_data['notify_by_phone'],
         'paysys_id': payment_request_data["paysys_id"],
-        'invoice_id': invoice_id
+        'invoice_id': invoice.id
     }
     payment = Payment.create(payment)
     db.session.commit()
 
-    # 6. Create a status JSON for responce
-    payment_responce_dict = {
-        'id': payment.id,
-        'status': payment.status
-    }
+    return payment
 
-    # 7. Send an email to user (if user wrote his email in form)
-    if payment_request_data['notify_by_email']:
-        email_responce = send_email(
-            payment_request_data['notify_by_email'],
-            "XOPAY transaction status",
-            "Thank you for your payment! Transaction status is: {status}".format(status=payment.status)
-        )
 
-    payment_responce_schema = PaymentResponceSchema()
-    result = payment_responce_schema.dump(payment_responce_dict)
-
-    return jsonify(result.data), 202
+def notify(email, payment):
+    return send_email(
+        email,
+        "XOPAY transaction status",
+        "Thank you for your payment! Transaction status is: {status}".format(status=payment.status)
+    )
 
 
 @app.route('/api/client/dev/payment/<payment_id>', methods=['PUT'])
 def payment_update_status(payment_id):
     status = request.get_json()
     if not status:
-        raise BaseApiError('No JSON in request')
+        raise BaseApiError('No JSON in request.')
+    if "status" not in status:
+        raise ValidationError("No 'status' in request JSON.")
 
     payment = Payment.query.get(payment_id)
     if not payment:
-        raise NotFoundError('There is no payment with such id')
-
-    try:
-        status["status"]
-    except:
-        raise ValidationError("No 'status' in request JSON")
+        raise NotFoundError('There is no payment with such id.')
 
     payment.status = status["status"]
 

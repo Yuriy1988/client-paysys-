@@ -1,6 +1,4 @@
 import decimal
-import logging
-from logging import FileHandler, Formatter
 
 from flask import Flask, json
 from flask.ext.cors import CORS
@@ -26,18 +24,6 @@ manager.add_command('db', MigrateCommand)
 
 # Logging:
 # FIXME: write correct log configuration and add logs
-# file_handler = FileHandler('./error.log')
-# file_handler.setLevel(logging.WARNING)
-# file_handler.setFormatter(Formatter(
-#     '''
-#     NEW_LOG:
-#     Time:        %(asctime)s
-#     Level Name:  %(levelname)s:
-#     Message:     %(message)s
-#     Pass:        [in %(pathname)s:%(lineno)d]
-#     '''
-# ))
-# app.logger.addHandler(file_handler)
 
 
 # Decimal-to-json fix:
@@ -52,11 +38,3 @@ class MyJSONEncoder(json.JSONEncoder):
 app.json_encoder = MyJSONEncoder
 
 from api import handlers
-
-# TODO: move into separate module
-
-
-@app.route('/')
-def index():
-    """ Redirect from root to admin page """
-    return app.send_static_file('client/home.html')

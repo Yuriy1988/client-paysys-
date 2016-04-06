@@ -1,3 +1,5 @@
+import json
+
 from config import ADMIN_URL, CURRENT_ADMIN_SERVER_VERSION, QUEUE_HOST_ADDRESS, QUEUE_NAME, NOTIFICATION_SERVER_URL
 import requests
 import decimal
@@ -42,7 +44,6 @@ def get_from_queue():
 
     print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
-    pass
 
 
 def get_store_by_store_id(store_id):
@@ -51,18 +52,7 @@ def get_store_by_store_id(store_id):
         current_admin_server_version=CURRENT_ADMIN_SERVER_VERSION,
         store_id=store_id
     )
-    return requests.get(url)
-
-
-def mask_card_number(number):
-    first_6 = number[0:6]
-    last_4 = number[-4:]
-    stars = '*' * (len(number) - 10)
-    return '{first_6}{stars}{last_4}'.format(
-        first_6=first_6,
-        stars=stars,
-        last_4=last_4
-    )
+    return json.loads(requests.get(url))
 
 
 def get_amount(items_list):

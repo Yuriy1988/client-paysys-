@@ -4,6 +4,12 @@ from config import API_VERSION, BUILD_DATE
 from flask import jsonify
 
 
+@app.route('/')
+def index():
+    """ Redirect from root to admin page """
+    return app.send_static_file('client/home.html')
+
+
 @app.route('/api/client/version', methods=['GET'])
 def get_version():
     """

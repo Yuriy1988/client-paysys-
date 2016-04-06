@@ -53,9 +53,7 @@ def invoice_get_info(invoice_id):
     if not invoice:
         raise NotFoundError()
 
-    schema = InvoiceSchema()
-
-    result = schema.dump(invoice)
+    result = InvoiceSchema().dump(invoice)
     return jsonify(result.data)
 
 
@@ -86,6 +84,4 @@ def get_payment_form(invoice_id):
         'currency': invoice.currency
     }
 
-    return render_template('payment_form.html',
-                           store_info=store_info,
-                           invoice_info=invoice_info)
+    return render_template('payment_form.html', store_info=store_info, invoice_info=invoice_info)
