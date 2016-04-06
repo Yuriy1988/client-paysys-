@@ -1,4 +1,3 @@
-import json
 import os
 from api.tests import base
 from api.handlers.security import _is_valid_rsa_key, PUBLIC_KEY_FILE_NAME

@@ -4,16 +4,12 @@ from api import app, db
 from api.models import Invoice, Payment
 from api.schemas import PaymentResponceSchema, PaymentRequestSchema
 from api.errors import ValidationError, NotFoundError, BaseApiError
-from config import CURRENT_CLIENT_SERVER_VERSION
 from helper.main import get_route
 import json
 import datetime
 
 
-@app.route('/api/client/{version}/invoices/<invoice_id>/payments'.format(
-    version=CURRENT_CLIENT_SERVER_VERSION),
-    methods=['POST']
-)
+@app.route('/api/client/dev/invoices/<invoice_id>/payments', methods=['POST'])
 def payment_create(invoice_id):
     """
     Create invoice using an incoming JSON.
@@ -98,10 +94,7 @@ def payment_create(invoice_id):
     return jsonify(result.data), 202
 
 
-@app.route('/api/client/{version}/payment/<payment_id>'.format(
-    version=CURRENT_CLIENT_SERVER_VERSION),
-    methods=['PUT']
-)
+@app.route('/api/client/dev/payment/<payment_id>', methods=['PUT'])
 def payment_update_status(payment_id):
     status = request.get_json()
     if not status:

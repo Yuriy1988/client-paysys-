@@ -1,6 +1,5 @@
 from api import app
-from config import CURRENT_CLIENT_SERVER_VERSION
-from flask import jsonify, request, Response
+from flask import jsonify, request
 import re
 import os
 
@@ -15,9 +14,7 @@ def _is_valid_rsa_key(key):
     return r.match(key)
 
 
-@app.route('/api/client/{version}/security/public_key'.format(
-    version=CURRENT_CLIENT_SERVER_VERSION), methods=['GET']
-)
+@app.route('/api/client/dev/security/public_key', methods=['GET'])
 def get_public_key():
     if not os.path.exists(PUBLIC_KEY_FILE_NAME):
         raise ServiceUnavailable("Key does not exist.")
@@ -27,9 +24,7 @@ def get_public_key():
     return jsonify(key)
 
 
-@app.route('/api/client/{version}/security/public_key'.format(
-    version=CURRENT_CLIENT_SERVER_VERSION), methods=['POST']
-)
+@app.route('/api/client/dev/security/public_key', methods=['POST'])
 def upload_public_key():
     try:
         key_info = request.get_json()

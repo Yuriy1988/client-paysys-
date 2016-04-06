@@ -5,7 +5,7 @@ from api import app, db
 from api.models import Invoice, Payment
 from api.schemas import InvoiceSchema, VersionSchema
 from api.handlers.client_utils import get_store_by_store_id
-from config import CURRENT_CLIENT_SERVER_VERSION, API_VERSION, BUILD_DATE
+from config import API_VERSION, BUILD_DATE
 from api.errors import NotFoundError, ValidationError
 
 
@@ -16,7 +16,7 @@ def get_version():
     """
     responce = {
         "api_version": API_VERSION,
-        "server_version": CURRENT_CLIENT_SERVER_VERSION,
+        "server_version": 'dev',
         "build_date": BUILD_DATE
     }
     version_schema = VersionSchema()
@@ -24,12 +24,12 @@ def get_version():
     return jsonify(result.data)
 
 
-@app.route('/api/client/{version}/invoices'.format(version=CURRENT_CLIENT_SERVER_VERSION), methods=['OPTIONS'])
+@app.route('/api/client/dev/invoices', methods=['OPTIONS'])
 def invoice_create_options():
     return Response(status=200)
 
 
-@app.route('/api/client/{version}/invoices'.format(version=CURRENT_CLIENT_SERVER_VERSION), methods=['POST'])
+@app.route('/api/client/dev/invoices', methods=['POST'])
 def invoice_create():
     """
     Create invoice using an incoming JSON.
@@ -56,7 +56,7 @@ def invoice_create():
     return jsonify(result.data)
 
 
-@app.route('/api/client/{version}/invoices/<invoice_id>'.format(version=CURRENT_CLIENT_SERVER_VERSION), methods=['GET'])
+@app.route('/api/client/dev/invoices/<invoice_id>', methods=['GET'])
 def invoice_get_info(invoice_id):
     """
     Get invoice info by invoice id.

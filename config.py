@@ -29,6 +29,5 @@ QUEUE_NAME = 'hello'  # TODO: Write down the right queue name.
 
 # Current versions:
 API_VERSION = 'dev'
-CURRENT_CLIENT_SERVER_VERSION = 'dev'
 CURRENT_ADMIN_SERVER_VERSION = 'dev'
 BUILD_DATE = datetime(2016, 3, 22, 18, 55, 42, 768858)
