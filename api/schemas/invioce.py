@@ -1,14 +1,8 @@
 from marshmallow import fields
-from marshmallow.validate import OneOf, Range, Length
+from marshmallow.validate import OneOf, Range
 
 from api.schemas import base
 from api.models import enum
-
-
-class VersionSchema(base.BaseSchema):
-    api_version = fields.Str(required=True)
-    server_version = fields.Str(required=True)
-    build_date = fields.DateTime(required=True)
 
 
 class ItemSchema(base.BaseSchema):

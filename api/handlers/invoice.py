@@ -1,27 +1,11 @@
-from flask import Response, request, jsonify, render_template
 import json
-from flask import request, jsonify, render_template
+from flask import Response, request, jsonify, render_template
+
 from api import app, db
-from api.models import Invoice, Payment
-from api.schemas import InvoiceSchema, VersionSchema
+from api.models import Invoice
+from api.schemas import InvoiceSchema
 from api.handlers.client_utils import get_store_by_store_id
-from config import API_VERSION, BUILD_DATE
-from api.errors import NotFoundError, ValidationError
-
-
-@app.route('/api/client/version', methods=['GET'])
-def get_version():
-    """
-    Return a current server and API versions.
-    """
-    responce = {
-        "api_version": API_VERSION,
-        "server_version": 'dev',
-        "build_date": BUILD_DATE
-    }
-    version_schema = VersionSchema()
-    result = version_schema.dump(responce)
-    return jsonify(result.data)
+from api.errors import NotFoundError
 
 
 @app.route('/api/client/dev/invoices', methods=['OPTIONS'])
