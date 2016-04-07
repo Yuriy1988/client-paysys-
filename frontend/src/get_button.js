@@ -52,11 +52,11 @@ document.onclick = function (event) {
                             location.href = `${XOPAY_CLIENT_HOST}/payment/${response.data.id}`;
                             break;
                         default:
-                            console.log(response); // TODO CATCH ERROR
+                            alert(response); // TODO CATCH ERROR
                     }
                 })
                 .catch(function (response) {
-                    console.log(response); //TODO CATCH ERROR
+                    alert(response); //TODO CATCH ERROR
                 });
         } else {
             alert("Invoice is invalid");
