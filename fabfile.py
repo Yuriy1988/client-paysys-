@@ -15,6 +15,7 @@ path_to_deploy = [
     'frontend/static',
     'api',
     'helper',
+    'periphery',
     'config.py',
     'manage.py',
     'requirements.txt',
@@ -23,6 +24,7 @@ path_to_deploy = [
 
 path_to_exclude = [
     '*.pyc',
+    '.gitignore',
     '__pycache__',
     'api/tests',
     'helper/tests.py'
