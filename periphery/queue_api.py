@@ -1,18 +1,8 @@
-import json
-
-from config import ADMIN_URL, CURRENT_ADMIN_SERVER_VERSION, QUEUE_HOST_ADDRESS, QUEUE_NAME, NOTIFICATION_SERVER_URL
-import requests
-import decimal
 import pika
-from celery import Celery
+from config import QUEUE_HOST_ADDRESS, QUEUE_NAME
 
 
-def send_email(email, subject, message):
-    Celery(broker=NOTIFICATION_SERVER_URL).send_task('notify.send_mail', (email, subject, message))
-    return "Message sent to {email}".format(email=email)
-
-
-def put_to_queue(body):
+def push(body):
     # Connect to the queue server
     with pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST_ADDRESS)) as connection:
         channel = connection.channel()
@@ -26,10 +16,8 @@ def put_to_queue(body):
                               body=body)
         # print(" [x] Sent body: ", body)
 
-    return "ACCEPTED"
 
-
-def get_from_queue():
+def pop():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST_ADDRESS))
     channel = connection.channel()
 
@@ -44,19 +32,3 @@ def get_from_queue():
 
     print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
-
-
-def get_store_by_store_id(store_id):
-    url = '{admin_url}/api/admin/{current_admin_server_version}/stores/{store_id}'.format(
-        admin_url=ADMIN_URL,
-        current_admin_server_version=CURRENT_ADMIN_SERVER_VERSION,
-        store_id=store_id
-    )
-    return json.loads(requests.get(url))
-
-
-def get_amount(items_list):
-    amount = 0
-    for item in items_list:
-        amount += decimal.Decimal(item.unit_price) * int(item.quantity)
-    return round(amount, 2)

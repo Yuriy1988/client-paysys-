@@ -1,5 +1,7 @@
 import uuid
 
+from decimal import Decimal
+
 from api import db
 import datetime
 from api.models import enum, base
@@ -30,7 +32,6 @@ class Invoice(base.BaseModel):
     items = db.relationship('Item', backref='invoice', lazy='dynamic')
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     payment = db.relationship('Payment', lazy='dynamic')
-    # transactions = db.relationship('Transaction', backref='transaction', lazy='dynamic')
 
     def __init__(self, order_id, store_id, currency, items):
         self.order_id = order_id
@@ -41,11 +42,13 @@ class Invoice(base.BaseModel):
     def __repr__(self):
         return '<Invoice id: %r>' % self.id
 
-    def get_amount(self):
-        invoice_amount = 0
-        for item in self.items:
-            invoice_amount += item.quantity * item.unit_price
-        return invoice_amount
+    @property
+    def amount(self):
+        items_list = Item.query.filter_by(invoice_id=self.id).all()
+        amount = 0
+        for item in items_list:
+            amount += Decimal(item.unit_price) * int(item.quantity)
+        return round(amount, 2)
 
     @classmethod
     def create(cls, data, add_to_db=True):

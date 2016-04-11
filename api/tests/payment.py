@@ -15,8 +15,10 @@ class TestPayment(base.BaseTestCase):
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
         payment_request = self.get_payment_request()
-        payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
-            invoice_id=invoice_body['id']), payment_request)
+        payment_status, payment_body = self.post(
+            '/invoices/{invoice_id}/payments'.format(invoice_id=invoice_body['id']),
+            payment_request
+        )
 
         self.assertEqual(payment_status, 202)
         # payment id generated:

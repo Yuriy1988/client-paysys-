@@ -1,4 +1,4 @@
-CLIENT_HOST="http://xopay.digitaloutlooks.com"
+CLIENT_HOST="http://192.168.1.118:7254"
 CLIENT_API_VERSION="dev"
 
 install:

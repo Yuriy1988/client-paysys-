@@ -1,15 +1,13 @@
+import json
 import random
 import string
-import json
 from copy import deepcopy
-
+from unittest.mock import MagicMock
 from flask.ext.testing import TestCase
 
-from unittest.mock import MagicMock
-import api.handlers.client_utils
-
-
+import helper
 from api import app, db as app_db
+from periphery import admin_api, notification_api, queue_api
 
 __author__ = 'Andrey Kupriy'
 
@@ -94,15 +92,20 @@ class BaseTestCase(TestCase):
                 }
             }
 
-        store_json = json.dumps(_store)
+        # FIXME: Valid JSON
+        _merchant = {
+            "merchant_account": {}
+        }
 
-        api.handlers.payment.get_store_by_store_id = MagicMock(return_value=store_json)
-        api.handlers.payment.put_to_queue = MagicMock(return_value={"status": "ACCEPTED"})
-        api.handlers.payment.send_email = MagicMock(return_value="Message sent to {email}".format(
+        store_json = _store
+        admin_api.merchant_by_id = MagicMock(return_value=_merchant)
+        admin_api.store_by_id = MagicMock(return_value=store_json)
+        queue_api.push = MagicMock(return_value={"status": "ACCEPTED"})
+        notification_api.send_email = MagicMock(return_value="Message sent to {email}".format(
             email=self._card_info["notify_by_email"]))
 
-        api.handlers.payment.get_route = MagicMock(return_value={
-            "bank_contract": {
+        helper.get_route = MagicMock(return_value={
+            "paysys_contract": {
                 "id": 10,
                 "commission_fixed": 10.01,
                 "commission_pct": 10,
@@ -160,6 +163,7 @@ class BaseTestCase(TestCase):
 
     def post(self, url, body):
         headers = {"Content-Type": "application/json"}
+        data=json.dumps(body)
         response = self.client.post(self.api_base + url, data=json.dumps(body), headers=headers)
         return response.status_code, response.json
 

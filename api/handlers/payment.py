@@ -1,22 +1,26 @@
-from api.handlers.client_utils import get_store_by_store_id, get_amount, put_to_queue, send_email
-from flask import request, jsonify, Response
-from api import app, db
-from api.models import Invoice, Payment
-from api.schemas import PaymentResponceSchema, PaymentRequestSchema
-from api.errors import ValidationError, NotFoundError, BaseApiError
-from helper.main import get_route
-import json
 import datetime
+
+import helper
+from api import app, db
+from api.errors import ValidationError, NotFoundError, BaseApiError
+from api.models import Invoice, Payment
+from api.schemas import PaymentRequestSchema, InvoiceSchema
+from flask import request, jsonify, Response
+from periphery import admin_api, notification_api, queue_api
 
 
 @app.route('/api/client/dev/invoices/<invoice_id>/payments', methods=['POST'])
 def payment_create(invoice_id):
     """
-    Create invoice using an incoming JSON.
+    Create invoice.
 
-    Test JSON:
-    {"card_number": "1111111111111111", "cardholder_name": "John Bowe", "cvv": "111", "expiry_date": "11/1111",
-    "notify_by_email": "email@email.com", "notify_by_phone": "1111111111"}
+    {
+        "paysys_id": "string",
+        "crypted_payment": "Base64String($CryptedPayment)",
+        "payment_account": "string",
+        "notify_by_email": "email",
+        "notify_by_phone": "phone",
+    }
 
     Returns:
     < 202 Accepted
@@ -28,61 +32,61 @@ def payment_create(invoice_id):
     < 404 Not Found
     :param invoice_id: Invoice custom (uuid) id.
     """
-    # 1. Check if there is an invoice with such id and get is if exists
     invoice = Invoice.query.get(invoice_id)
     if not invoice:
         raise NotFoundError('There is no invoice with such id')
 
-    # 2. Catch JSON with card info
-    payment_request_schema = PaymentRequestSchema()
-    payment_request_data, payment_request_errors = payment_request_schema.load(request.get_json())
+    payment_request, errors = PaymentRequestSchema().load(request.get_json())
+    if errors:
+        raise ValidationError(errors=errors)
 
-    if payment_request_errors:
-        raise ValidationError(errors=payment_request_errors)
+    payment = process_payment(invoice_id, payment_request)
 
-    ####
-    payment = process_payment(invoice, payment_request_data)
+    queue_api.push(construct_transaction(payment_request, invoice, payment))
 
-    payment_request_data['notify_by_email'] and notify(payment_request_data['notify_by_email'], payment)
+    payment_request['notify_by_email'] and notify(payment_request['notify_by_email'], payment)
 
-    payment_status = {'id': payment.id, 'status': payment.status}
-    return jsonify(json.dumps(payment_status)), 202
+    return jsonify({'id': payment.id, 'status': payment.status}), 202
 
 
-def process_payment(invoice, payment_request_data):
-    # 3.1. Get merchant_id from Admin (using store API)
-    store_data = get_store_by_store_id(invoice.store_id)
+def construct_transaction(payment_request, invoice, payment):
+    serialized_invoice = InvoiceSchema().dump(invoice)
+    merchant_id = admin_api.store_by_id(invoice.store_id)["merchant_id"]
+    merchant_account = admin_api.merchant_by_id(merchant_id)["merchant_account"]
+    route = helper.get_route(payment_request["paysys_id"], merchant_id, invoice.amount, invoice.currency)
 
-    # 3.2. Get Helper result
-    amount = get_amount(invoice.items)
-    helper_responce = get_route(
-        payment_request_data["paysys_id"],
-        store_data['merchant_id'],
-        amount,
-        invoice.currency
-    )
+    transaction = {
+        "id": payment.id,
+        "payment": {
+            "description": "TODO: description support.",
+            "invoice": serialized_invoice,
+            "amount_coins": invoice.amount,
+        },
+        "source": {
+            "paysys_contract": route["paysys_contract"],
+            "payment_requisites": {
+                "crypted_payment": payment_request["crypted_payment"]
+            }
+        },
+        "destination": {
+            "merchant_contract": route["merchant_contract"],
+            "merchant_account": merchant_account
+        }
+    }
 
-    # 4.1. Create a JSON for Transaction queue
-    transaction_json = json.dumps({
-        'invoice': str(invoice),
-        'bank_contract': helper_responce['bank_contract'],
-        'merchant_contract': helper_responce['merchant_contract'],
-        'amount': str(amount * 100),
-        'source': payment_request_data
-    })
+    return transaction
 
-    # 4.2. Send the Transaction JSON to queue
-    queue_status = put_to_queue(transaction_json)
 
-    # 5. Save Payment obj to DB
+def process_payment(invoice_id, payment_request_data):
     payment = {
         'payment_account': payment_request_data['payment_account'],
-        'status': queue_status["status"],
-        'notify_by_email': payment_request_data['notify_by_email'],
-        'notify_by_phone': payment_request_data['notify_by_phone'],
+        'status': "ACCEPTED",
+        'invoice_id': invoice_id,
         'paysys_id': payment_request_data["paysys_id"],
-        'invoice_id': invoice.id
+        'notify_by_email': payment_request_data.get('notify_by_email'),
+        'notify_by_phone': payment_request_data.get('notify_by_phone'),
     }
+
     payment = Payment.create(payment)
     db.session.commit()
 
@@ -90,7 +94,7 @@ def process_payment(invoice, payment_request_data):
 
 
 def notify(email, payment):
-    return send_email(
+    return notification_api.send_email(
         email,
         "XOPAY transaction status",
         "Thank you for your payment! Transaction status is: {status}".format(status=payment.status)

@@ -1,11 +1,9 @@
-import json
-from flask import Response, request, jsonify, render_template
-
 from api import app, db
+from api.errors import NotFoundError
 from api.models import Invoice
 from api.schemas import InvoiceSchema
-from api.handlers.client_utils import get_store_by_store_id
-from api.errors import NotFoundError
+from flask import Response, request, jsonify, render_template
+from periphery import admin_api
 
 
 @app.route('/api/client/dev/invoices', methods=['OPTIONS'])
@@ -64,11 +62,9 @@ def get_payment_form(invoice_id):
         raise NotFoundError()
 
     # Getting custom layout store info from Admin (logo, etc):
-    store_json_info = get_store_by_store_id(invoice.store_id)
-    if not store_json_info:
+    store_data = admin_api.store_by_id(invoice.store_id)
+    if not store_data:
         raise NotFoundError
-
-    store_data = json.loads(store_json_info.text)
 
     store_info = {
         'store_name': store_data['store_name'],
@@ -80,7 +76,7 @@ def get_payment_form(invoice_id):
 
     invoice_info = {
         'id': invoice.id,
-        'amount': invoice.get_amount(),
+        'amount': invoice.amount,
         'currency': invoice.currency
     }
 
