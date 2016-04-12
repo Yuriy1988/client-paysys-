@@ -6,11 +6,10 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 
-from config import STATIC_FOLDER
-
-
-app = Flask(__name__, static_folder=STATIC_FOLDER)
+app = Flask(__name__)
 app.config.from_object('config')
+app.static_folder = app.config["STATIC_FOLDER"]
+
 
 # allow cross-origin ajax
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})

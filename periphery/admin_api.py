@@ -4,12 +4,11 @@
 import json
 import requests
 
-
-ADMIN_API_URL = "http://localhost:7128/api/admin/dev"
+from api import app
 
 
 def _admin(url, **params):
-    return json.loads(requests.get(ADMIN_API_URL + url, params=params).text)
+    return json.loads(requests.get(app.config["ADMIN_API_URL"] + url, params=params).text)
 
 
 def store_by_id(store_id):

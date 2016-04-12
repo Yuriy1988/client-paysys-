@@ -1,7 +1,7 @@
+from flask import jsonify
+
 from api import app
 from api.schemas.version import VersionSchema
-from config import API_VERSION, BUILD_DATE
-from flask import jsonify
 
 
 @app.route('/')
@@ -16,9 +16,9 @@ def get_version():
     Return a current server and API versions.
     """
     responce = {
-        "api_version": API_VERSION,
+        "api_version": app.config["API_VERSION"],
         "server_version": 'dev',
-        "build_date": BUILD_DATE
+        "build_date": app.config["BUILD_DATE"]
     }
     version_schema = VersionSchema()
     result = version_schema.dump(responce)
