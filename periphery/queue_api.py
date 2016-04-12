@@ -1,8 +1,10 @@
 import pika
 
 from api import app
+from periphery.service_error import handle_service_unavailable_error
 
 
+@handle_service_unavailable_error(msg="RabbitMQ service is unavailable now.")
 def push(body):
     # Connect to the queue server
     with pika.BlockingConnection(pika.ConnectionParameters(host=app.config["QUEUE_HOST_ADDRESS"])) as connection:
@@ -18,6 +20,7 @@ def push(body):
         # print(" [x] Sent body: ", body)
 
 
+@handle_service_unavailable_error(msg="RabbitMQ service is unavailable now.")
 def pop():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=app.config["QUEUE_HOST_ADDRESS"]))
     channel = connection.channel()

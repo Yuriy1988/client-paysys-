@@ -5,8 +5,10 @@ import json
 import requests
 
 from api import app
+from periphery.service_error import handle_service_unavailable_error
 
 
+@handle_service_unavailable_error(msg="Admin service is unavailable now.")
 def _admin(url, **params):
     return json.loads(requests.get(app.config["ADMIN_API_URL"] + url, params=params).text)
 

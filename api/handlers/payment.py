@@ -4,32 +4,34 @@ import helper
 from api import app, db
 from api.errors import ValidationError, NotFoundError, BaseApiError
 from api.models import Invoice, Payment
-from api.schemas import PaymentRequestSchema, InvoiceSchema
+from api.schemas import PaymentRequestSchema, InvoiceSchema, TransactionSchema
 from flask import request, jsonify, Response
 from periphery import admin_api, notification_api, queue_api
+
+
+@app.route('/api/client/dev/payment/<payment_id>', methods=['PUT'])
+def payment_update_status(payment_id):
+    status = request.get_json()
+    if not status:
+        raise BaseApiError('No JSON in request.')
+    if "status" not in status:
+        raise ValidationError("No 'status' in request JSON.")
+
+    payment = Payment.query.get(payment_id)
+    if not payment:
+        raise NotFoundError('There is no payment with such id.')
+
+    payment.status = status["status"]
+
+    payment.updated = datetime.datetime.utcnow()
+    db.session.commit()
+
+    return Response(status=200)
 
 
 @app.route('/api/client/dev/invoices/<invoice_id>/payments', methods=['POST'])
 def payment_create(invoice_id):
     """
-    Create invoice.
-
-    {
-        "paysys_id": "string",
-        "crypted_payment": "Base64String($CryptedPayment)",
-        "payment_account": "string",
-        "notify_by_email": "email",
-        "notify_by_phone": "phone",
-    }
-
-    Returns:
-    < 202 Accepted
-    {
-            id: string,	// payment_id - идентификатор для запроса состояния платежа
-            status: string	// статус платежа (default=ACCEPTED - принят в обработку)
-    }
-    < 400 Bad Request
-    < 404 Not Found
     :param invoice_id: Invoice custom (uuid) id.
     """
     invoice = Invoice.query.get(invoice_id)
@@ -73,8 +75,7 @@ def construct_transaction(payment_request, invoice, payment):
             "merchant_account": merchant_account
         }
     }
-
-    return transaction
+    return TransactionSchema().dumps(transaction)
 
 
 def process_payment(invoice_id, payment_request_data):
@@ -99,23 +100,3 @@ def notify(email, payment):
         "XOPAY transaction status",
         "Thank you for your payment! Transaction status is: {status}".format(status=payment.status)
     )
-
-
-@app.route('/api/client/dev/payment/<payment_id>', methods=['PUT'])
-def payment_update_status(payment_id):
-    status = request.get_json()
-    if not status:
-        raise BaseApiError('No JSON in request.')
-    if "status" not in status:
-        raise ValidationError("No 'status' in request JSON.")
-
-    payment = Payment.query.get(payment_id)
-    if not payment:
-        raise NotFoundError('There is no payment with such id.')
-
-    payment.status = status["status"]
-
-    payment.updated = datetime.datetime.utcnow()
-    db.session.commit()
-
-    return Response(status=200)
