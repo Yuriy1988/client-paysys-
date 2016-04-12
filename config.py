@@ -29,3 +29,6 @@ QUEUE_NAME = 'hello'  # TODO: Write down the right queue name.
 # Current versions:
 API_VERSION = 'dev'
 BUILD_DATE = datetime(2016, 3, 22, 18, 55, 42, 768858)
+
+ROOT_PATH = os.path.dirname(__file__)
+PUBLIC_KEY_FILE_NAME = ROOT_PATH + '/public.pem'
