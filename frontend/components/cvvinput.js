@@ -110,10 +110,16 @@ export class CVVInput extends InputComponent {
     renderControl() {
         if (this.state.visibility) {
             return (
-                <div className="cvv-btns-wrapper"
-                     onClick={this.preventClose}>
-                    {this.renderButtons()}
+                <div className="cvv-wrapper">
+                    <div className="cvv-btns-wrapper"
+                         onClick={this.preventClose}>
+                        {this.renderButtons()}
+                    </div>
+                    <div className="cvv-help-img">
+                        <img src="/static/client/img/cvv_help.png" />
+                    </div>
                 </div>
+
             );
         } else {
             return null;

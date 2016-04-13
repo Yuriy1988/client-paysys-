@@ -149,14 +149,36 @@ html, body {
     height: 100%;
 }
 
-.cvv-btns-wrapper {
-    width: 144px;
+
+.cvv-wrapper {
+    width: 330px;
     position: absolute;
-    background: #f0efff;
-    border: 1px solid #818181;
     z-index: 10000;
-    box-sizing: content-box;
+    background: #f0efff;
     padding: 3px;
+    border: 1px solid #818181;
+    box-sizing: content-box;
+}
+
+.cvv-btns-wrapper {
+    width: 108px;
+    float: left;
+    box-sizing: content-box;
+    top:0;
+    left:0;
+}
+
+.cvv-help-img {
+    width: 216px;
+    float: left;
+    padding: 3px;
+    box-sizing: content-box;
+    top:0;
+    left:0;
+}
+
+.cvv-help-img img {
+    width: 100%;
 }
 
 .cvv-btns-wrapper .cvv-btn {
