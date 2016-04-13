@@ -7,7 +7,7 @@ from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config.from_object('config')
+app.config.from_object('config.Debug')
 app.static_folder = app.config["STATIC_FOLDER"]
 
 

@@ -13,8 +13,6 @@ __author__ = 'Andrey Kupriy'
 
 
 class BaseTestCase(TestCase):
-    # If database is missing, run shell command: make db_test_create
-    SQLALCHEMY_DATABASE_URI = "postgresql://xopclienttest:test123@localhost/xopclienttestdb"
 
     api_base = '/api/client/dev'
 
@@ -138,15 +136,8 @@ class BaseTestCase(TestCase):
 
     def create_app(self):
         """ App for testing """
-        self.config()
+        app.config.from_object('config.Testing')
         return app
-
-    def config(self):
-        """ Configuration for testing """
-        app.config['DEBUG'] = True
-        app.config['TESTING'] = True
-        app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = self.SQLALCHEMY_DATABASE_URI
 
     @staticmethod
     def rand_int(a=0, b=100):
@@ -163,7 +154,6 @@ class BaseTestCase(TestCase):
 
     def post(self, url, body):
         headers = {"Content-Type": "application/json"}
-        data=json.dumps(body)
         response = self.client.post(self.api_base + url, data=json.dumps(body), headers=headers)
         return response.status_code, response.json
 

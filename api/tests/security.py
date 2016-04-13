@@ -1,6 +1,8 @@
 import os
+
+from api import app
 from api.tests import base
-from api.handlers.security import _is_valid_rsa_key, PUBLIC_KEY_FILE_NAME
+from api.handlers.security import _is_valid_rsa_key
 
 
 class TestSecurity(base.BaseTestCase):
@@ -15,7 +17,7 @@ class TestSecurity(base.BaseTestCase):
                 "hQIDAQAB\n-----END PUBLIC KEY-----"
 
     def setUp(self):
-        with open(PUBLIC_KEY_FILE_NAME, "w") as f:
+        with open(app.config["PUBLIC_KEY_FILE_NAME"], "w") as f:
             f.write(self._test_key)
 
     # GET /security/public_key
@@ -29,7 +31,7 @@ class TestSecurity(base.BaseTestCase):
         self.assertTrue(_is_valid_rsa_key(body["key"]))
 
     def test_get_does_not_exists(self):
-        os.remove(PUBLIC_KEY_FILE_NAME)
+        os.remove(app.config["PUBLIC_KEY_FILE_NAME"])
 
         status, body = self.get('/security/public_key')
 
@@ -38,14 +40,14 @@ class TestSecurity(base.BaseTestCase):
     # POST /security/public_key
 
     def test_update_key(self):
-        os.remove(PUBLIC_KEY_FILE_NAME)
-        self.assertFalse(os.path.exists(PUBLIC_KEY_FILE_NAME))
+        os.remove(app.config["PUBLIC_KEY_FILE_NAME"])
+        self.assertFalse(os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]))
 
         post_json = {"key": self._test_key}
         status, body = self.post('/security/public_key', post_json)
 
         self.assertEqual(status, 200, msg=body.get("error", "Unhandled error."))
-        self.assertTrue(os.path.exists(PUBLIC_KEY_FILE_NAME))
+        self.assertTrue(os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]))
 
     def test_update_invalid_key(self):
         post_json = {"key": "garbage_text"}
@@ -53,5 +55,5 @@ class TestSecurity(base.BaseTestCase):
         self.assertEqual(status, 400, msg=body.get("error", "Unhandled error."))
 
     def tearDown(self):
-        if os.path.exists(PUBLIC_KEY_FILE_NAME):
-            os.remove(PUBLIC_KEY_FILE_NAME)
+        if os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]):
+            os.remove(app.config["PUBLIC_KEY_FILE_NAME"])

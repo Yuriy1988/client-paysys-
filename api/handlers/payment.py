@@ -75,7 +75,9 @@ def construct_transaction(payment_request, invoice, payment):
             "merchant_account": merchant_account
         }
     }
-    return TransactionSchema().dumps(transaction)
+    # FIXME: add validation.
+    # print(TransactionSchema().validate(transaction))
+    return jsonify(transaction)
 
 
 def process_payment(invoice_id, payment_request_data):

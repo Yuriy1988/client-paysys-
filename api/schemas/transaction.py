@@ -21,6 +21,7 @@ class PaySysContractSchema(base.BaseSchema):
     commission_fixed = fields.Decimal(required=True)
     commission_pct = fields.Decimal(required=True, validate=Range(min=-100, max=100))
     currency = fields.String(required=True, validate=OneOf(enum.CURRENCY_ENUM), default="USD")
+    payment_interface = fields.String(required=True)
 
 
 class MerchantAccountSchema(base.BaseSchema):
@@ -56,57 +57,3 @@ class TransactionSchema(base.BaseSchema):
     payment = fields.Nested(PaymentSchema, required=True)
     source = fields.Nested(SourceSchema, required=True)
     destination = fields.Nested(DestinationSchema, required=True)
-
-
-TRANSACTION = {
-    "id": "uuid",
-    "payment": {
-        "description": "string",
-        "invoice": {
-            "id": "uuid",
-            "payment_url": "url",
-            "order_id": "uuid",
-            "store_id": "uuid",
-            "currency": "enum",
-            "items": [
-                {
-                    "store_item_id": "uuid",
-                    "quantity": 0,
-                    "unit_price": 0.0,
-                    "item_name": "string"
-                },
-                ...
-            ],
-        },
-        "amount_coins": 0,
-    },
-    "source": {
-        "paysys_contract": {
-            "id": 0,
-            "contractor_name": "string",
-            "paysys_id": "enum",
-            "commission_fixed": 0.0,
-            "commission_pct": 0.0,
-            "currency": "enum"
-        },
-        "payment_requisites": {
-            "crypted_payment": "crypted"
-        }
-    },
-    "destination": {
-        "merchant_contract": {
-            "id": 0,
-            "merchant_id": 0,
-            "commission_fixed": 0.0,
-            "commission_pct": 0.0,
-            "currency": "enum"
-        },
-        "merchant_account": {
-            "bank_name": "string",
-            "checking_account": "",
-            "currency": "enum",
-            "mfo": "000000",
-            "okpo": "00000000"
-        }
-    }
-}

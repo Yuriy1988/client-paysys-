@@ -16,3 +16,16 @@ def max_tax_contract(contracts, amount):
 
 def min_tax_contract(contracts, amount):
     return min(contracts, key=contract_key_func(amount))
+
+
+def clean_up(contract):
+    """Deletes processing useless fields from contract."""
+    del_if_exists(contract, "contract_doc_url")
+    del_if_exists(contract, "filter")
+    del_if_exists(contract, "active")
+    return contract
+
+
+def del_if_exists(obj, key):
+    if key in obj:
+        del obj[key]

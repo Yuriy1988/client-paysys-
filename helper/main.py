@@ -1,4 +1,4 @@
-from helper.helper_utils import min_tax_contract, max_tax_contract
+from helper.helper_utils import min_tax_contract, max_tax_contract, clean_up
 from periphery import admin_api
 
 
@@ -25,11 +25,3 @@ def get_route(payment_system_id, merchant_id, amount, currency):
         "paysys_contract": clean_up(paysys_contract),
         "merchant_contract": clean_up(merchant_contract)
     }
-
-
-def clean_up(contract):
-    """Deletes processing useless fields from contract."""
-    del contract["contract_doc_url"]
-    del contract["filter"]
-    del contract["active"]
-    return contract
