@@ -118,9 +118,10 @@ def push_key(key_file='~/.ssh/id_rsa.pub'):
 def setup_supervisor():
     sudo('apt-get install -y supervisor')
 
-    # To run supervisorctl without root (sudo) do:
-    # 1. add chown=$USER:$USER into [unix_http_server] section in /etc/supervisor/supervisord.conf
-    # 2. sudo service supervisor restart
+    base_config_file = '/tmp/supervisord.conf'
+    create_config(base_config_file, 'server/supervisord.conf.templ')
+    put(base_config_file, '/etc/supervisor/', use_sudo=True)
+    local('rm {config}'.format(config=base_config_file))
 
     config_file = '/tmp/xopay-client.conf'
     create_config(config_file, 'server/xopay-client.conf.supervisor.templ')
