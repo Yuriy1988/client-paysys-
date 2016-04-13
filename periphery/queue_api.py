@@ -23,7 +23,7 @@ def get_connection_parameters():
 def push(body):
     with pika.BlockingConnection(get_connection_parameters()) as connection:
         channel = connection.channel()
-        channel.queue_declare(queue=app.config["QUEUE_NAME"])
+        channel.queue_declare(queue=app.config["QUEUE_NAME"], durable=True)
         channel.basic_publish(exchange='',
                               routing_key=app.config["QUEUE_NAME"],
                               body=body)
@@ -33,14 +33,9 @@ def push(body):
 def pop():
     connection = pika.BlockingConnection(get_connection_parameters())
     channel = connection.channel()
-    channel.queue_declare(queue=app.config["QUEUE_NAME"])
+    channel.queue_declare(queue=app.config["QUEUE_NAME"], durable=True)
 
     channel.basic_consume(callback,
                           queue=app.config["QUEUE_NAME"],
                           no_ack=True)
     channel.start_consuming()
-
-if __name__ == '__main__':
-    app.config.from_object('config.Debug')
-    push("Hello")
-    pop()
