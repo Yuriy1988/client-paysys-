@@ -6,7 +6,7 @@ from api.errors import ValidationError, NotFoundError, BaseApiError
 from api.models import Invoice, Payment
 from api.schemas import PaymentRequestSchema, InvoiceSchema, TransactionSchema
 from flask import request, jsonify, Response
-from periphery import admin_api, notification_api, queue_api
+from periphery import admin_api, notification_api, queue
 
 
 @app.route('/api/client/dev/payment/<payment_id>', methods=['PUT'])
@@ -44,7 +44,7 @@ def payment_create(invoice_id):
 
     payment = process_payment(invoice_id, payment_request)
 
-    queue_api.push(construct_transaction(payment_request, invoice, payment))
+    queue.push(construct_transaction(payment_request, invoice, payment))
 
     payment_request['notify_by_email'] and notify(payment_request['notify_by_email'], payment)
 
@@ -77,7 +77,7 @@ def construct_transaction(payment_request, invoice, payment):
     }
     # FIXME: add validation.
     # print(TransactionSchema().validate(transaction))
-    return jsonify(transaction)
+    return transaction
 
 
 def process_payment(invoice_id, payment_request_data):

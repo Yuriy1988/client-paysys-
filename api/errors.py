@@ -93,6 +93,13 @@ class NotFoundError(BaseApiError):
 
 
 @_handle_api_error
+class InternalServerError(BaseApiError):
+
+    default_status_code = 500
+    default_message = 'Internal Server Error'
+
+
+@_handle_api_error
 class ServiceUnavailable(BaseApiError):
 
     default_status_code = 503
