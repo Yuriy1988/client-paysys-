@@ -8,6 +8,11 @@ DB_TEST_NAME=xopclienttestdb
 DB_TEST_USER=xopclienttest
 DB_TEST_PASSWORD=test123
 
+QUEUE_USERNAME=xopay_rabbit
+QUEUE_PASSWORD=5lf01xiOFwyMLvQrkzz7
+QUEUE_VIRTUAL_HOST=/xopay
+
+
 # ========== Linux ==========
 
 
@@ -18,8 +23,9 @@ install_python35_repo:
 	sudo apt-get update
 
 install:
-	sudo apt-get install $(PYTHON) $(PYTHON)-dev python3-pip python3-wheel python-virtualenv
-	sudo apt-get install postgresql postgresql-contrib python-psycopg2
+	sudo apt-get install -y $(PYTHON) $(PYTHON)-dev python3-pip python3-wheel python-virtualenv
+	sudo apt-get install -y postgresql postgresql-contrib python-psycopg2
+	sudo apt-get install -y rabbitmq-server
 
 
 # ------ Database -----
@@ -61,6 +67,18 @@ db_clean:
 	sudo -u postgres psql $(DB_NAME) -c "GRANT ALL ON SCHEMA public TO public"
 
 
+# ----- Queue -----
+
+queue_create:
+	sudo rabbitmqctl add_vhost $(QUEUE_VIRTUAL_HOST)
+	sudo rabbitmqctl add_user $(QUEUE_USERNAME) $(QUEUE_PASSWORD)
+	sudo rabbitmqctl set_permissions -p $(QUEUE_VIRTUAL_HOST) $(QUEUE_USERNAME) ".*" ".*" ".*"
+
+queue_remove:
+	sudo rabbitmqctl delete_user $(QUEUE_USERNAME)
+	sudo rabbitmqctl delete_vhost $(QUEUE_VIRTUAL_HOST)
+
+
 # ----- Virtualenv -----
 
 venv_init:
@@ -76,7 +94,7 @@ build_static:
 
 # ----- Setup -----
 
-setup: install venv_init db_create
+setup: install venv_init db_create queue_create
 
 
 # ----- Update -----

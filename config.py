@@ -33,13 +33,14 @@ class Debug(_Base):
     ADMIN_API_URL = "http://localhost:7128/api/admin/dev"
 
     # Celery
-    NOTIFICATION_SERVER_URL = 'amqp://remote:remote@192.168.1.118:5672//'  # TODO: Write down the right Admin-server address.
+    NOTIFICATION_SERVER_URL = 'amqp://xopay_rabbit:5lf01xiOFwyMLvQrkzz7@0.0.0.0:5672//'  # TODO: Write down the right Admin-server address.
 
     # Queue:
-    QUEUE_HOST = 'localhost'  # TODO: Write down the right queue-server address (without port).
+    QUEUE_HOST = '0.0.0.0'
     QUEUE_PORT = 5672
-    QUEUE_USERNAME = 'remote'
-    QUEUE_PASSWORD = 'remote'
+    QUEUE_USERNAME = 'xopay_rabbit'
+    QUEUE_PASSWORD = '5lf01xiOFwyMLvQrkzz7'
+    QUEUE_VIRTUAL_HOST = '/xopay'
     QUEUE_NAME = 'transactions'
 
 
