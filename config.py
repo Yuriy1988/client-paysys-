@@ -41,7 +41,7 @@ class Debug(_Base):
     QUEUE_USERNAME = 'xopay_rabbit'
     QUEUE_PASSWORD = '5lf01xiOFwyMLvQrkzz7'
     QUEUE_VIRTUAL_HOST = '/xopay'
-    QUEUE_NAME = 'transactions'
+    QUEUE_NAME = 'transactions_for_processing'
 
 
 class Production(_Base):
