@@ -1,7 +1,5 @@
 import os
 
-from datetime import datetime
-
 
 class _Base:
 
@@ -16,7 +14,7 @@ class _Base:
 
     # Current versions:
     API_VERSION = 'dev'
-    BUILD_DATE = datetime(2016, 3, 22, 18, 55, 42, 768858)
+    BUILD_DATE = '2016-04-16T17:09:00+00:00'
 
     # Security
     CSRF_ENABLED = True

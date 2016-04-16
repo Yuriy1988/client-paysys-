@@ -1,4 +1,5 @@
 import decimal
+from datetime import datetime
 
 from flask import Flask, json
 from flask.ext.cors import CORS
@@ -28,9 +29,17 @@ manager.add_command('db', MigrateCommand)
 # Decimal-to-json fix:
 class XOPayJSONEncoder(json.JSONEncoder):
     def default(self, obj):
+
         if isinstance(obj, decimal.Decimal):
             # Convert decimal instances to strings.
             return str(obj)
+
+        if isinstance(obj, datetime):
+            # datetime in format: YYYY-MM-DDThh:mm:ss±hh:mm
+            if not obj.tzinfo:
+                raise TypeError(repr(obj) + ' timezone missing')
+            return obj.strftime('%Y-%m-%dT%H:%M:%S%z')
+
         return super(XOPayJSONEncoder, self).default(obj)
 
 

@@ -1,7 +1,7 @@
-from flask import json
-import api.handlers
 import unittest
-from datetime import datetime
+from flask import json
+
+from api import app
 
 
 class TestGetVersion(unittest.TestCase):
@@ -9,12 +9,12 @@ class TestGetVersion(unittest.TestCase):
     _valid_resp = {
             "api_version": "dev",
             "server_version": "dev",
-            "build_date": "2016-03-22T18:55:42.768858+00:00"
+            "build_date": "2016-01-01T12:00:00+00:00"
         }
 
     def setUp(self):
-        self.BUILD_DATE = datetime(2016, 3, 22, 18, 55, 42, 768858)
-        self.app = api.app.test_client()
+        app.config['BUILD_DATE'] = "2016-01-01T12:00:00+00:00"
+        self.app = app.test_client()
 
     # Tests:
 

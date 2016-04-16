@@ -1,7 +1,6 @@
 from flask import jsonify
 
 from api import app
-from api.schemas.version import VersionSchema
 
 
 @app.route('/')
@@ -20,6 +19,4 @@ def get_version():
         "server_version": 'dev',
         "build_date": app.config["BUILD_DATE"]
     }
-    version_schema = VersionSchema()
-    result = version_schema.dump(response)
-    return jsonify(result.data)
+    return jsonify(response)
