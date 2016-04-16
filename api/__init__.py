@@ -26,14 +26,14 @@ manager.add_command('db', MigrateCommand)
 
 
 # Decimal-to-json fix:
-class MyJSONEncoder(json.JSONEncoder):
+class XOPayJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, decimal.Decimal):
             # Convert decimal instances to strings.
             return str(obj)
-        return super(MyJSONEncoder, self).default(obj)
+        return super(XOPayJSONEncoder, self).default(obj)
 
 
-app.json_encoder = MyJSONEncoder
+app.json_encoder = XOPayJSONEncoder
 
 from api import handlers

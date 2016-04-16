@@ -20,7 +20,7 @@ class TestGetVersion(unittest.TestCase):
 
     # GET /api/client/version
 
-    def test_get_valid_responce(self):
+    def test_get_valid_response(self):
         result = self.app.get('/api/client/version')
         data = json.loads(result.data)
 

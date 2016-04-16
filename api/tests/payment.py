@@ -117,7 +117,7 @@ class TestPayment(base.BaseTestCase):
 
     # Change Payment status API
 
-    def test_payment_change_status_responce(self):
+    def test_payment_change_status_response(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
@@ -199,7 +199,7 @@ class TestPayment(base.BaseTestCase):
 
         self.assertEqual(payment_change.status, '400 BAD REQUEST')
 
-    def test_payment_change_status_responce_bad_json(self):
+    def test_payment_change_status_response_bad_json(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 

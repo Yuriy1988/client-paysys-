@@ -35,6 +35,6 @@ class PaymentRequestSchema(base.BaseSchema):
     notify_by_phone = fields.Str()
 
 
-class PaymentResponceSchema(base.BaseSchema):
+class PaymentResponseSchema(base.BaseSchema):
     id = fields.Str(required=True, validate=(Length(min=8, max=127)))
     status = fields.Str(required=True, validate=OneOf(enum.PAYMENT_STATUS_ENUM))
