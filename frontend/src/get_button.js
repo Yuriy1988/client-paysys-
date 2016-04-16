@@ -49,7 +49,7 @@ document.onclick = function (event) {
                 .then(function (response) {
                     switch (response.status) {
                         case 200:
-                            location.href = `${XOPAY_CLIENT_HOST}/payment/${response.data.id}`;
+                            location.href = `${XOPAY_CLIENT_HOST}/client/payment/${response.data.id}`;
                             break;
                         default:
                             alert(response); // TODO CATCH ERROR

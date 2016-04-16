@@ -55,7 +55,7 @@ def invoice_get_info(invoice_id):
     return jsonify(result.data)
 
 
-@app.route('/payment/<invoice_id>', methods=['GET'])
+@app.route('/client/payment/<invoice_id>', methods=['GET'])
 def get_payment_form(invoice_id):
     invoice = Invoice.query.get(invoice_id)
     if not invoice:
