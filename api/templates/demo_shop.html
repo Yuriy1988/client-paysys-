@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demoshop</title>
+    <script src="http://xopay.digitaloutlooks.com/static/client/js/get_button.js"></script> <!--Здесь URL на скрипт кнопки (менять host)-->
+</head>
+<body>
+
+<p>Страничка, на которой вы можете пополнить телефон +380980906619 на 50 гривен</p>
+<!-- Аттрибуты начинающиеся с  DATA- (большими буквами), это параметры создания инвойса, которые можно менять-->
+<button DATA-order_id="1"
+        DATA-items='[{"store_item_id": "+380980906619", "quantity": 1, "unit_price": 50, "item_name": "Пополнение счета"}]'
+        DATA-currency="UAH"
+        DATA-store_id="85126d61-3fae-4d2c-8405-6b0e08a7d0d1"
+
+        data-xopay="true"
+        class="xopay-get-button">Пополнить</button>
+
+</body>
+</html>

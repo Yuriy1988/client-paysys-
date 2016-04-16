@@ -46,3 +46,4 @@ class XOPayJSONEncoder(json.JSONEncoder):
 app.json_encoder = XOPayJSONEncoder
 
 from api import handlers
+from api import pages
