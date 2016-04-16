@@ -1,45 +1,52 @@
 {% extends "__main.html" %}
 
-{% block scripts %}
-    <script>
-        var invoice = {
-            amount: "{{invoice_info.amount}}",
-            currency: "{{invoice_info.currency}}",
-            id: "{{invoice_info.id}}",
-        };
-
-        var store = {
-            {% if store_info.store_name %}
-                storeName: "{{store_info.store_name }}",
-            {% else %}
-                storeName: null,
-            {% endif %}
-            {% if store_info.store_url %}
-                storeUrl: "{{store_info.store_url }}",
-            {% else %}
-                storeUrl: null,
-            {% endif %}
-            {% if store_info.description %}
-                description: "{{store_info.description }}",
-            {% else %}
-                description: null,
-            {% endif %}
-            {% if store_info.logo  %}
-                logo: "{{store_info.logo }}",
-            {% else %}
-                logo: null,
-            {% endif %}
-            {% if store_info.show_logo  %}
-                showLogo: true,
-            {% else %}
-                showLogo: false,
-            {% endif %}
-        };
-    </script>
-    <script src="{{ url_for('static', filename='client/js/payment_form.js') }}"></script>
-{% endblock %}
-
 {% block content %}
-    <div id="root"></div>
+    <div id="root">
+    {% if error %}
+        <h1>Error: {{ error }}</h1>
+    {% endif %}
+    </div>
 {% endblock %}
 
+{% block scripts %}
+    {% if not error %}
+        <script>
+            var invoice = {
+                amount: "{{invoice_info.amount}}",
+                currency: "{{invoice_info.currency}}",
+                id: "{{invoice_info.id}}",
+            };
+
+            var store = {
+                {% if store_info.store_name %}
+                    storeName: "{{store_info.store_name }}",
+                {% else %}
+                    storeName: null,
+                {% endif %}
+                {% if store_info.store_url %}
+                    storeUrl: "{{store_info.store_url }}",
+                {% else %}
+                    storeUrl: null,
+                {% endif %}
+                {% if store_info.description %}
+                    description: "{{store_info.description }}",
+                {% else %}
+                    description: null,
+                {% endif %}
+                {% if store_info.logo  %}
+                    logo: "{{store_info.logo }}",
+                {% else %}
+                    logo: null,
+                {% endif %}
+                {% if store_info.show_logo  %}
+                    showLogo: true,
+                {% else %}
+                    showLogo: false,
+                {% endif %}
+            };
+        </script>
+        <script src="{{ url_for('static', filename='client/js/payment_form.js') }}"></script>
+
+    {% endif %}
+
+{% endblock %}
