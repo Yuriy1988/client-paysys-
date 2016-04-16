@@ -2,20 +2,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Demoshop</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>XOPay Demo Shop</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="http://www.quackit.com/html/templates/download/bootstrap/business-2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS: You can use this stylesheet to override any Bootstrap styles and/or apply your own styles -->
+    <link href="http://www.quackit.com/html/templates/download/bootstrap/business-2/css/custom.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom Fonts from Google -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
     <script src="http://xopay.digitaloutlooks.com/static/client/js/get_button.js"></script> <!--Здесь URL на скрипт кнопки (менять host)-->
+
 </head>
 <body>
 
-<p>Страничка, на которой вы можете пополнить телефон +380980906619 на 50 гривен</p>
-<!-- Аттрибуты начинающиеся с  DATA- (большими буквами), это параметры создания инвойса, которые можно менять-->
-<button DATA-order_id="1"
-        DATA-items='[{"store_item_id": "+380980906619", "quantity": 1, "unit_price": 50, "item_name": "Пополнение счета"}]'
-        DATA-currency="UAH"
-        DATA-store_id="85126d61-3fae-4d2c-8405-6b0e08a7d0d1"
+    <div class="content content-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h2 class="section-header">Mobile company demo shop</h2>
 
-        data-xopay="true"
-        class="xopay-get-button">Пополнить</button>
+                    <p class="lead text-light">Here you can top-up mobile <b>+380980906619</b> using a XOPay payment system. Amount to be added: 50 UAH.</p>
+
+                    <!-- Аттрибуты начинающиеся с  DATA- (большими буквами), это параметры создания инвойса, которые можно менять-->
+                    <button DATA-order_id="1"
+                        DATA-items='[{"store_item_id": "+380980906619", "quantity": 1, "unit_price": 50, "item_name": "Пополнение счета"}]'
+                        DATA-currency="UAH"
+                        DATA-store_id="bdb5a015-816e-4628-8943-19414d045afb"
+
+                        data-xopay="true"
+                        class=" btn btn-primary btn-lg">
+                        PAY
+                    </button>
+
+                </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive img-circle center-block" src="http://www.quackit.com/html/templates/download/bootstrap/business-2/images/iphone.jpg" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="http://www.quackit.com/html/templates/download/bootstrap/business-2/js/jquery-1.11.3.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="http://www.quackit.com/html/templates/download/bootstrap/business-2/js/bootstrap.min.js"></script>
+    <!-- Plugin JavaScript -->
+    <script src="http://www.quackit.com/html/templates/download/bootstrap/business-2/js/jquery.easing.min.js"></script>
+    <!-- Custom Javascript -->
+    <script src="http://www.quackit.com/html/templates/download/bootstrap/business-2/js/custom.js"></script>
 
 </body>
 </html>
