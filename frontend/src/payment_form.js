@@ -5,6 +5,7 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
 import ajax from 'axios'
+import 'babel-polyfill'
 
 import Utils, {Validator, CreditCard, Payment} from '../utils'
 import {Field, ComboBox, CVVInput} from '../components'
