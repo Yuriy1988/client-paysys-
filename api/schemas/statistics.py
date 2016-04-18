@@ -5,6 +5,7 @@ from api.models import enum
 
 
 class StatisticsArgsSchema(base.BaseSchema):
+
     limit = fields.Str(allow_none=True)
     from_date = fields.Date(allow_none=True)
     till_date = fields.Date(allow_none=True)
@@ -13,5 +14,5 @@ class StatisticsArgsSchema(base.BaseSchema):
     paysys_id = fields.Str(allow_none=True, validate=OneOf(enum.PAYMENT_SYSTEMS_ID_ENUM))
     status = fields.Str(allow_none=True, validate=OneOf(enum.PAYMENT_STATUS_ENUM))
     currency = fields.Str(allow_none=True, validate=OneOf(enum.CURRENCY_ENUM))
-    from_amount = fields.Str(allow_none=True, validate=base.validate_digits_only)
-    till_amount = fields.Str(allow_none=True, validate=base.validate_digits_only)
+    from_amount = fields.Str(allow_none=True)
+    till_amount = fields.Str(allow_none=True)

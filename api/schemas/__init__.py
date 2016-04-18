@@ -1,5 +1,5 @@
 from .invoice import InvoiceSchema
-from .payment import VisaMasterSchema, PaymentResponseSchema, PaymentSchema, PaymentRequestSchema
+from .payment import PaymentSchema
 from .statistics import StatisticsArgsSchema
 from .transaction import TransactionSchema
 

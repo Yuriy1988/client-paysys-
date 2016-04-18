@@ -4,7 +4,7 @@ import helper
 from api import app, db
 from api.errors import ValidationError, NotFoundError, BaseApiError
 from api.models import Invoice, Payment
-from api.schemas import PaymentRequestSchema, InvoiceSchema, TransactionSchema
+from api.schemas import PaymentSchema, InvoiceSchema
 from flask import request, jsonify, Response
 from periphery import admin_api, notification_api, queue
 
@@ -38,7 +38,7 @@ def payment_create(invoice_id):
     if not invoice:
         raise NotFoundError('There is no invoice with such id')
 
-    payment_request, errors = PaymentRequestSchema().load(request.get_json())
+    payment_request, errors = PaymentSchema().load(request.get_json())
     if errors:
         raise ValidationError(errors=errors)
 
@@ -46,7 +46,7 @@ def payment_create(invoice_id):
 
     queue.push(construct_transaction(payment_request, invoice, payment))
 
-    payment_request['notify_by_email'] and notify(payment_request['notify_by_email'], payment)
+    # payment_request['notify_by_email'] and notify(payment_request['notify_by_email'], payment)
 
     return jsonify({'id': payment.id, 'status': payment.status}), 202
 

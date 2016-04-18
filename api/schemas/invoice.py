@@ -5,6 +5,8 @@ from marshmallow.validate import OneOf, Range, Length
 from api.schemas import base
 from api.models import enum
 
+__author__ = 'Kostel Serhii'
+
 
 class _ItemSchema(base.BaseSchema):
 
