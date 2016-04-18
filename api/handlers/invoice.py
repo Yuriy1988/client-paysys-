@@ -1,8 +1,9 @@
+from flask import Response, request, jsonify, render_template
+
 from api import app, db
 from api.errors import NotFoundError
 from api.models import Invoice
 from api.schemas import InvoiceSchema
-from flask import Response, request, jsonify, render_template
 from periphery import admin_api
 
 
