@@ -54,7 +54,6 @@ class BaseTestCase(TestCase):
 
     _payment = {
         "card_number": "1111111111111111",
-        "status": "ACCEPTED",
         "notify_by_email": "email@email.com",
         "notify_by_phone": "111111111111",
         "invoice_id": ""  # invoice_id does not exist yet.

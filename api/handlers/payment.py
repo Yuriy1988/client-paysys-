@@ -38,13 +38,15 @@ def payment_create(invoice_id):
     if not invoice:
         raise NotFoundError('There is no invoice with such id')
 
-    payment_request, errors = PaymentSchema().load(request.get_json())
+    data, errors = PaymentSchema().load(request.get_json())
     if errors:
         raise ValidationError(errors=errors)
 
-    payment = process_payment(invoice_id, payment_request)
+    data['invoice_id'] = invoice_id
+    payment = Payment.create(data)
+    db.session.commit()
 
-    queue.push(construct_transaction(payment_request, invoice, payment))
+    queue.push(construct_transaction(data, invoice, payment))
 
     # payment_request['notify_by_email'] and notify(payment_request['notify_by_email'], payment)
 
@@ -78,22 +80,6 @@ def construct_transaction(payment_request, invoice, payment):
     # FIXME: add validation.
     # print(TransactionSchema().validate(transaction))
     return transaction
-
-
-def process_payment(invoice_id, payment_request_data):
-    payment = {
-        'payment_account': payment_request_data['payment_account'],
-        'status': "ACCEPTED",
-        'invoice_id': invoice_id,
-        'paysys_id': payment_request_data["paysys_id"],
-        'notify_by_email': payment_request_data.get('notify_by_email'),
-        'notify_by_phone': payment_request_data.get('notify_by_phone'),
-    }
-
-    payment = Payment.create(payment)
-    db.session.commit()
-
-    return payment
 
 
 def notify(email, payment):

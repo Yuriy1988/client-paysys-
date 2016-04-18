@@ -24,11 +24,19 @@ class Payment(base.BaseModel):
                  status='CREATED', notify_by_email=None, notify_by_phone=None):
         self.paysys_id = paysys_id
         self.payment_account = payment_account
-        self.invoice_id = invoice_id
-        self.crypted_payment = crypted_payment
+
         self.status = status
+
         self.notify_by_email = notify_by_email
         self.notify_by_phone = notify_by_phone
 
+        self.invoice_id = invoice_id
+
+        self._crypted_payment = crypted_payment
+
     def __repr__(self):
         return '<Payment id: %r>' % self.id
+
+    @property
+    def crypted_payment(self):
+        return self._crypted_payment

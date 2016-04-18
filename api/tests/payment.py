@@ -46,7 +46,7 @@ class TestPayment(base.BaseTestCase):
         self.assertIsNotNone(payment)
         self.assertIsNotNone(payment.id)
         self.assertEqual(payment.payment_account, "111111******1111")
-        self.assertEqual(payment.status, "ACCEPTED")
+        self.assertEqual(payment.status, "CREATED")
         self.assertEqual(payment.notify_by_email, "email@email.com")
         self.assertEqual(payment.notify_by_phone, "111111111111")
         self.assertEqual(payment.invoice_id, invoice_body['id'])
