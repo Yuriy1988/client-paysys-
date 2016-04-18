@@ -16,8 +16,9 @@ class Payment(base.BaseModel):
     notify_by_email = db.Column(db.String(120))
     notify_by_phone = db.Column(db.String(120))
     paysys_id = db.Column(db.Enum(*enum.PAYMENT_SYSTEMS_ID_ENUM, name='enum_payment_systems'), default='VISA_MASTER')
-    invoice_id = db.Column(db.String, db.ForeignKey('invoice.id'))
-    invoice = db.relationship('Invoice')
+
+    invoice_id = db.Column(db.String, db.ForeignKey('invoice.id', ondelete='CASCADE'))
+
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     updated = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 

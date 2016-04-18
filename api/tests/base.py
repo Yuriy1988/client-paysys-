@@ -19,7 +19,7 @@ class BaseTestCase(TestCase):
     # defaults
     _invoice = {
         "order_id": "order_id_1",
-        "store_id": "dss9-asdf-sasf-fsaa",
+        "store_id": "00000000-1111-2222-3333-444444444444",
         "currency": "USD",
         "items": [
             {

@@ -1,4 +1,4 @@
-from .invoice import InvoiceSchema, ItemSchema
+from .invoice import InvoiceSchema
 from .payment import VisaMasterSchema, PaymentResponseSchema, PaymentSchema, PaymentRequestSchema
 from .statistics import StatisticsArgsSchema
 from .transaction import TransactionSchema
