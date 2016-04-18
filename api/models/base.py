@@ -1,3 +1,5 @@
+import uuid
+import pytz
 from sqlalchemy.inspection import inspect
 
 from api import db
@@ -78,3 +80,13 @@ class BaseModel(db.Model):
             setattr(self, key, value)
         if data and add_to_db:
             db.session.add(self)
+
+
+# functions for fields default
+
+def uuid_id():
+    return str(uuid.uuid4())
+
+
+# use only as server_default=base.now_dt or onupdate=base.now_dt
+now_dt = db.func.now(tz=pytz.utc)

@@ -26,6 +26,8 @@ class _Base:
 class Debug(_Base):
     DEBUG = True
 
+    SERVER_NAME = 'localhost:7254'
+
     # Current links:
     PROCESSING_URL = 'localhost:8888'  # TODO: Write down the right Processing-server address.
     ADMIN_API_URL = "http://localhost:7128/api/admin/dev"
@@ -44,6 +46,8 @@ class Debug(_Base):
 
 class Production(_Base):
     DEBUG = False
+
+    SERVER_NAME = 'xoapy.digitaloutlooks.com'
 
 
 class Testing(_Base):

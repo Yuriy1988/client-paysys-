@@ -1,12 +1,9 @@
-import pytz
-import uuid
-from datetime import datetime
+from copy import deepcopy
 from decimal import Decimal
 from flask import url_for
 
 from api import db
 from api.models import enum, base
-from copy import deepcopy
 
 
 class Item(base.BaseModel):
@@ -35,15 +32,15 @@ class Invoice(base.BaseModel):
 
     __tablename__ = 'invoice'
 
-    id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = db.Column(db.String, primary_key=True, default=base.uuid_id)
     order_id = db.Column(db.String(255), nullable=False)
     store_id = db.Column(db.String(36), nullable=False)
     currency = db.Column(db.Enum(*enum.CURRENCY_ENUM, name='enum_currency'), nullable=False)
 
+    created = db.Column(db.DateTime(timezone=True), server_default=base.now_dt)
+
     items = db.relationship('Item', backref='invoice')
     payment = db.relationship('Payment', backref='invoice', uselist=False)
-
-    created = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(tz=pytz.utc))
 
     def __init__(self, order_id, store_id, currency, items):
         self.order_id = order_id
@@ -53,6 +50,8 @@ class Invoice(base.BaseModel):
             raise ValueError('Blank list of items in the invoice')
         self.items = items
 
+        # TODO: add total_price field
+
     def __repr__(self):
         return '<Invoice id: %r>' % self.id
 
@@ -60,6 +59,7 @@ class Invoice(base.BaseModel):
     def payment_url(self):
         return url_for('get_payment_form', invoice_id=self.id, _external=True)
 
+# TODO: rename amount
     @property
     def amount(self):
         items_list = Item.query.filter_by(invoice_id=self.id).all()
