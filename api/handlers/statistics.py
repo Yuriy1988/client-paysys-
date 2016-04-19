@@ -8,13 +8,6 @@ from api.errors import ValidationError
 from api.schemas import StatisticsArgsSchema, PaymentSchema
 
 
-def get_amount(items_list):
-    amount = 0
-    for i in items_list:
-        amount += i.quantity * i.unit_price
-    return amount
-
-
 @app.route('/api/client/dev/store/<store_id>/statistics', methods=['GET'])
 def get_store_statistics(store_id):
     request_schema = StatisticsArgsSchema()
@@ -40,12 +33,10 @@ def get_store_statistics(store_id):
         query = query.filter(Payment.updated < data['till_date'] + timedelta(days=1))
 
     # lists:
-    if 'from_amount' in data:
-        # query = query.filter(get_amount(Payment.invoice.items) >= decimal.Decimal(data['from_amount']))
-        query = [i for i in query if get_amount(i.invoice.items) >= decimal.Decimal(data['from_amount'])]
-    if 'till_amount' in data:
-        # query = query.filter(get_amount(Payment.invoice.items) <= decimal.Decimal(data['till_amount']))
-        query = [ i for i in query if get_amount(i.invoice.items) <= decimal.Decimal(data['till_amount'])]
+    if 'from_total_price' in data:
+        query = query.filter(Invoice.total_price >= decimal.Decimal(data['from_total_price']))
+    if 'till_total_price' in data:
+        query = query.filter(Invoice.total_price <= decimal.Decimal(data['till_total_price']))
 
     schema = PaymentSchema(many=True)
     if query.all():

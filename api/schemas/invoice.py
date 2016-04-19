@@ -25,3 +25,4 @@ class InvoiceSchema(base.BaseSchema):
     items = fields.Nested(_ItemSchema, many=True, required=True, allow_none=False, validate=Length(min=1))
 
     payment_url = fields.Url(dump_only=True)
+    total_price = fields.Decimal(dump_only=True)

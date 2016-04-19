@@ -14,5 +14,5 @@ class StatisticsArgsSchema(base.BaseSchema):
     paysys_id = fields.Str(allow_none=True, validate=OneOf(enum.PAYMENT_SYSTEMS_ID_ENUM))
     status = fields.Str(allow_none=True, validate=OneOf(enum.PAYMENT_STATUS_ENUM))
     currency = fields.Str(allow_none=True, validate=OneOf(enum.CURRENCY_ENUM))
-    from_amount = fields.Str(allow_none=True)
-    till_amount = fields.Str(allow_none=True)
+    from_total_price = fields.Str(allow_none=True)
+    till_total_price = fields.Str(allow_none=True)

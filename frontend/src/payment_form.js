@@ -143,7 +143,7 @@ class PaymentForm extends Component {
                     </h2>
 
                     <p >{store.description}</p>
-                    <h2><strong>{invoice.amount} {invoice.currency}</strong></h2>
+                    <h2><strong>{invoice.total_price} {invoice.currency}</strong></h2>
                     <form onSubmit={this.handleSubmitForm}>
                         <table>
                             <tbody>

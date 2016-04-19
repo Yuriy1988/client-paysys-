@@ -8,6 +8,8 @@ from api.models import enum, base
 
 class Item(base.BaseModel):
 
+    # NOTE: do NOT create/update Items manually only through Invoice.items.
+
     __tablename__ = 'item'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -36,21 +38,26 @@ class Invoice(base.BaseModel):
     order_id = db.Column(db.String(255), nullable=False)
     store_id = db.Column(db.String(36), nullable=False)
     currency = db.Column(db.Enum(*enum.CURRENCY_ENUM, name='enum_currency'), nullable=False)
+    total_price = db.Column(db.Numeric, nullable=False)
 
     created = db.Column(db.DateTime(timezone=True), server_default=base.now_dt)
 
-    items = db.relationship('Item', backref='invoice')
+    _items = db.relationship('Item', backref='invoice')
     payment = db.relationship('Payment', backref='invoice', uselist=False)
 
     def __init__(self, order_id, store_id, currency, items):
         self.order_id = order_id
         self.store_id = store_id
         self.currency = currency
+
         if len(items) < 1:
             raise ValueError('Blank list of items in the invoice')
-        self.items = items
+        self._items = items
 
-        # TODO: add total_price field
+        total_price = self._calculate_total_price(items)
+        if total_price < Decimal('0.01'):
+            raise ValueError('Total price can not be less than 0.01')
+        self.total_price = total_price
 
     def __repr__(self):
         return '<Invoice id: %r>' % self.id
@@ -59,14 +66,15 @@ class Invoice(base.BaseModel):
     def payment_url(self):
         return url_for('get_payment_form', invoice_id=self.id, _external=True)
 
-# TODO: rename amount
     @property
-    def amount(self):
-        items_list = Item.query.filter_by(invoice_id=self.id).all()
-        amount = 0
-        for item in items_list:
-            amount += Decimal(item.unit_price) * int(item.quantity)
-        return round(amount, 2)
+    def items(self):
+        # NOTE: do NOT change items after Invoice creation, because
+        # total_price calculated from it.
+        return self._items
+
+    @property
+    def total_price_coins(self):
+        return int(self.total_price * 100)
 
     @classmethod
     def create(cls, data, add_to_db=True):
@@ -77,3 +85,7 @@ class Invoice(base.BaseModel):
 
         invoice = super(Invoice, cls).create(data)
         return invoice
+
+    @staticmethod
+    def _calculate_total_price(items):
+        return sum(Decimal(it.unit_price) * Decimal(it.quantity) for it in items)

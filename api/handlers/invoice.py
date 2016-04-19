@@ -77,7 +77,7 @@ def get_payment_form(invoice_id):
 
     invoice_info = {
         'id': invoice.id,
-        'amount': invoice.amount,
+        'total_price': invoice.total_price,
         'currency': invoice.currency
     }
 

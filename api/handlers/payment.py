@@ -57,14 +57,14 @@ def construct_transaction(payment_request, invoice, payment):
     serialized_invoice = InvoiceSchema().dump(invoice)
     merchant_id = admin_api.store_by_id(invoice.store_id)["merchant_id"]
     merchant_account = admin_api.merchant_by_id(merchant_id)["merchant_account"]
-    route = helper.get_route(payment_request["paysys_id"], merchant_id, invoice.amount, invoice.currency)
+    route = helper.get_route(payment_request["paysys_id"], merchant_id, invoice.total_price, invoice.currency)
 
     transaction = {
         "id": payment.id,
         "payment": {
             "description": "TODO: description support.",
             "invoice": serialized_invoice,
-            "amount_coins": invoice.amount,
+            "amount_coins": invoice.total_price_coins,
         },
         "source": {
             "paysys_contract": route["paysys_contract"],
