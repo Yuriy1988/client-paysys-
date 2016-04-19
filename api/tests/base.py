@@ -154,7 +154,7 @@ class BaseTestCase(TestCase):
     def post(self, url, body):
         headers = {"Content-Type": "application/json"}
         response = self.client.post(self.api_base + url, data=json.dumps(body), headers=headers)
-        return response.status_code, response.json
+        return response.status_code, response.json if response.mimetype == 'application/json' else response.data
 
     def put(self, url, body):
         headers = {"Content-Type": "application/json"}

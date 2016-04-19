@@ -2,7 +2,6 @@ import os
 
 from api import app
 from api.tests import base
-from api.handlers.security import _is_valid_rsa_key
 
 
 class TestSecurity(base.BaseTestCase):
@@ -16,44 +15,56 @@ class TestSecurity(base.BaseTestCase):
                 "LqNb2QcAIpRP8mKIoaAPZHwEWF5F0lYB6MusAneHFqsDx0cF+ZVUem1KXNMi+YTE\n" \
                 "hQIDAQAB\n-----END PUBLIC KEY-----"
 
-    def setUp(self):
+    def create_public_key(self):
         with open(app.config["PUBLIC_KEY_FILE_NAME"], "w") as f:
             f.write(self._test_key)
-
-    # GET /security/public_key
-
-    def test_get_secret_key(self):
-        status, body = self.get('/security/public_key')
-
-        self.assertEqual(status, 200, msg=body.get("error", "Unhandled error."))
-
-        self.assertTrue("key" in body)
-        self.assertTrue(_is_valid_rsa_key(body["key"]))
-
-    def test_get_does_not_exists(self):
-        os.remove(app.config["PUBLIC_KEY_FILE_NAME"])
-
-        status, body = self.get('/security/public_key')
-
-        self.assertEqual(status, 503, msg=body.get("error", "Unhandled error."))
-
-    # POST /security/public_key
-
-    def test_update_key(self):
-        os.remove(app.config["PUBLIC_KEY_FILE_NAME"])
-        self.assertFalse(os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]))
-
-        post_json = {"key": self._test_key}
-        status, body = self.post('/security/public_key', post_json)
-
-        self.assertEqual(status, 200, msg=body.get("error", "Unhandled error."))
-        self.assertTrue(os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]))
-
-    def test_update_invalid_key(self):
-        post_json = {"key": "garbage_text"}
-        status, body = self.post('/security/public_key', post_json)
-        self.assertEqual(status, 400, msg=body.get("error", "Unhandled error."))
 
     def tearDown(self):
         if os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]):
             os.remove(app.config["PUBLIC_KEY_FILE_NAME"])
+
+    # GET /security/public_key
+
+    def test_get_public_key(self):
+        self.create_public_key()
+
+        status, body = self.get('/security/public_key')
+
+        self.assertEqual(status, 200)
+        self.assertEqual(body['key'], self._test_key)
+
+    def test_get_public_key_not_exists(self):
+        status, body = self.get('/security/public_key')
+        self.assertEqual(status, 503)
+
+    # POST /security/public_key
+
+    def test_update_public_key(self):
+        self.assertFalse(os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]))
+
+        status, body = self.post('/security/public_key', {"key": self._test_key})
+
+        self.assertEqual(status, 200)
+        self.assertTrue(os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]))
+
+    def test_update_public_key_overwrite(self):
+        self.create_public_key()
+
+        new_key = self._test_key.replace('5', '9')
+
+        status, body = self.post('/security/public_key', {'key': new_key})
+        self.assertEqual(status, 200)
+
+        status, body = self.get('/security/public_key')
+        self.assertEqual(status, 200)
+        self.assertEqual(body['key'], new_key)
+
+    def test_update_public_key_error(self):
+        status, body = self.post('/security/public_key', '')
+        self.assertEqual(status, 400)
+
+        status, body = self.post('/security/public_key', {"not_key": "123"})
+        self.assertEqual(status, 400)
+
+        status, body = self.post('/security/public_key', {"key": "garbage_text"})
+        self.assertEqual(status, 400)
