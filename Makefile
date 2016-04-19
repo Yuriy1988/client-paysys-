@@ -35,6 +35,9 @@ db_update:
 	./manage.py db migrate
 	./manage.py db upgrade
 
+db_revert:
+	./manage.py db downgrade
+
 db_psql_create:
 	sudo -u postgres psql -c "CREATE USER $(DB_USER) WITH PASSWORD '$(DB_PASSWORD)'"
 	sudo -u postgres psql -c "CREATE DATABASE $(DB_NAME) OWNER $(DB_USER)"
@@ -55,9 +58,6 @@ db_remove:
 	sudo -u postgres dropuser -e --if-exists $(DB_USER)
 
 db_reset: db_remove db_create
-
-db_revert:
-	./manage.py db downgrade
 
 db_clean:
 	rm -rf migrations

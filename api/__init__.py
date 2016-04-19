@@ -2,7 +2,6 @@ import decimal
 from datetime import datetime
 
 from flask import Flask, json
-from flask.ext.cors import CORS
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
@@ -10,10 +9,6 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config.from_object('config.Debug')
 app.static_folder = app.config["STATIC_FOLDER"]
-
-
-# allow cross-origin ajax
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # DB and Migrations:
 db = SQLAlchemy(app)

@@ -17,6 +17,14 @@ def store_by_id(store_id):
     return _admin("/stores/{}".format(store_id))
 
 
+def store_exists(store_id):
+    return _admin("/stores/{}/exists".format(store_id))
+
+
+def store_paysys(store_id):
+    return _admin("/stores/{}/store_paysys".format(store_id))
+
+
 def merchant_by_id(merchant_id):
     return _admin("/merchants/{}".format(merchant_id))
 

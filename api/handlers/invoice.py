@@ -1,37 +1,30 @@
-from flask import Response, request, jsonify, render_template
+from flask import request, jsonify
+from flask.ext.cors import cross_origin
 
 from api import app, db
-from api.errors import NotFoundError
+from api.errors import NotFoundError, ValidationError
 from api.models import Invoice
 from api.schemas import InvoiceSchema
 from periphery import admin_api
 
 
-@app.route('/api/client/dev/invoices', methods=['OPTIONS'])
-def invoice_create_options():
-    return Response(status=200)
-
-
 @app.route('/api/client/dev/invoices', methods=['POST'])
+@cross_origin()
 def invoice_create():
     """
     Create invoice using an incoming JSON.
-
-    Test JSON:
-    {"order_id": "order_id_1", "store_id": "dss9-asdf-sasf-fsaa", "currency": "USD", "items": [{"store_item_id": "item_id_1",
-    "quantity": 3, "unit_price": 23.5}, {"store_item_id": "item_id_2", "quantity": 1, "unit_price": 10}]}
-
-    Returns:
-    < 200 OK $Invoice
-    < 400 Bad Request
-
+    Allow Cross Origin requests.
     """
     schema = InvoiceSchema()
     data, errors = schema.load(request.get_json())
     if errors:
-        return jsonify(errors=errors), 400
+        raise ValidationError(errors=errors)
 
-    # Creating a new Invoice object:
+    store_id = data.get('store_id')
+    store_exists = admin_api.store_exists(store_id)
+    if not store_exists.get('exists', False):
+        raise ValidationError(errors={'store_id': ['Store {store_id} does not exists.'.format(store_id=store_id)]})
+
     invoice = Invoice.create(data)
     db.session.commit()
 
@@ -40,45 +33,33 @@ def invoice_create():
 
 
 @app.route('/api/client/dev/invoices/<invoice_id>', methods=['GET'])
-def invoice_get_info(invoice_id):
+def invoice_detail(invoice_id):
     """
-    Get invoice info by invoice id.
-
-    Returns:
-    < 200 OK $Invoice
-    < 404 Not Found
+    Get invoice detail by invoice id.
+    :param str invoice_id: invoice identifier.
     """
     invoice = Invoice.query.get(invoice_id)
     if not invoice:
         raise NotFoundError()
 
-    result = InvoiceSchema().dump(invoice)
+    schema = InvoiceSchema()
+
+    result = schema.dump(invoice)
     return jsonify(result.data)
 
 
-@app.route('/client/payment/<invoice_id>', methods=['GET'])
-def get_payment_form(invoice_id):
+@app.route('/api/client/dev/invoices/<invoice_id>/invoice_paysys', methods=['GET'])
+def invoice_allowed_payment_systems(invoice_id):
+    """
+    Get list of payment system id, that allowed to pay for invoice.
+    :param str invoice_id: invoice identifier.
+    """
     invoice = Invoice.query.get(invoice_id)
     if not invoice:
-        return render_template('payment_form.html', error='Invoice "%s" not found!' % invoice_id)
+        raise NotFoundError()
 
-    # Getting custom layout store info from Admin (logo, etc):
-    store_data = admin_api.store_by_id(invoice.store_id)
-    if not store_data:
-        return render_template('payment_form.html', error='Store "%s" not found!' % invoice.store_id)
+    response = admin_api.store_paysys(invoice.store_id)
+    store_paysys = response.get('store_paysys', [])
+    allowed_invoice_paysys = [sps['paysys_id'] for sps in store_paysys if sps.get('allowed')]
 
-    store_info = {
-        'store_name': store_data['store_name'],
-        'store_url': store_data['store_url'],
-        'description': store_data['description'],
-        'logo': store_data['logo'],
-        'show_logo': store_data['show_logo']
-    }
-
-    invoice_info = {
-        'id': invoice.id,
-        'total_price': invoice.total_price,
-        'currency': invoice.currency
-    }
-
-    return render_template('payment_form.html', store_info=store_info, invoice_info=invoice_info)
+    return jsonify(invoice_paysys=allowed_invoice_paysys)

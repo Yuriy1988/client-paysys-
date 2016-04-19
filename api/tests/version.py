@@ -21,7 +21,7 @@ class TestGetVersion(unittest.TestCase):
     # GET /api/client/version
 
     def test_get_valid_response(self):
-        result = self.app.get('/api/client/version')
+        result = self.app.get('/client/version')
         data = json.loads(result.data)
 
         self.assertEqual(result.status_code, 200)
