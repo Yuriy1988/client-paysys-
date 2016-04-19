@@ -22,7 +22,7 @@ def merchant_by_id(merchant_id):
 
 
 def merchant_contracts_by_id(merchant_id, currency):
-    return _admin("/payment_systems/{}/contracts".format(merchant_id), currency=currency, active=True)
+    return _admin("/merchants/{}/contracts".format(merchant_id), currency=currency, active=True)
 
 
 def bank_contracts_by_id(payment_system_id, currency):
