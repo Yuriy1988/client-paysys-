@@ -1,37 +1,49 @@
-from api import app
-from flask import jsonify, request
-import re
 import os
+from flask import jsonify, request, Response
 
-from api.errors import ValidationError, ServiceUnavailable
+from api import app
+from api.errors import ServiceUnavailable, InternalServerError, ValidationError
+from api.schemas.base import BaseSchema, Regexp, fields
 
 
-def _is_valid_rsa_key(key):
-    r = re.compile("^-----BEGIN PUBLIC KEY-----[A-Za-z0-9+=/\n]*-----END PUBLIC KEY-----$")
-    return r.match(key)
+class SecuritySchema(BaseSchema):
+
+    key = fields.Str(required=True, validate=Regexp(
+        regex='^-----BEGIN PUBLIC KEY-----[A-Za-z0-9+=/\n]*-----END PUBLIC KEY-----$',
+        error='Wrong public key format.'))
 
 
 @app.route('/api/client/dev/security/public_key', methods=['GET'])
-def get_public_key():
+def public_key_get():
+    """
+    Return public key from file.
+    """
     if not os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]):
         raise ServiceUnavailable("RSA key does not exist.")
-    with open(app.config["PUBLIC_KEY_FILE_NAME"]) as f:
-        public_key = f.read()
-        key = {'key': public_key}
-    return jsonify(key)
+
+    try:
+        with open(app.config["PUBLIC_KEY_FILE_NAME"]) as f:
+            public_key = f.read()
+    except IOError:
+        raise InternalServerError('Read RSA public key error.')
+
+    return jsonify(key=public_key)
 
 
 @app.route('/api/client/dev/security/public_key', methods=['POST'])
-def upload_public_key():
+def public_key_create():
+    """
+    Upload public key into file.
+    """
+    schema = SecuritySchema()
+    data, errors = schema.load(request.get_json())
+    if errors:
+        raise ValidationError(errors=errors)
+
     try:
-        key_info = request.get_json()
-        if 'key' not in key_info:
-            raise ValidationError("'key' is required.")
-        key = str(key_info['key'])
-        if not _is_valid_rsa_key(key):
-            raise ValidationError("Invalid key format.")
         with open(app.config["PUBLIC_KEY_FILE_NAME"], 'w') as f:
-            f.write(key)
-    except TypeError:
-        raise ValidationError("Set header. Content-Type: application/json")
-    return jsonify({})
+            f.write(data['key'])
+    except IOError:
+        raise InternalServerError('Error writing public key to file.')
+
+    return Response(status=200)
