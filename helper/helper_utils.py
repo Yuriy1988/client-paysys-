@@ -1,21 +1,22 @@
+from decimal import Decimal
 
 
-def contract_key_func(amount):
+def contract_key_func(total_price):
     """
-    Return function that finds total tax considering amount (uses for finding max and min tax)
-    :param amount: Payment amount
+    Return function that finds total tax considering total_price (uses for finding max and min tax)
+    :param total_price: Payment total price
     """
     def get_contract_key(contract):
-        return contract.get("commission_fixed", 0.0) + amount * contract.get("commission_pct", 0.0) / 100.0
+        return Decimal(contract.get("commission_fixed", 0)) + total_price * Decimal(contract.get("commission_pct", 0)) / Decimal(100)
     return get_contract_key
 
 
-def max_tax_contract(contracts, amount):
-    return max(contracts, key=contract_key_func(amount))
+def max_tax_contract(contracts, total_price):
+    return max(contracts, key=contract_key_func(total_price))
 
 
-def min_tax_contract(contracts, amount):
-    return min(contracts, key=contract_key_func(amount))
+def min_tax_contract(contracts, total_price):
+    return min(contracts, key=contract_key_func(total_price))
 
 
 def clean_up(contract):

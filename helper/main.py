@@ -2,7 +2,7 @@ from helper.helper_utils import min_tax_contract, max_tax_contract, clean_up
 from periphery import admin_api
 
 
-def get_route(payment_system_id, merchant_id, amount, currency):
+def get_route(payment_system_id, merchant_id, total_price, currency):
     """
     Gives the most profitable payment route: couple of contracts.
     Returns dictionary in format:
@@ -10,7 +10,7 @@ def get_route(payment_system_id, merchant_id, amount, currency):
     * cleaned up means deleting 'contract_doc_url', 'filter', 'active' fields from contract.
     :param payment_system_id: Id of payment system (payment interface provider)
     :param merchant_id: Id of merchant (payment destination)
-    :param amount: Payment amount.
+    :param total_price: Payment total price.
     :param currency: Payment currency.
     """
     # get contracts from admin server via API
@@ -18,8 +18,8 @@ def get_route(payment_system_id, merchant_id, amount, currency):
     merchant_contracts = admin_api.merchant_contracts_by_id(merchant_id, currency)   # +
 
     # find most profitable deals (contracts)
-    paysys_contract = min_tax_contract(bank_contracts, amount)
-    merchant_contract = max_tax_contract(merchant_contracts, amount)
+    paysys_contract = min_tax_contract(bank_contracts.get('contracts'), total_price)
+    merchant_contract = max_tax_contract(merchant_contracts.get('contracts'), total_price)
 
     return {
         "paysys_contract": clean_up(paysys_contract),
