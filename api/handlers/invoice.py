@@ -58,8 +58,6 @@ def invoice_allowed_payment_systems(invoice_id):
     if not invoice:
         raise NotFoundError()
 
-    response = admin_api.store_paysys(invoice.store_id)
-    store_paysys = response.get('store_paysys', [])
-    allowed_invoice_paysys = [sps['paysys_id'] for sps in store_paysys if sps.get('allowed')]
+    allowed_paysys = admin_api.get_allowed_store_paysys(invoice.store_id)
 
-    return jsonify(invoice_paysys=allowed_invoice_paysys)
+    return jsonify(invoice_paysys=allowed_paysys)
