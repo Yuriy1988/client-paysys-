@@ -31,7 +31,7 @@ def merchant_id(route):
 class TestHelper(unittest.TestCase):
 
     def setUp(self):
-        admin_api.bank_contracts_by_id = MagicMock(
+        admin_api.get_payment_system_contracts = MagicMock(
             return_value={'contracts': [
                 contract_factory(1, 3.0, 2.6),
                 contract_factory(2, 4.0, 1.8),
@@ -39,7 +39,7 @@ class TestHelper(unittest.TestCase):
                 contract_factory(4, 0.0, 3.0),  # max
                 contract_factory(5, 0.0, 2.8),
             ]})
-        admin_api.merchant_contracts_by_id = MagicMock(
+        admin_api.get_merchant_contracts = MagicMock(
             return_value={'contracts': [
                 contract_factory(1, 0, 3.1),
                 contract_factory(2, 0, 4.0),  # max

@@ -1,4 +1,4 @@
-import json
+from flask import json
 
 from api.tests import base
 from api.models import Payment, Invoice

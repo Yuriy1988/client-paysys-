@@ -34,7 +34,7 @@ def get_payment_form(invoice_id):
         return render_template('payment_form.html', error='Invoice "%s" not found!' % invoice_id)
 
     # Getting custom layout store info from Admin (logo, etc):
-    store_data = admin_api.store_by_id(invoice.store_id)
+    store_data = admin_api.get_store(invoice.store_id)
     if not store_data:
         return render_template('payment_form.html', error='Store "%s" not found!' % invoice.store_id)
 

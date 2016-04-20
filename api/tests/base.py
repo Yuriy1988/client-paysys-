@@ -1,13 +1,13 @@
-import json
 import random
 import string
 from copy import deepcopy
 from unittest.mock import MagicMock
+from flask import json
 from flask.ext.testing import TestCase
 
 import helper
-from api import app, db as app_db, models
-from periphery import admin_api, notification_api, queue_api
+from api import app, db as app_db, models, transaction
+from periphery import admin_api, notification_api
 
 __author__ = 'Andrey Kupriy'
 
@@ -95,9 +95,11 @@ class BaseTestCase(TestCase):
         }
 
         store_json = _store
-        admin_api.merchant_by_id = MagicMock(return_value=_merchant)
-        admin_api.store_by_id = MagicMock(return_value=store_json)
-        queue_api.push = MagicMock(return_value={"status": "ACCEPTED"})
+        admin_api.get_merchant = MagicMock(return_value=_merchant)
+        admin_api.get_store = MagicMock(return_value=store_json)
+        admin_api.check_store_exists = MagicMock(return_value={'exists': True})
+        admin_api.get_allowed_store_paysys = MagicMock(return_value=list(models.enum.PAYMENT_SYSTEMS_ID_ENUM))
+        transaction._push_transaction_to_queue = MagicMock(return_value=None)
         notification_api.send_email = MagicMock(return_value="Message sent to {email}".format(
             email=self._card_info["notify_by_email"]))
 

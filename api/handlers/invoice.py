@@ -21,8 +21,8 @@ def invoice_create():
         raise ValidationError(errors=errors)
 
     store_id = data.get('store_id')
-    store_exists = admin_api.store_exists(store_id)
-    if not store_exists.get('exists', False):
+    store_exists = admin_api.check_store_exists(store_id)
+    if not store_exists:
         raise ValidationError(errors={'store_id': ['Store {store_id} does not exists.'.format(store_id=store_id)]})
 
     invoice = Invoice.create(data)

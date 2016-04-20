@@ -14,11 +14,11 @@ def get_route(payment_system_id, merchant_id, total_price, currency):
     :param currency: Payment currency.
     """
     # get contracts from admin server via API
-    bank_contracts = admin_api.bank_contracts_by_id(payment_system_id, currency)     # -
-    merchant_contracts = admin_api.merchant_contracts_by_id(merchant_id, currency)   # +
+    paysys_contracts = admin_api.get_payment_system_contracts(payment_system_id, currency)     # -
+    merchant_contracts = admin_api.get_merchant_contracts(merchant_id, currency)   # +
 
     # find most profitable deals (contracts)
-    paysys_contract = min_tax_contract(bank_contracts.get('contracts'), total_price)
+    paysys_contract = min_tax_contract(paysys_contracts.get('contracts'), total_price)
     merchant_contract = max_tax_contract(merchant_contracts.get('contracts'), total_price)
 
     return {
