@@ -7,7 +7,7 @@ from flask.ext.testing import TestCase
 
 import helper
 from api import app, db as app_db, models
-from periphery import admin_api, notification_api, queue
+from periphery import admin_api, notification_api, queue_api
 
 __author__ = 'Andrey Kupriy'
 
@@ -97,9 +97,7 @@ class BaseTestCase(TestCase):
         store_json = _store
         admin_api.merchant_by_id = MagicMock(return_value=_merchant)
         admin_api.store_by_id = MagicMock(return_value=store_json)
-        admin_api.store_exists = MagicMock(return_value={'exists': True})
-        admin_api.store_paysys = MagicMock(return_value={'store_paysys': list(models.enum.PAYMENT_SYSTEMS_ID_ENUM)})
-        queue.push = MagicMock(return_value={"status": "ACCEPTED"})
+        queue_api.push = MagicMock(return_value={"status": "ACCEPTED"})
         notification_api.send_email = MagicMock(return_value="Message sent to {email}".format(
             email=self._card_info["notify_by_email"]))
 
