@@ -1,9 +1,8 @@
+import functools
 import unittest
 from unittest.mock import MagicMock
 
-from api import services
-import functools
-import helper.main
+from api import services, helper
 
 
 # Util functions:
@@ -21,35 +20,32 @@ def contract_factory(contract_id, commission_fixed, commission_pct):
 
 
 def bank_id(route):
-    return route["paysys_contract"]["id"]
+    return route.paysys_contract["id"]
 
 
 def merchant_id(route):
-    return route["merchant_contract"]["id"]
+    return route.merchant_contract["id"]
 
 
 class TestHelper(unittest.TestCase):
 
     def setUp(self):
         services.get_payment_system_contracts = MagicMock(
-            return_value={'contracts': [
-                contract_factory(1, 3.0, 2.6),
-                contract_factory(2, 4.0, 1.8),
-                contract_factory(3, 5.0, 1.0),  # min
-                contract_factory(4, 0.0, 3.0),  # max
-                contract_factory(5, 0.0, 2.8),
-            ]})
+            return_value= [
+                contract_factory(1, '3.0', '2.6'),
+                contract_factory(2, '4.0', '1.8'),
+                contract_factory(3, '5.0', '1.0'),  # min
+                contract_factory(4, '0.0', '3.0'),  # max
+                contract_factory(5, '0.0', '2.8'),
+            ])
         services.get_merchant_contracts = MagicMock(
-            return_value={'contracts': [
-                contract_factory(1, 0, 3.1),
-                contract_factory(2, 0, 4.0),  # max
-                contract_factory(3, 1, 2.8),  # min
-            ]})
-        self.helper_get_route = functools.partial(helper.main.get_route,
-                                                  payment_system_id=0,
-                                                  merchant_id=0,
-                                                  currency='USD'
-                                                  )
+            return_value= [
+                contract_factory(1, '0', '3.1'),
+                contract_factory(2, '0', '4.0'),  # max
+                contract_factory(3, '1', '2.8'),  # min
+            ])
+        self.helper_get_route = functools.partial(helper.get_route, paysys_id=0, merchant_id=0, currency='USD')
+
         self.BANK_ID_ERROR = "Incorrect bank contract are found.\n{}"
         self.MERCHANT_ID_ERROR = "Incorrect merchant contract are found.\n{}"
 

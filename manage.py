@@ -22,10 +22,6 @@ def test():
     api_tests_path = os.path.join(base, 'api', 'tests')
     api_suite = unittest.TestLoader().discover(api_tests_path, pattern='*.py')
 
-    helper_tests_path = os.path.join(base, 'helper')
-    helper_suite = unittest.TestLoader().discover(helper_tests_path)
-
-    api_suite.addTests(helper_suite)
     unittest.TextTestRunner(verbosity=2).run(api_suite)
 
 test_command = script.Command(test)

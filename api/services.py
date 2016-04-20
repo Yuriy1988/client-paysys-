@@ -85,10 +85,11 @@ def get_merchant_contracts(merchant_id, currency):
     Request merchant contracts filtered by currency and active=True
     :param merchant_id: merchant identifier
     :param currency: one of currency enum
-    :return: dict with Merchant Contracts
+    :return: list with Merchant Contracts
     """
-    return _admin_server_get_request('/merchants/{id}/contracts'.format(id=merchant_id),
+    resp = _admin_server_get_request('/merchants/{id}/contracts'.format(id=merchant_id),
                                      currency=currency, active=True)
+    return resp.get('contracts', [])
 
 
 def get_payment_system_contracts(paysys_id, currency):
@@ -96,10 +97,11 @@ def get_payment_system_contracts(paysys_id, currency):
     Request payment system contracts filtered by currency and active=True
     :param paysys_id: payment system identifier
     :param currency: one of currency enum
-    :return: dict with Merchant Contracts
+    :return: list with Payment System Contracts
     """
-    return _admin_server_get_request('/payment_systems/{id}/contracts'.format(id=paysys_id),
+    resp = _admin_server_get_request('/payment_systems/{id}/contracts'.format(id=paysys_id),
                                      currency=currency, active=True)
+    return resp.get('contracts', [])
 
 
 # Notify service

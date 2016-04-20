@@ -5,7 +5,6 @@ from unittest.mock import MagicMock
 from flask import json
 from flask.ext.testing import TestCase
 
-import helper
 from api import app, db as app_db, models, transaction, services
 
 __author__ = 'Andrey Kupriy'
@@ -62,68 +61,69 @@ class BaseTestCase(TestCase):
         "status": "SUCCESS"
     }
 
+    _store = {
+        "id": 10,
+        "store_name": "The Greatest Store Ever!",
+        "store_url": "http://www.greatest.com",
+        "store_identifier": "dss9-asdf-sasf-fsaa",
+        "category": None,
+        "description": "Desdafggagagagas",
+        "logo": None,
+        "show_logo": False,
+        "merchant_id": "dss9-asdf-sasf-fsda",
+        "store_settings":
+            {
+                "sign_algorithm": "sign_algorithm",
+                "sign_key": "somethingdfsfdf",
+                "succeed_url": "sdfasdfasfasfsdfasfsdf",
+                "failure_url": "sdfasfasfasdfasdfasdfasd",
+                "commission_pct": 10.0
+            }
+        }
+
+    _merchant_account = {
+        "bank_name": "Alfa DO Bank",
+        "checking_account": "4111111111111111",
+        "currency": "USD",
+        "mfo": "123456",
+        "okpo": "12345678"
+    }
+
+    _paysys_contracts = [{
+        "id": 10,
+        "commission_fixed": 10.01,
+        "commission_pct": 10,
+        "contract_doc_url": "http://www.link10.com",
+        "currency": "USD",
+        "active": True,
+        "filter": "*"
+    }]
+
+    _merchant_contracts = [{
+        "id": 11,
+        "commission_fixed": 11.01,
+        "commission_pct": 11,
+        "contract_doc_url": "http://www.link11.com",
+        "currency": "USD",
+        "active": True,
+        "filter": "*"
+    }]
+
     def setUp(self):
         """ Setup before test case """
         app_db.session.close()
         app_db.drop_all()
         app_db.create_all()
 
-        _store = {
-            "id": 10,
-            "store_name": "The Greatest Store Ever!",
-            "store_url": "http://www.greatest.com",
-            "store_identifier": "dss9-asdf-sasf-fsaa",
-            "category": None,
-            "description": "Desdafggagagagas",
-            "logo": None,
-            "show_logo": False,
-            "merchant_id": "dss9-asdf-sasf-fsda",
-            "store_settings":
-                {
-                    "sign_algorithm": "sign_algorithm",
-                    "sign_key": "somethingdfsfdf",
-                    "succeed_url": "sdfasdfasfasfsdfasfsdf",
-                    "failure_url": "sdfasfasfasdfasdfasdfasd",
-                    "commission_pct": 10.0
-                }
-            }
-
-        _merchant_account = {
-            "bank_name": "Alfa DO Bank",
-            "checking_account": "4111111111111111",
-            "currency": "USD",
-            "mfo": "123456",
-            "okpo": "12345678"
-        }
-
-        services.get_merchant_account = MagicMock(return_value=_merchant_account)
-        services.get_store = MagicMock(return_value=_store.copy())
+        services.get_merchant_account = MagicMock(return_value=self._merchant_account.copy())
+        services.get_store = MagicMock(return_value=self._store.copy())
         services.check_store_exists = MagicMock(return_value={'exists': True})
         services.get_allowed_store_paysys = MagicMock(return_value=list(models.enum.PAYMENT_SYSTEMS_ID_ENUM))
+        services.get_payment_system_contracts = MagicMock(return_value=self._paysys_contracts)
+        services.get_merchant_contracts = MagicMock(return_value=self._merchant_contracts)
         services.send_email = MagicMock(return_value=None)
         services.send_sms = MagicMock(return_value=None)
         transaction._push_transaction_to_queue = MagicMock(return_value=None)
-
-        helper.get_route = MagicMock(return_value={
-            "paysys_contract": {
-                "id": 10,
-                "commission_fixed": 10.01,
-                "commission_pct": 10,
-                "contract_doc_url": "http://www.link10.com",
-                "currency": "USD",
-                "active": True,
-                "filter": "*"
-            },
-            "merchant_contract": {
-                "id": 11,
-                "commission_fixed": 11.01,
-                "commission_pct": 11,
-                "contract_doc_url": "http://www.link11.com",
-                "currency": "USD",
-                "active": True,
-                "filter": "*"
-            }
-        })
 
     def tearDown(self):
         """ Teardown after test case """

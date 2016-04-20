@@ -2,8 +2,7 @@ import pika
 from pika import exceptions as mq_err
 from flask import json
 
-import helper
-from api import app, errors, services
+from api import app, errors, services, helper
 from api.schemas import InvoiceSchema
 
 __author__ = 'Kostel Serhii'
@@ -85,13 +84,13 @@ def send_transaction(invoice, payment):
             "amount_coins": invoice.total_price_coins,
         },
         "source": {
-            "paysys_contract": route["paysys_contract"],
+            "paysys_contract": route.paysys_contract,
             "payment_requisites": {
                 "crypted_payment": payment.crypted_payment
             }
         },
         "destination": {
-            "merchant_contract": route["merchant_contract"],
+            "merchant_contract": route.merchant_contract,
             "merchant_account": merchant_account_json
         }
     }
