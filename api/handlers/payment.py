@@ -55,12 +55,15 @@ def payment_update(payment_id):
     if not payment:
         raise NotFoundError('There is no payment with such id.')
 
-    schema = PaymentSchema(only=('status',))
-    data, errors = schema.load(request.get_json())
+    schema = PaymentSchema(partial=True, only=('status',))
+    data, errors = schema.load(request.get_json(), origin_model=payment)
     if errors:
         raise ValidationError(errors=errors)
 
-    payment.status = data["status"]
+    payment.update(data)
     db.session.commit()
 
-    return Response(status=200)
+    schema = PaymentSchema(only=('id', 'status',))
+    result = schema.dump(payment)
+
+    return jsonify(result.data)

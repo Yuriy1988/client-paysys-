@@ -46,7 +46,7 @@ class TestPayment(base.BaseTestCase):
         self.assertIsNotNone(payment)
         self.assertIsNotNone(payment.id)
         self.assertEqual(payment.payment_account, "111111******1111")
-        self.assertEqual(payment.status, "CREATED")
+        self.assertEqual(payment.status, "ACCEPTED")
         self.assertEqual(payment.notify_by_email, "email@email.com")
         self.assertEqual(payment.notify_by_phone, "111111111111")
         self.assertEqual(payment.invoice_id, invoice_body['id'])
@@ -219,8 +219,8 @@ class TestPayment(base.BaseTestCase):
         )
         updated_payment = Payment.query.filter_by(invoice_id=invoice_body['id']).one()
 
+        self.assertEqual(payment_change.status, '200 OK')
         self.assertNotEqual(updated_payment.status, "UPDATED")
-        self.assertEqual(payment_change.status, '400 BAD REQUEST')
 
     def test_payment_change_status_bad_payment_id(self):
         invoice = self.get_invoice()
