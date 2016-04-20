@@ -1,5 +1,5 @@
 from helper.helper_utils import min_tax_contract, max_tax_contract, clean_up
-from periphery import admin_api
+from api import services
 
 
 def get_route(payment_system_id, merchant_id, total_price, currency):
@@ -14,8 +14,8 @@ def get_route(payment_system_id, merchant_id, total_price, currency):
     :param currency: Payment currency.
     """
     # get contracts from admin server via API
-    paysys_contracts = admin_api.get_payment_system_contracts(payment_system_id, currency)     # -
-    merchant_contracts = admin_api.get_merchant_contracts(merchant_id, currency)   # +
+    paysys_contracts = services.get_payment_system_contracts(payment_system_id, currency)     # -
+    merchant_contracts = services.get_merchant_contracts(merchant_id, currency)   # +
 
     # find most profitable deals (contracts)
     paysys_contract = min_tax_contract(paysys_contracts.get('contracts'), total_price)

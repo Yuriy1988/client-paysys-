@@ -3,9 +3,8 @@ from pika import exceptions as mq_err
 from flask import json
 
 import helper
-from api import app, errors
+from api import app, errors, services
 from api.schemas import InvoiceSchema
-from periphery import admin_api
 
 __author__ = 'Kostel Serhii'
 
@@ -72,9 +71,9 @@ def send_transaction(invoice, payment):
     """
     invoice_json = InvoiceSchema().dump(invoice)
 
-    store = admin_api.get_store(invoice.store_id)
+    store = services.get_store(invoice.store_id)
     merchant_id = store['merchant_id']
-    merchant_account_json = admin_api.get_merchant_account(merchant_id)
+    merchant_account_json = services.get_merchant_account(merchant_id)
 
     route = helper.get_route(payment.paysys_id, merchant_id, invoice.total_price, invoice.currency)
 

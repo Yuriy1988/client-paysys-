@@ -1,10 +1,9 @@
 from flask import request, jsonify
 
-from api import app, db, transaction
+from api import app, db, transaction, services
 from api.errors import ValidationError, NotFoundError
 from api.models import Invoice, Payment
 from api.schemas import PaymentSchema
-from periphery import admin_api
 
 
 @app.route('/api/client/dev/invoices/<invoice_id>/payments', methods=['POST'])
@@ -23,7 +22,7 @@ def payment_create(invoice_id):
         raise ValidationError(errors=errors)
 
     # Allow only payment system, that allowed for payment store.
-    allowed_paysys = admin_api.get_allowed_store_paysys(invoice.store_id)
+    allowed_paysys = services.get_allowed_store_paysys(invoice.store_id)
     if data['paysys_id'] not in allowed_paysys:
         raise ValidationError(errors={'paysy_id': ['Current payment system does not allowed to use']})
 

@@ -6,8 +6,7 @@ from flask import json
 from flask.ext.testing import TestCase
 
 import helper
-from api import app, db as app_db, models, transaction
-from periphery import admin_api
+from api import app, db as app_db, models, transaction, services
 
 __author__ = 'Andrey Kupriy'
 
@@ -97,13 +96,12 @@ class BaseTestCase(TestCase):
             "okpo": "12345678"
         }
 
-        store_json = _store
-        admin_api.get_merchant_account = MagicMock(return_value=_merchant_account)
-        admin_api.get_store = MagicMock(return_value=store_json)
-        admin_api.check_store_exists = MagicMock(return_value={'exists': True})
-        admin_api.get_allowed_store_paysys = MagicMock(return_value=list(models.enum.PAYMENT_SYSTEMS_ID_ENUM))
-        admin_api.send_email = MagicMock(return_value=None)
-        admin_api.send_sms = MagicMock(return_value=None)
+        services.get_merchant_account = MagicMock(return_value=_merchant_account)
+        services.get_store = MagicMock(return_value=_store.copy())
+        services.check_store_exists = MagicMock(return_value={'exists': True})
+        services.get_allowed_store_paysys = MagicMock(return_value=list(models.enum.PAYMENT_SYSTEMS_ID_ENUM))
+        services.send_email = MagicMock(return_value=None)
+        services.send_sms = MagicMock(return_value=None)
         transaction._push_transaction_to_queue = MagicMock(return_value=None)
 
         helper.get_route = MagicMock(return_value={

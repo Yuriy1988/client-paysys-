@@ -1,6 +1,5 @@
-from api import db
+from api import db, services
 from api.models import base, enum
-from periphery.admin_api import send_email, send_sms
 
 
 class Payment(base.BaseModel):
@@ -54,13 +53,13 @@ def send_notifications(payment):
     :param payment: Payment model instance
     """
     if payment.notify_by_email:
-        send_email(
+        services.send_email(
             payment.notify_by_email,
             'XOPay transaction status',
             'Thank you for your payment! Transaction status is: {status}'.format(status=payment.status)
         )
     if payment.notify_by_phone:
-        send_sms(
+        services.send_sms(
             payment.notify_by_phone,
             'XOPay transaction status is: {status}'.format(status=payment.status)
         )
