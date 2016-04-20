@@ -41,9 +41,9 @@ def get_allowed_store_paysys(store_id):
     :param store_id: store identifier
     :return: list of allowed paysys_id
     """
-    resp = _admin_server_get_request('/stores/{id}/store_paysys'.format(id=store_id))
+    resp = _admin_server_get_request('/stores/{id}/store_paysys'.format(id=store_id), allowed=True)
     store_paysys_list = resp.get('store_paysys', [])
-    return [sps['paysys_id'] for sps in store_paysys_list if sps.get('allowed')]
+    return [sps['paysys_id'] for sps in store_paysys_list]
 
 
 def check_store_exists(store_id):
