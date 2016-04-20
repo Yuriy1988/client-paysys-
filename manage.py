@@ -18,7 +18,7 @@ manager.add_command('runserver', server)
 # test
 def test():
     base = os.path.dirname(os.path.realpath(__file__))
-    print(base)
+
     api_tests_path = os.path.join(base, 'api', 'tests')
     api_suite = unittest.TestLoader().discover(api_tests_path, pattern='*.py')
 
