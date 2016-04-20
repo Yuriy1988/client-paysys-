@@ -1,10 +1,10 @@
-from flask import request, jsonify, Response
+from flask import request, jsonify
 
 from api import app, db, transaction
 from api.errors import ValidationError, NotFoundError
 from api.models import Invoice, Payment
 from api.schemas import PaymentSchema
-from periphery import admin_api, notification_api
+from periphery import admin_api
 
 
 @app.route('/api/client/dev/invoices/<invoice_id>/payments', methods=['POST'])
@@ -36,9 +36,6 @@ def payment_create(invoice_id):
     payment.status = 'ACCEPTED'
     db.session.commit()
 
-    if payment.notify_by_email:
-        notification_api.notify(payment.notify_by_email, payment)
-
     schema = PaymentSchema(only=('id', 'status',))
     result = schema.dump(payment)
 
@@ -60,8 +57,9 @@ def payment_update(payment_id):
     if errors:
         raise ValidationError(errors=errors)
 
-    payment.update(data)
-    db.session.commit()
+    if data:
+        payment.update(data)
+        db.session.commit()
 
     schema = PaymentSchema(only=('id', 'status',))
     result = schema.dump(payment)

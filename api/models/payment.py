@@ -1,5 +1,6 @@
 from api import db
 from api.models import base, enum
+from periphery.admin_api import send_email, send_sms
 
 
 class Payment(base.BaseModel):
@@ -43,3 +44,23 @@ class Payment(base.BaseModel):
     @property
     def crypted_payment(self):
         return self._crypted_payment
+
+
+@base.on_model_event(Payment, 'after_insert')
+@base.on_model_event(Payment, 'after_update')
+def send_notifications(payment):
+    """
+    If something changed - send notification.
+    :param payment: Payment model instance
+    """
+    if payment.notify_by_email:
+        send_email(
+            payment.notify_by_email,
+            'XOPay transaction status',
+            'Thank you for your payment! Transaction status is: {status}'.format(status=payment.status)
+        )
+    if payment.notify_by_phone:
+        send_sms(
+            payment.notify_by_phone,
+            'XOPay transaction status is: {status}'.format(status=payment.status)
+        )

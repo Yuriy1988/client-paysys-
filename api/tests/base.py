@@ -7,7 +7,7 @@ from flask.ext.testing import TestCase
 
 import helper
 from api import app, db as app_db, models, transaction
-from periphery import admin_api, notification_api
+from periphery import admin_api
 
 __author__ = 'Andrey Kupriy'
 
@@ -102,9 +102,9 @@ class BaseTestCase(TestCase):
         admin_api.get_store = MagicMock(return_value=store_json)
         admin_api.check_store_exists = MagicMock(return_value={'exists': True})
         admin_api.get_allowed_store_paysys = MagicMock(return_value=list(models.enum.PAYMENT_SYSTEMS_ID_ENUM))
+        admin_api.send_email = MagicMock(return_value=None)
+        admin_api.send_sms = MagicMock(return_value=None)
         transaction._push_transaction_to_queue = MagicMock(return_value=None)
-        notification_api.send_email = MagicMock(return_value="Message sent to {email}".format(
-            email=self._card_info["notify_by_email"]))
 
         helper.get_route = MagicMock(return_value={
             "paysys_contract": {
@@ -174,13 +174,13 @@ class BaseTestCase(TestCase):
         return deepcopy(self._invoice)
 
     def get_payment(self):
-        return deepcopy(self._payment)
+        return self._payment.copy()
 
     def get_card_info(self):
-        return deepcopy(self._card_info)
+        return self._card_info.copy()
 
     def get_new_status(self):
-        return deepcopy(self._new_status)
+        return self._new_status.copy()
 
     def get_payment_request(self):
-        return deepcopy(self._payment_request)
+        return self._payment_request.copy()

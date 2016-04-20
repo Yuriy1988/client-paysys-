@@ -1,8 +1,13 @@
 import requests
 from requests import exceptions
+from celery import Celery
 
 from api import app, errors
 
+__author__ = 'Kostel Serhii'
+
+
+# Admin service
 
 def _admin_server_get_request(url, **params):
     """
@@ -95,3 +100,40 @@ def get_payment_system_contracts(paysys_id, currency):
     """
     return _admin_server_get_request('/payment_systems/{id}/contracts'.format(id=paysys_id),
                                      currency=currency, active=True)
+
+
+# Notify service
+
+def _send_notify(task_name, body):
+    """
+    Send notification task to the Celery through the queue.
+    :param task_name: notification task name
+    :param body: notification body as tuple
+    """
+    print("Send notification: %s" % str(body))
+    try:
+        notify = Celery(broker=app.config["NOTIFICATION_SERVER_URL"])
+        notify.send_task(task_name, body)
+    except Exception as err:
+        # Notification error should not crash task execution
+        # TODO: add logger
+        print("Notification service is unavailable now: %s" % str(err))
+
+
+def send_email(email_address, subject, message):
+    """
+    Send email notification.
+    :param str email_address: email address
+    :param str subject: email subject
+    :param str message: email main message
+    """
+    _send_notify('notify.send_mail', (email_address, subject, message))
+
+
+def send_sms(phone_number, message):
+    """
+    Send sms notification.
+    :param str phone_number: phone number
+    :param str message: sms message
+    """
+    _send_notify('notify.send_sms', (phone_number, message))
