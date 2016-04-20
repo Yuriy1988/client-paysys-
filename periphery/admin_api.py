@@ -65,15 +65,13 @@ def get_store(store_id):
     return _admin_server_get_request('/stores/{id}'.format(id=store_id))
 
 
-def get_store_merchant_account(store_id):
+def get_merchant_account(merchant_id):
     """
-    Request store merchant account model json by store_id
-    :param store_id: store identifier
+    Request merchant account model json by store_id
+    :param merchant_id: merchant identifier
     :return: dict with Merchant Account object
     """
-    # TODO: replace with one request to admin server
-    store = get_store(store_id)
-    merchant = _admin_server_get_request('/merchants/{id}'.format(id=store["merchant_id"]))
+    merchant = _admin_server_get_request('/merchants/{id}'.format(id=merchant_id))
     return merchant['merchant_account']
 
 

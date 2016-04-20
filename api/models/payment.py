@@ -22,6 +22,9 @@ class Payment(base.BaseModel):
 
     def __init__(self, paysys_id, payment_account, invoice_id, crypted_payment,
                  status='CREATED', notify_by_email=None, notify_by_phone=None):
+        # create id to use it before commit (in transaction)
+        self.id = base.uuid_id()
+
         self.paysys_id = paysys_id
         self.payment_account = payment_account
 

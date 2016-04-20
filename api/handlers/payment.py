@@ -1,90 +1,66 @@
-import datetime
-
-import helper
-from api import app, db
-from api.errors import ValidationError, NotFoundError, BaseApiError
-from api.models import Invoice, Payment
-from api.schemas import PaymentSchema, InvoiceSchema
 from flask import request, jsonify, Response
-from periphery import admin_api, notification_api, queue_api
 
-
-@app.route('/api/client/dev/payment/<payment_id>', methods=['PUT'])
-def payment_update_status(payment_id):
-    status = request.get_json()
-    if not status:
-        raise BaseApiError('No JSON in request.')
-    if "status" not in status:
-        raise ValidationError("No 'status' in request JSON.")
-
-    payment = Payment.query.get(payment_id)
-    if not payment:
-        raise NotFoundError('There is no payment with such id.')
-
-    payment.status = status["status"]
-
-    payment.updated = datetime.datetime.utcnow()
-    db.session.commit()
-
-    return Response(status=200)
+from api import app, db, transaction
+from api.errors import ValidationError, NotFoundError
+from api.models import Invoice, Payment
+from api.schemas import PaymentSchema
+from periphery import admin_api, notification_api
 
 
 @app.route('/api/client/dev/invoices/<invoice_id>/payments', methods=['POST'])
 def payment_create(invoice_id):
     """
-    :param invoice_id: Invoice custom (uuid) id.
+    Create new payment for invoice.
+    :param invoice_id: Invoice identifier.
     """
     invoice = Invoice.query.get(invoice_id)
     if not invoice:
         raise NotFoundError('There is no invoice with such id')
 
-    data, errors = PaymentSchema().load(request.get_json())
+    schema = PaymentSchema(exclude=('status',))
+    data, errors = schema.load(request.get_json())
     if errors:
         raise ValidationError(errors=errors)
 
+    # Allow only payment system, that allowed for payment store.
+    allowed_paysys = admin_api.get_allowed_store_paysys(invoice.store_id)
+    if data['paysys_id'] not in allowed_paysys:
+        raise ValidationError(errors={'paysy_id': ['Current payment system does not allowed to use']})
+
     data['invoice_id'] = invoice_id
     payment = Payment.create(data)
+
+    # if got an exception - do not save payment into DB
+    transaction.send_transaction(invoice, payment)
+
+    payment.status = 'ACCEPTED'
     db.session.commit()
 
-    queue_api.push(construct_transaction(data, invoice, payment))
+    if payment.notify_by_email:
+        notification_api.notify(payment.notify_by_email, payment)
 
-    # payment_request['notify_by_email'] and notify(payment_request['notify_by_email'], payment)
+    schema = PaymentSchema(only=('id', 'status',))
+    result = schema.dump(payment)
 
-    return jsonify({'id': payment.id, 'status': payment.status}), 202
-
-
-def construct_transaction(payment_request, invoice, payment):
-    serialized_invoice = InvoiceSchema().dump(invoice)
-    merchant_id = admin_api.store_by_id(invoice.store_id)["merchant_id"]
-    merchant_account = admin_api.merchant_by_id(merchant_id)["merchant_account"]
-    route = helper.get_route(payment_request["paysys_id"], merchant_id, invoice.total_price, invoice.currency)
-
-    transaction = {
-        "id": payment.id,
-        "payment": {
-            "description": "TODO: description support.",
-            "invoice": serialized_invoice,
-            "amount_coins": invoice.total_price_coins,
-        },
-        "source": {
-            "paysys_contract": route["paysys_contract"],
-            "payment_requisites": {
-                "crypted_payment": payment_request["crypted_payment"]
-            }
-        },
-        "destination": {
-            "merchant_contract": route["merchant_contract"],
-            "merchant_account": merchant_account
-        }
-    }
-    # FIXME: add validation.
-    # print(TransactionSchema().validate(transaction))
-    return transaction
+    return jsonify(result.data), 202
 
 
-def notify(email, payment):
-    return notification_api.send_email(
-        email,
-        "XOPAY transaction status",
-        "Thank you for your payment! Transaction status is: {status}".format(status=payment.status)
-    )
+@app.route('/api/client/dev/payment/<payment_id>', methods=['PUT'])
+def payment_update(payment_id):
+    """
+    Update payment status.
+    :param payment_id: Invoice identifier.
+    """
+    payment = Payment.query.get(payment_id)
+    if not payment:
+        raise NotFoundError('There is no payment with such id.')
+
+    schema = PaymentSchema(only=('status',))
+    data, errors = schema.load(request.get_json())
+    if errors:
+        raise ValidationError(errors=errors)
+
+    payment.status = data["status"]
+    db.session.commit()
+
+    return Response(status=200)

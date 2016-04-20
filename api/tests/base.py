@@ -98,7 +98,7 @@ class BaseTestCase(TestCase):
         }
 
         store_json = _store
-        admin_api.get_store_merchant_account = MagicMock(return_value=_merchant_account)
+        admin_api.get_merchant_account = MagicMock(return_value=_merchant_account)
         admin_api.get_store = MagicMock(return_value=store_json)
         admin_api.check_store_exists = MagicMock(return_value={'exists': True})
         admin_api.get_allowed_store_paysys = MagicMock(return_value=list(models.enum.PAYMENT_SYSTEMS_ID_ENUM))
