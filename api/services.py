@@ -29,7 +29,7 @@ def _admin_server_get_request(url, **params):
     except exceptions.RequestException:
         raise errors.InternalServerError('The admin server request error.')
 
-    if response.status_code == requests.codes.ok:
+    if response.status_code not in [200, 201, 202, 204]:
         raise errors.InternalServerError('Wrong response status {0} from admin server.'.format(response.status_code))
 
     try:
