@@ -14,7 +14,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post(
             '/invoices/{invoice_id}/payments'.format(invoice_id=invoice_body['id']),
             payment_request
@@ -27,7 +27,7 @@ class TestPayment(base.BaseTestCase):
         self.assertIn('status', payment_body)
 
     def test_post_payment_response_wrong_invoice_id(self):
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/4k3k-kde3-ofkl-3345-sdada2-2a/payments/visa_master', payment_request)
 
         self.assertEqual(payment_status, 404)
@@ -36,7 +36,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
 
@@ -45,17 +45,17 @@ class TestPayment(base.BaseTestCase):
 
         self.assertIsNotNone(payment)
         self.assertIsNotNone(payment.id)
-        self.assertEqual(payment.payment_account, "111111******1111")
+        self.assertEqual(payment.payment_account, "4123 98** **** 0000")
         self.assertEqual(payment.status, "ACCEPTED")
         self.assertEqual(payment.notify_by_email, "email@email.com")
-        self.assertEqual(payment.notify_by_phone, "111111111111")
+        self.assertEqual(payment.notify_by_phone, "380111234567")
         self.assertEqual(payment.invoice_id, invoice_body['id'])
 
     def test_payment_account_required(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         del payment_request['payment_account']
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
@@ -69,7 +69,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         del payment_request['crypted_payment']
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
@@ -83,7 +83,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_request['paysys_id'] = None
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
@@ -95,7 +95,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_request['paysys_id'] = 'ddd'
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
@@ -107,7 +107,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_request['crypted_payment'] = None
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
@@ -121,7 +121,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
 
@@ -144,7 +144,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
 
@@ -167,7 +167,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
 
@@ -184,7 +184,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
 
@@ -203,7 +203,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
 
@@ -226,7 +226,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
 
@@ -248,7 +248,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
 
@@ -270,7 +270,7 @@ class TestPayment(base.BaseTestCase):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
-        payment_request = self.get_payment_request()
+        payment_request = self.get_payment()
         payment_status, payment_body = self.post('/invoices/{invoice_id}/payments'.format(
             invoice_id=invoice_body['id']), payment_request)
 

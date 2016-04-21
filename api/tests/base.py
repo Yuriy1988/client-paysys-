@@ -33,28 +33,12 @@ class BaseTestCase(TestCase):
         ]
     }
 
-    _card_info = {
-        "card_number": "1111111111111111",
-        "cardholder_name": "John Bowe",
-        "cvv": "111",
-        "expiry_date": "11/1111",
-        "notify_by_email": "email@email.com",
-        "notify_by_phone": "111111111111"
-    }
-
-    _payment_request = {
-        "paysys_id": "VISA_MASTER",
-        "crypted_payment": "ssadadjkfskjashcjkahcu3hd83hdwdh28d283h2e323eu823eufdsjiosjf39u9ejsod0r38u289u28uediweduw",
-        "payment_account": "111111******1111",
-        "notify_by_email": "email@email.com",
-        "notify_by_phone": "111111111111"
-    }
-
     _payment = {
-        "card_number": "1111111111111111",
+        "paysys_id": "VISA_MASTER",
+        "crypted_payment": "ssada" * 10,
+        "payment_account": "4123987601230000",
         "notify_by_email": "email@email.com",
-        "notify_by_phone": "111111111111",
-        "invoice_id": ""  # invoice_id does not exist yet.
+        "notify_by_phone": "380111234567"
     }
 
     _new_status = {
@@ -171,14 +155,8 @@ class BaseTestCase(TestCase):
     def get_invoice(self):
         return deepcopy(self._invoice)
 
-    def get_payment(self):
-        return self._payment.copy()
-
-    def get_card_info(self):
-        return self._card_info.copy()
-
     def get_new_status(self):
         return self._new_status.copy()
 
-    def get_payment_request(self):
-        return self._payment_request.copy()
+    def get_payment(self):
+        return self._payment.copy()

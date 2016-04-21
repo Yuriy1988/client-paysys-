@@ -11,7 +11,7 @@ __author__ = 'Kostel Serhii'
 # MasterCard : 16 digits, starting with 51 through 55.
 # Card can be already masked.
 _visa_master_regexp = re.compile(
-    "^(4[0-9]{3}[0-9\*]{8}[0-9]{4}|4[0-9]{3}[0-9\*]{5}[0-9]{4}|5[1-5][0-9]{2}[0-9\*]{8}[0-9]{4})$")
+    "^(4[0-9]{5}[0-9\*]{6}[0-9]{4}|4[0-9]{5}[0-9\*]{3}[0-9]{4}|5[1-5][0-9]{4}[0-9\*]{6}[0-9]{4})$")
 
 
 class PaymentSchema(base.BaseSchema):
@@ -37,6 +37,11 @@ class PaymentSchema(base.BaseSchema):
         Check payment account depending on the payment system.
         :param data: payment json
         """
+        # Validate schema called before other validators,
+        # so if some fields missing - it's will be validated later
+        if 'paysys_id' not in data or 'payment_account' not in data:
+            return
+
         if data['paysys_id'] == 'VISA_MASTER':
             cleaned_pa = re.sub('[- ]', '', data['payment_account'])
             if not _visa_master_regexp.match(cleaned_pa):
@@ -49,16 +54,22 @@ class PaymentSchema(base.BaseSchema):
     def mask_payment_account(self, data):
         """
         Mask Visa/Master card numbed as:
-        16 dig: 4123 1234 5678 9870 -> 4123 **** **** 9870
-        13 dig: 4123 12345 9870 -> 4123 ***** 9870
+        16 dig: 4123 1234 5678 9870 -> 4123 12** **** 9870
+        13 dig: 4123 12345 9870 -> 4123 12*** 9870
         :param data: payment data
         :return: payment data with masked payment account
         """
+        # If some fields missing - it's will be validated later
+        if 'paysys_id' not in data or 'payment_account' not in data:
+            return data
+
         if data['paysys_id'] == 'VISA_MASTER':
             cleaned_pa = re.sub('[- ]', '', data['payment_account'])
             pa_len = len(cleaned_pa)
-            prefix, suffix = cleaned_pa[:4], cleaned_pa[-4:]
-            center = '**** ****' if pa_len >= 16 else '*' * (pa_len - 8)
-            data['payment_account'] = ' '.join((prefix, center, suffix))
+
+            data['payment_account'] = re.sub(
+                pattern=r'^(\d{4})(\d{2})\d+(\d{4})$',
+                repl=r'\1 \2**%s \3' % (r'*' * (pa_len - 8) if 16 > pa_len > 8 else r' ****'),
+                string=cleaned_pa)
 
         return data
