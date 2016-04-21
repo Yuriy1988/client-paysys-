@@ -9,7 +9,7 @@ class _Base:
     PUBLIC_KEY_FILE_NAME = BASE_FOLDER + '/public.pem'
 
     # Date base
-    SQLALCHEMY_DATABASE_URI = 'postgresql://xopclient:G5MuJkzyAXQhslCQ@localhost/xopclientdb'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://xopclient:G5MuJkzyAXQhslCQ@127.0.0.1/xopclientdb'
     SQLALCHEMY_TRACK_MODIFICATIONS = False      # flask-sql signaling not used now
 
     # Current versions:
@@ -26,11 +26,11 @@ class _Base:
 class Debug(_Base):
     DEBUG = True
 
-    SERVER_NAME = 'localhost:7254'
+    SERVER_NAME = '127.0.0.1:7254'
 
     # Current links:
-    PROCESSING_URL = 'localhost:8888'  # TODO: Write down the right Processing-server address.
-    ADMIN_API_URL = "http://localhost:7128/api/admin/dev"
+    PROCESSING_URL = '127.0.0.1:8888'  # TODO: Write down the right Processing-server address.
+    ADMIN_API_URL = "http://127.0.0.1:7128/api/admin/dev"
 
     # Celery
     NOTIFICATION_SERVER_URL = 'amqp://xopay_rabbit:5lf01xiOFwyMLvQrkzz7@0.0.0.0:5672//'  # TODO: Write down the right Admin-server address.
@@ -55,7 +55,7 @@ class Testing(_Base):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
 
     # Date base
-    SQLALCHEMY_DATABASE_URI = "postgresql://xopclienttest:test123@localhost/xopclienttestdb"
+    SQLALCHEMY_DATABASE_URI = "postgresql://xopclienttest:test123@127.0.0.1/xopclienttestdb"
 
     # Paths
     PUBLIC_KEY_FILE_NAME = _Base.BASE_FOLDER + '/test_public.pem'
