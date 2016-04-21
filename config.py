@@ -10,7 +10,7 @@ class _Base:
 
     # Date base
     SQLALCHEMY_DATABASE_URI = 'postgresql://xopclient:G5MuJkzyAXQhslCQ@127.0.0.1/xopclientdb'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False      # flask-sql signaling not used now
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # Current versions:
     API_VERSION = 'dev'
@@ -47,7 +47,22 @@ class Debug(_Base):
 class Production(_Base):
     DEBUG = False
 
-    SERVER_NAME = 'xoapy.digitaloutlooks.com'
+    SERVER_NAME = 'xopay.digitaloutlooks.com'
+
+    # Current links:
+    PROCESSING_URL = '127.0.0.1:8888'  # TODO: Write down the right Processing-server address.
+    ADMIN_API_URL = "http://127.0.0.1:7128/api/admin/dev"
+
+    # Celery
+    NOTIFICATION_SERVER_URL = 'amqp://xopay_rabbit:5lf01xiOFwyMLvQrkzz7@0.0.0.0:5672//'  # TODO: Write down the right Admin-server address.
+
+    # Queue:
+    QUEUE_HOST = '0.0.0.0'
+    QUEUE_PORT = 5672
+    QUEUE_USERNAME = 'xopay_rabbit'
+    QUEUE_PASSWORD = '5lf01xiOFwyMLvQrkzz7'
+    QUEUE_VIRTUAL_HOST = '/xopay'
+    QUEUE_NAME = 'transactions_for_processing'
 
 
 class Testing(_Base):

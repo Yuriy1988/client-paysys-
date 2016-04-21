@@ -7,7 +7,7 @@ from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config.from_object('config.Debug')
+app.config.from_object('config.Production')
 app.static_folder = app.config["STATIC_FOLDER"]
 
 # DB and Migrations:
@@ -21,7 +21,6 @@ manager.add_command('db', MigrateCommand)
 # FIXME: write correct log configuration and add logs
 
 
-# Decimal-to-json fix:
 class XOPayJSONEncoder(json.JSONEncoder):
     def default(self, obj):
 
