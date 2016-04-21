@@ -5,6 +5,8 @@ from api.errors import ValidationError, NotFoundError
 from api.models import Invoice, Payment
 from api.schemas import PaymentSchema
 
+__author__ = 'Kostel Serhii'
+
 
 @app.route('/api/client/dev/invoices/<invoice_id>/payments', methods=['POST'])
 def payment_create(invoice_id):
@@ -15,6 +17,10 @@ def payment_create(invoice_id):
     invoice = Invoice.query.get(invoice_id)
     if not invoice:
         raise NotFoundError('There is no invoice with such id')
+
+    # Can be only one payment for invoice
+    if invoice.payment is not None:
+        raise ValidationError('Payment by invoice has been created. Current status: %s' % invoice.payment.status)
 
     schema = PaymentSchema(exclude=('status',))
     data, errors = schema.load(request.get_json())
