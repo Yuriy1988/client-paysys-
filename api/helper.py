@@ -1,6 +1,8 @@
 from collections import namedtuple
 from decimal import Decimal
-from api import services
+
+from api import services, errors
+
 
 Route = namedtuple('Route', ['paysys_contract', 'merchant_contract'])
 
@@ -39,14 +41,19 @@ def get_route(paysys_id, merchant_id, total_price, currency):
     """
     # get contracts from admin server via API
     paysys_contracts = services.get_payment_system_contracts(paysys_id, currency)   # -
+    if not paysys_contracts:
+        raise errors.InternalServerError('Payment System contracts not found.')
+
     merchant_contracts = services.get_merchant_contracts(merchant_id, currency)     # +
+    if not merchant_contracts:
+        raise errors.InternalServerError('Merchant contracts not found.')
 
     # calculate tax for every contracts
     paysys_with_tax = ((contract, calculate_contract_tax(contract, total_price)) for contract in paysys_contracts)
     merchant_with_tax = ((contract, calculate_contract_tax(contract, total_price)) for contract in merchant_contracts)
 
     # find most profitable deals (contracts)
-    paysys_contract, ps_tax = min(paysys_with_tax, key=lambda v: v[1])
-    merchant_contract, mr_tax = max(merchant_with_tax, key=lambda v: v[1])
+    ps_contract, ps_tax = min(paysys_with_tax, key=lambda v: v[1])
+    mr_contract, mr_tax = max(merchant_with_tax, key=lambda v: v[1])
 
-    return Route(paysys_contract=_clean_up(paysys_contract), merchant_contract=_clean_up(merchant_contract))
+    return Route(paysys_contract=_clean_up(ps_contract), merchant_contract=_clean_up(mr_contract))
