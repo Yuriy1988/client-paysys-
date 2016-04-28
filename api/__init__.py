@@ -1,4 +1,6 @@
+import os
 import decimal
+import logging.config
 from datetime import datetime
 
 from flask import Flask, json
@@ -18,7 +20,10 @@ manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 # Logging:
-# FIXME: write correct log configuration and add logs
+with open(os.path.join(app.config['BASE_FOLDER'], app.config['LOG_CONFIG']), 'rt') as f:
+    log_config = json.load(f)
+logging.config.dictConfig(log_config)
+logging.getLogger("production")
 
 
 class XOPayJSONEncoder(json.JSONEncoder):

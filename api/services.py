@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from requests import exceptions
 from celery import Celery
@@ -112,14 +114,13 @@ def _send_notify(task_name, body):
     :param task_name: notification task name
     :param body: notification body as tuple
     """
-    print("Send notification: %s" % str(body))
+    logging.info("Send notification: %s" % str(body))
     try:
         notify = Celery(broker=app.config["NOTIFICATION_SERVER_URL"])
         notify.send_task(task_name, body)
     except Exception as err:
         # Notification error should not crash task execution
-        # TODO: add logger
-        print("Notification service is unavailable now: %s" % str(err))
+        logging.error("Notification service is unavailable now: %s" % str(err))
 
 
 def send_email(email_address, subject, message):

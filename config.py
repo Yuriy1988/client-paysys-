@@ -2,6 +2,7 @@ import os
 
 
 class _Base:
+    LOG_CONFIG = "log_config.json"
 
     # Paths
     BASE_FOLDER = os.path.abspath(os.path.dirname(__file__))
