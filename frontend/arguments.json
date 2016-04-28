@@ -4,7 +4,7 @@
       "full" : "client_host",
       "short" : "h",
       "value" : true,
-      "description" : "Xopay client hostname http:\/\/xopay.digitaloutlooks.com"
+      "description" : "Xopay client hostname https:\/\/xopay.digitaloutlooks.com"
     },
     {
       "full" : "client_api_version",

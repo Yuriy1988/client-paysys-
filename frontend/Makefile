@@ -1,4 +1,4 @@
-CLIENT_HOST="http://xopay.digitaloutlooks.com"
+CLIENT_HOST="https://xopay.digitaloutlooks.com"
 CLIENT_API_VERSION="dev"
 
 install:
