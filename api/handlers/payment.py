@@ -47,11 +47,27 @@ def payment_create(invoice_id):
     return jsonify(result.data), 202
 
 
+@app.route('/api/client/dev/payment/<payment_id>', methods=['GET'])
+def payment_detail(payment_id):
+    """
+    Get payment status detail.
+    :param payment_id: Payment identifier.
+    """
+    payment = Payment.query.get(payment_id)
+    if not payment:
+        raise NotFoundError('There is no payment with such id.')
+
+    schema = PaymentSchema(only=('id', 'status',))
+    result = schema.dump(payment)
+
+    return jsonify(result.data)
+
+
 @app.route('/api/client/dev/payment/<payment_id>', methods=['PUT'])
 def payment_update(payment_id):
     """
     Update payment status.
-    :param payment_id: Invoice identifier.
+    :param payment_id: IPayment identifier.
     """
     payment = Payment.query.get(payment_id)
     if not payment:
