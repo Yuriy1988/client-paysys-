@@ -21,7 +21,7 @@ class PaymentSchema(base.BaseSchema):
     payment_account = fields.Str(required=True, validate=Length(min=10, max=127))
     crypted_payment = fields.Str(required=True, validate=Length(min=1, max=4096))
 
-    status = fields.Str()
+    status = fields.Str(validate=OneOf(enum.PAYMENT_STATUS_ENUM))
 
     notify_by_email = fields.Email(allow_none=True)
     notify_by_phone = fields.Str(allow_none=True, validate=base.Phone())
