@@ -4,8 +4,9 @@
  */
 
 export {
-    Field as Field,
-    ComboBox as ComboBox
+  Field as Field,
+  ComboBox as ComboBox
 } from './field'
 
-export {CVVInput as CVVInput} from './cvvinput'
+export { CVVInput as CVVInput } from './cvvinput'
+export { StatusBox as StatusBox } from './statusBox'
