@@ -53,13 +53,17 @@ def send_notifications(payment):
     :param payment: Payment model instance
     """
     if payment.notify_by_email:
-        services.send_email(
-            payment.notify_by_email,
-            'XOPay transaction status',
-            'Thank you for your payment! Transaction status is: {status}'.format(status=payment.status)
-        )
+        message = ''
+
+        if payment.status == 'SUCCESS':
+            message = 'Thank you for your payment!\nTransaction [%s] status is success!' % payment.id
+
+        if payment.status == 'REJECTED':
+            message = 'Sorry, but your transaction [%s] is rejected.\nTry agen later.' % payment.id
+
+        if message:
+            services.send_email(payment.notify_by_email, subject='XOPay transaction status', message=message)
+
     if payment.notify_by_phone:
-        services.send_sms(
-            payment.notify_by_phone,
-            'XOPay transaction status is: {status}'.format(status=payment.status)
-        )
+        if payment.status in ['SUCCESS', 'REJECTED']:
+            services.send_sms(payment.notify_by_phone, 'XOPay transaction status is %s' % payment.status)

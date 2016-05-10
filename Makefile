@@ -134,5 +134,6 @@ mac_db_install:
 	sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $(DB_NAME) TO $(DB_USER)"
 
 mac_venv_install:
+	# If some issues, try: $sudo PATH=$PATH:/usr/pgsql-9.5.1/bin/ pip install psycopg2
 	virtualenv --no-site-packages -p /usr/local/bin/python3 venv
 	bash -c "source venv/bin/activate && pip install -r requirements.txt"
