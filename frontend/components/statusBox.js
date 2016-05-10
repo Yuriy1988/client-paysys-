@@ -4,6 +4,7 @@
  */
 import React, { Component } from "react";
 import Utils from '../utils'
+import ajax from 'axios'
 
 export class StatusBox extends Component {
   constructor(props) {
