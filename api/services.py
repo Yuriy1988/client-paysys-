@@ -1,10 +1,9 @@
 import logging
-
 import requests
 from requests import exceptions
-from celery import Celery
 
 from api import app, errors
+from api.message_queue import push_to_queue
 
 __author__ = 'Kostel Serhii'
 
@@ -108,16 +107,15 @@ def get_payment_system_contracts(paysys_id, currency):
 
 # Notify service
 
-def _send_notify(task_name, body):
+def _send_notify(queue_name, body_json):
     """
-    Send notification task to the Celery through the queue.
-    :param task_name: notification task name
-    :param body: notification body as tuple
+    Send notification task to the Notify Service through the queue.
+    :param queue_name: notification queue name
+    :param dict body_json: notification body json
     """
-    logging.info("Send notification: %s" % str(body))
+    logging.info("Send notification to [%s]: %r", queue_name,  body_json)
     try:
-        notify = Celery(broker=app.config["NOTIFICATION_SERVER_URL"])
-        notify.send_task(task_name, body)
+        push_to_queue(queue_name, body_json)
     except Exception as err:
         # Notification error should not crash task execution
         logging.error("Notification service is unavailable now: %s" % str(err))
@@ -130,7 +128,7 @@ def send_email(email_address, subject, message):
     :param str subject: email subject
     :param str message: email main message
     """
-    _send_notify('notify.send_mail', (email_address, subject, message))
+    _send_notify(app.config['QUEUE_EMAIL'], {'email_to': email_address, 'subject': subject, 'text': message})
 
 
 def send_sms(phone_number, message):
@@ -139,4 +137,4 @@ def send_sms(phone_number, message):
     :param str phone_number: phone number
     :param str message: sms message
     """
-    _send_notify('notify.send_sms', (phone_number, message))
+    _send_notify(app.config['QUEUE_SMS'], {'phone': phone_number, 'text': message})
