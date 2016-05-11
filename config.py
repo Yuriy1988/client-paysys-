@@ -40,7 +40,7 @@ class Debug(_Base):
     QUEUE_PASSWORD = '5lf01xiOFwyMLvQrkzz7'
     QUEUE_VIRTUAL_HOST = '/xopay'
 
-    QUEUE_TRANSACTION = 'transactions_status'
+    QUEUE_TRANS_FOR_PROCESSING='transactions_for_processing'
     QUEUE_EMAIL = 'notify_email'
     QUEUE_SMS = 'notify_sms'
 
@@ -61,7 +61,7 @@ class Production(_Base):
     QUEUE_PASSWORD = '5lf01xiOFwyMLvQrkzz7'
     QUEUE_VIRTUAL_HOST = '/xopay'
 
-    QUEUE_TRANSACTION='transactions_status'
+    QUEUE_TRANS_FOR_PROCESSING='transactions_for_processing'
     QUEUE_EMAIL='notify_email'
     QUEUE_SMS='notify_sms'
 

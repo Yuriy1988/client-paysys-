@@ -39,4 +39,4 @@ def send_transaction(invoice, payment):
         }
     }
 
-    push_to_queue(app.config["QUEUE_TRANSACTION"], transaction)
+    push_to_queue(app.config['QUEUE_TRANS_FOR_PROCESSING'], transaction)
