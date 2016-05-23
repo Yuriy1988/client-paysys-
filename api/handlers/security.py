@@ -2,7 +2,7 @@ import os
 from flask import jsonify, request, Response
 
 from api import app
-from api.errors import ServiceUnavailable, InternalServerError, ValidationError
+from api.errors import ServiceUnavailableError, InternalServerError, ValidationError
 from api.schemas.base import BaseSchema, Regexp, fields
 
 
@@ -19,7 +19,7 @@ def public_key_get():
     Return public key from file.
     """
     if not os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]):
-        raise ServiceUnavailable("RSA key does not exist.")
+        raise ServiceUnavailableError("RSA key does not exist.")
 
     try:
         with open(app.config["PUBLIC_KEY_FILE_NAME"]) as f:

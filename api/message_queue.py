@@ -51,6 +51,6 @@ def push_to_queue(queue_name, body_json):
             channel.basic_publish(exchange='', routing_key=queue_name, body=body, properties=publish_properties)
 
     except mq_err.AMQPConnectionError as err:
-        raise errors.ServiceUnavailable('Queue error: %r' % err)
+        raise errors.ServiceUnavailableError('Queue error: %r' % err)
     except (mq_err.AMQPChannelError, mq_err.AMQPError) as err:
         raise errors.InternalServerError('Queue error: %r' % err)

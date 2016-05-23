@@ -100,7 +100,7 @@ class InternalServerError(BaseApiError):
 
 
 @_handle_api_error
-class ServiceUnavailable(BaseApiError):
+class ServiceUnavailableError(BaseApiError):
 
     default_status_code = 503
     default_message = 'Service Unavailable'
