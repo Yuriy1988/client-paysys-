@@ -2,7 +2,7 @@ import logging
 import requests
 from requests import exceptions
 
-from api import app, errors
+from api import app, errors, auth
 from api.message_queue import push_to_queue
 
 __author__ = 'Kostel Serhii'
@@ -18,8 +18,10 @@ def _admin_server_get_request(url, **params):
     :return: response as dict or raise exception
     """
     full_url = app.config["ADMIN_API_URL"] + url
+    headers = {"Authorization": "Bearer %s" % auth.get_system_token()}
+
     try:
-        response = requests.get(full_url, params=params, timeout=5)
+        response = requests.get(full_url, params=params, headers=headers, timeout=5)
 
     except exceptions.Timeout:
         raise errors.ServiceUnavailableError('The admin server connection timeout.')

@@ -1,4 +1,7 @@
 import os
+from datetime import timedelta
+
+__author__ = 'Kostel Serhii'
 
 
 class _Base:
@@ -22,6 +25,11 @@ class _Base:
     CSRF_SESSION_KEY = "rx$iyDi~~ztvGj$q|pUVQSmBD07gSWTPswP{H3vKQ0HkvSKnzj"
 
     SECRET_KEY = "twuDcr%V#QQ8i*J8DW3k9XNG{~|266~0I?5ek1Zy4HMF4w{KPwfsddf4456"
+
+    AUTH_ALGORITHM = 'HS512'
+    AUTH_KEY = 'PzYs2qLh}2$8uUJbBnWB800iYKe5xdYqItRNo7@38yW@tPDVAX}EV5V31*ZK78QS'
+    AUTH_TOKEN_LIFE_TIME = timedelta(minutes=30)
+    AUTH_SYSTEM_USER_ID = 'xopay.client'
 
 
 class Debug(_Base):
