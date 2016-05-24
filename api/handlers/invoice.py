@@ -1,13 +1,13 @@
 from flask import request, jsonify
 from flask.ext.cors import cross_origin
 
-from api import app, db, services
+from api import api_v1, db, services
 from api.errors import NotFoundError, ValidationError
 from api.models import Invoice
 from api.schemas import InvoiceSchema
 
 
-@app.route('/api/client/dev/invoices', methods=['POST'])
+@api_v1.route('/invoices', methods=['POST'])
 @cross_origin()
 def invoice_create():
     """
@@ -31,7 +31,7 @@ def invoice_create():
     return jsonify(result.data)
 
 
-@app.route('/api/client/dev/invoices/<invoice_id>', methods=['GET'])
+@api_v1.route('/invoices/<invoice_id>', methods=['GET'])
 def invoice_detail(invoice_id):
     """
     Get invoice detail by invoice id.
@@ -47,7 +47,7 @@ def invoice_detail(invoice_id):
     return jsonify(result.data)
 
 
-@app.route('/api/client/dev/invoices/<invoice_id>/invoice_paysys', methods=['GET'])
+@api_v1.route('/invoices/<invoice_id>/invoice_paysys', methods=['GET'])
 def invoice_allowed_payment_systems(invoice_id):
     """
     Get list of payment system id, that allowed to pay for invoice.

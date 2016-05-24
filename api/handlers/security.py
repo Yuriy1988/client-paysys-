@@ -1,7 +1,7 @@
 import os
 from flask import jsonify, request, Response
 
-from api import app
+from api import app, api_v1
 from api.errors import ServiceUnavailableError, InternalServerError, ValidationError
 from api.schemas.base import BaseSchema, Regexp, fields
 
@@ -13,7 +13,7 @@ class SecuritySchema(BaseSchema):
         error='Wrong public key format.'))
 
 
-@app.route('/api/client/dev/security/public_key', methods=['GET'])
+@api_v1.route('/security/public_key', methods=['GET'])
 def public_key_get():
     """
     Return public key from file.
@@ -30,7 +30,7 @@ def public_key_get():
     return jsonify(key=public_key)
 
 
-@app.route('/api/client/dev/security/public_key', methods=['POST'])
+@api_v1.route('/security/public_key', methods=['POST'])
 def public_key_create():
     """
     Upload public key into file.

@@ -1,6 +1,6 @@
 from flask import request, jsonify
 
-from api import app, db, transaction, services
+from api import api_v1, db, auth, transaction, services
 from api.errors import ValidationError, NotFoundError
 from api.models import Invoice, Payment
 from api.schemas import PaymentSchema
@@ -8,7 +8,7 @@ from api.schemas import PaymentSchema
 __author__ = 'Kostel Serhii'
 
 
-@app.route('/api/client/dev/invoices/<invoice_id>/payments', methods=['POST'])
+@api_v1.route('/invoices/<invoice_id>/payments', methods=['POST'])
 def payment_create(invoice_id):
     """
     Create new payment for invoice.
@@ -47,7 +47,7 @@ def payment_create(invoice_id):
     return jsonify(result.data), 202
 
 
-@app.route('/api/client/dev/payment/<payment_id>', methods=['GET'])
+@api_v1.route('/payment/<payment_id>', methods=['GET'])
 def payment_detail(payment_id):
     """
     Get payment status detail.
@@ -63,11 +63,12 @@ def payment_detail(payment_id):
     return jsonify(result.data)
 
 
-@app.route('/api/client/dev/payment/<payment_id>', methods=['PUT'])
+@api_v1.route('/payment/<payment_id>', methods=['PUT'])
+@auth.auth('system')
 def payment_update(payment_id):
     """
     Update payment status.
-    :param payment_id: IPayment identifier.
+    :param payment_id: Payment identifier.
     """
     payment = Payment.query.get(payment_id)
     if not payment:

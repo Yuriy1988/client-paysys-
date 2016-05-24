@@ -1,14 +1,15 @@
-from datetime import timedelta
 import decimal
-
+from datetime import timedelta
 from flask import request, jsonify
-from api import app, db
+
+from api import api_v1, db, auth
 from api.models import Invoice, Payment
 from api.errors import ValidationError
 from api.schemas import StatisticsArgsSchema, PaymentSchema
 
 
-@app.route('/api/client/dev/store/<store_id>/statistics', methods=['GET'])
+@api_v1.route('/store/<store_id>/statistics', methods=['GET'])
+@auth.auth('system')
 def get_store_statistics(store_id):
     request_schema = StatisticsArgsSchema()
     data, errors = request_schema.load(request.args)
@@ -46,7 +47,9 @@ def get_store_statistics(store_id):
     return jsonify(history=result.data)
 
 
-@app.route('/api/client/dev/<store_id>/statistics/autocomplete/payment_id', methods=['GET'])
+# TODO: add to documentation
+@api_v1.route('/stores/<store_id>/statistics/autocomplete/payment_id', methods=['GET'])
+@auth.auth('system')
 def payment_id_autocomplete(store_id):
     search_piece = request.args('payment_id')
     # query = Payment.query.filter(Invoice.store_id == store_id)
