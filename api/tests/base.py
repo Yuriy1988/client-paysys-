@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from flask import json
 from flask.ext.testing import TestCase
 
-from api import app, db as app_db, models, transaction, services
+from api import app, db as app_db, auth as api_auth, models, services
 
 __author__ = 'Andrey Kupriy'
 
@@ -99,15 +99,13 @@ class BaseTestCase(TestCase):
         app_db.drop_all()
         app_db.create_all()
 
-        services.get_merchant_account = MagicMock(return_value=self._merchant_account.copy())
         services.get_store = MagicMock(return_value=self._store.copy())
         services.check_store_exists = MagicMock(return_value={'exists': True})
         services.get_allowed_store_paysys = MagicMock(return_value=list(models.enum.PAYMENT_SYSTEMS_ID_ENUM))
+        services.get_merchant_account = MagicMock(return_value=self._merchant_account.copy())
         services.get_payment_system_contracts = MagicMock(return_value=self._paysys_contracts)
         services.get_merchant_contracts = MagicMock(return_value=self._merchant_contracts)
-        services.send_email = MagicMock(return_value=None)
-        services.send_sms = MagicMock(return_value=None)
-        transaction._push_transaction_to_queue = MagicMock(return_value=None)
+        services.push_to_queue = MagicMock(return_value=None)
 
     def tearDown(self):
         """ Teardown after test case """
@@ -134,22 +132,32 @@ class BaseTestCase(TestCase):
         a_zA_Z0_9 = string.ascii_letters + string.digits
         return ''.join((random.choice(a_zA_Z0_9) for i in range(str_len)))
 
-    def get(self, url):
-        response = self.client.get(self.api_base + url)
+    def get_system_token(self):
+        return api_auth.get_system_token()
+
+    def request(self, url, method='GET', data=None, token=None, **options):
+        headers = {"Content-Type": "application/json"}
+        if token:
+            headers["Authorization"] = "Bearer %s" % token
+
+        data = json.dumps(data) if isinstance(data, dict) else data
+
+        return self.client.open(self.api_base + url, method=method, data=data, headers=headers, **options)
+
+    def get(self, url, token=None):
+        response = self.request(url, method='GET', token=token)
         return response.status_code, response.json
 
-    def post(self, url, body):
-        headers = {"Content-Type": "application/json"}
-        response = self.client.post(self.api_base + url, data=json.dumps(body), headers=headers)
+    def post(self, url, body, token=None):
+        response = self.request(url, method='POST', data=body, token=token)
         return response.status_code, response.json if response.mimetype == 'application/json' else response.data
 
-    def put(self, url, body):
-        headers = {"Content-Type": "application/json"}
-        response = self.client.put(self.api_base + url, data=json.dumps(body), headers=headers)
+    def put(self, url, body, token=None):
+        response = self.request(url, method='PUT', data=body, token=token)
         return response.status_code, response.json
 
-    def delete(self, url):
-        response = self.client.delete(self.api_base + url)
+    def delete(self, url, token=None):
+        response = self.request(url, method='DELETE', token=token)
         return response.status_code, response.json if response.status_code >= 400 else None
 
     def get_invoice(self):

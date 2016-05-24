@@ -147,10 +147,10 @@ class TestInvoice(base.BaseTestCase):
         invoice_model_1 = Invoice.query.get(body1['id'])
         invoice_model_2 = Invoice.query.get(body2['id'])
 
-        status, body = self.get('/invoices/{id}'.format(id=invoice_model_1.id))
+        status, body = self.get('/invoices/%s' % invoice_model_1.id)
         self.assertEqual(status, 200)
 
-        status, body = self.get('/invoices/{id}'.format(id=invoice_model_2.id))
+        status, body = self.get('/invoices/%s' % invoice_model_2.id)
         self.assertEqual(status, 200)
 
     def test_get_invoice_full_valid_response(self):
@@ -158,7 +158,7 @@ class TestInvoice(base.BaseTestCase):
         status, body = self.post('/invoices', invoice)
         invoice_model = Invoice.query.get(body['id'])
 
-        status, body = self.get('/invoices/{id}'.format(id=invoice_model.id))
+        status, body = self.get('/invoices/%s' % invoice_model.id)
         self.assertEqual(status, 200)
 
         self.assertIn('id', body)
