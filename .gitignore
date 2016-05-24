@@ -9,3 +9,4 @@ dist
 migrations
 *.pem
 node_modules
+test_cover
