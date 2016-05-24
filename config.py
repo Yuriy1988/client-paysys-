@@ -38,7 +38,6 @@ class Debug(_Base):
     SERVER_NAME = '127.0.0.1:7254'
 
     # Current links:
-    PROCESSING_URL = '127.0.0.1:8888'  # TODO: Write down the right Processing-server address.
     ADMIN_API_URL = "http://127.0.0.1:7128/api/admin/dev"
 
     # Queue:
@@ -59,7 +58,6 @@ class Production(_Base):
     SERVER_NAME = 'xopay.digitaloutlooks.com'
 
     # Current links:
-    PROCESSING_URL = '127.0.0.1:8888'  # TODO: Write down the right Processing-server address.
     ADMIN_API_URL = "http://127.0.0.1:7128/api/admin/dev"
 
     # Queue:
