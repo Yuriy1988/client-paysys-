@@ -14,8 +14,7 @@ hosts = dict(
 path_to_deploy = [
     'frontend/static',
     'api',
-    'config.py',
-    'manage.py',
+    '*.py',
     'requirements.txt',
     'Makefile',
     'log_config.json'
@@ -26,6 +25,7 @@ path_to_exclude = [
     '.gitignore',
     '__pycache__',
     'api/tests',
+    'fabfile.py'
 ]
 
 env.deploy_dir = '/var/www/xopay/client'
