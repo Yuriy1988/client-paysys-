@@ -6,7 +6,7 @@ class Payment(base.BaseModel):
 
     __tablename__ = 'payment'
 
-    id = db.Column(db.String, primary_key=True, default=base.uuid_id)
+    id = db.Column(db.String, primary_key=True)
     paysys_id = db.Column(db.Enum(*enum.PAYMENT_SYSTEMS_ID_ENUM, name='enum_payment_systems'), nullable=False)
     payment_account = db.Column(db.String(127), nullable=False)
 
@@ -23,7 +23,8 @@ class Payment(base.BaseModel):
     def __init__(self, paysys_id, payment_account, invoice_id, crypted_payment,
                  status='CREATED', notify_by_email=None, notify_by_phone=None):
         # create id to use it before commit (in transaction)
-        self.id = base.uuid_id()
+        # use the same id as invoice_id
+        self.id = invoice_id
 
         self.paysys_id = paysys_id
         self.payment_account = payment_account
