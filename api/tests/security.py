@@ -42,7 +42,7 @@ class TestSecurity(base.BaseTestCase):
     def test_update_public_key(self):
         self.assertFalse(os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]))
 
-        status, body = self.post('/security/public_key', {"key": self._test_key})
+        status, body = self.post('/security/public_key', {"key": self._test_key}, token=self.get_system_token())
 
         self.assertEqual(status, 200)
         self.assertTrue(os.path.exists(app.config["PUBLIC_KEY_FILE_NAME"]))
@@ -52,7 +52,7 @@ class TestSecurity(base.BaseTestCase):
 
         new_key = self._test_key.replace('5', '9')
 
-        status, body = self.post('/security/public_key', {'key': new_key})
+        status, body = self.post('/security/public_key', {'key': new_key}, token=self.get_system_token())
         self.assertEqual(status, 200)
 
         status, body = self.get('/security/public_key')
@@ -60,11 +60,11 @@ class TestSecurity(base.BaseTestCase):
         self.assertEqual(body['key'], new_key)
 
     def test_update_public_key_error(self):
-        status, body = self.post('/security/public_key', '')
+        status, body = self.post('/security/public_key', '', token=self.get_system_token())
         self.assertEqual(status, 400)
 
-        status, body = self.post('/security/public_key', {"not_key": "123"})
+        status, body = self.post('/security/public_key', {"not_key": "123"}, token=self.get_system_token())
         self.assertEqual(status, 400)
 
-        status, body = self.post('/security/public_key', {"key": "garbage_text"})
+        status, body = self.post('/security/public_key', {"key": "garbage_text"}, token=self.get_system_token())
         self.assertEqual(status, 400)
