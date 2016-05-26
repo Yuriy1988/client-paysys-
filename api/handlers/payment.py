@@ -44,10 +44,14 @@ def payment_create(invoice_id):
     schema = PaymentSchema(only=('id', 'status',))
     result = schema.dump(payment)
 
-    return jsonify(result.data), 202
+    response = result.data
+    response['access_token'] = auth.get_access_token()
+
+    return jsonify(response), 202
 
 
 @api_v1.route('/payment/<payment_id>', methods=['GET'])
+@auth.auth('access_token')
 def payment_detail(payment_id):
     """
     Get payment status detail.

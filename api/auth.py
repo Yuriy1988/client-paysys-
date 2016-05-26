@@ -141,3 +141,15 @@ def get_system_token():
         groups=['system'],
     )
     return _create_token(payload=payload)
+
+
+def get_access_token():
+    """
+    Access token for temporary requests without authorization
+    :return: access JWT token
+    """
+    payload = dict(
+        exp=datetime.utcnow() + app.config['ACCESS_TOKEN_LIFE_TIME'],
+        groups=['access_token'],
+    )
+    return _create_token(payload=payload)

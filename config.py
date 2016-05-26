@@ -31,6 +31,8 @@ class _Base:
     AUTH_TOKEN_LIFE_TIME = timedelta(minutes=30)
     AUTH_SYSTEM_USER_ID = 'xopay.client'
 
+    ACCESS_TOKEN_LIFE_TIME = timedelta(days=1)
+
 
 class Debug(_Base):
     DEBUG = True

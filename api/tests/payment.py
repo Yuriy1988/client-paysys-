@@ -184,3 +184,5 @@ class TestPayment(base.BaseTestCase):
                 token=self.get_system_token()
             )
             self.assertEqual(status, 404)
+
+    # TODO: GET /payment/<payment_id>
