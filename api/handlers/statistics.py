@@ -9,8 +9,8 @@ from api.schemas import StatisticsArgsSchema, StatisticsPaymentsSchema
 @api_v1.route('/statistics/payments', methods=['GET'])
 @auth.auth('system')
 def payments_statistics():
-    request_schema = StatisticsArgsSchema()
-    data, errors = request_schema.load(request.args)
+    schema = StatisticsArgsSchema()
+    data, errors = schema.load(request.args)
     if errors:
         raise ValidationError(errors=errors)
 

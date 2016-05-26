@@ -17,9 +17,9 @@ class StatisticsArgsSchema(base.BaseSchema):
     from_date = fields.Date(allow_none=True)
     till_date = fields.Date(allow_none=True)
 
-    order_by = fields.Str(default='created', validate=Length(min=5, max=20))
-    limit = fields.Int(default=10, validate=Range(min=1, max=30))
-    offset = fields.Int(default=0, validate=Range(min=0))
+    order_by = fields.Str(allow_none=True, missing='created', validate=Length(min=5, max=20))
+    limit = fields.Int(allow_none=True, missing=10, validate=Range(min=1, max=30))
+    offset = fields.Int(allow_none=True, missing=0, validate=Range(min=0))
 
 
 class _StatisticsInvoiceSchema(base.BaseSchema):
