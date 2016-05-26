@@ -8,8 +8,8 @@ class StatisticsArgsSchema(base.BaseSchema):
 
     store_id = fields.Str(allow_none=True, validate=Length(equal=36))
     currency = fields.Str(allow_none=True, validate=OneOf(enum.CURRENCY_ENUM))
-    from_total_price = fields.Decimal(allow_none=True)
-    till_total_price = fields.Decimal(allow_none=True)
+    from_total_price = fields.Decimal(allow_none=True, places=2)
+    till_total_price = fields.Decimal(allow_none=True, places=2)
 
     paysys_id = fields.Str(allow_none=True, validate=OneOf(enum.PAYMENT_SYSTEMS_ID_ENUM))
     payment_account = fields.Str(allow_none=True, validate=Length(max=127))
@@ -27,7 +27,7 @@ class _StatisticsInvoiceSchema(base.BaseSchema):
     invoice_id = fields.Str(dump_only=True)
     store_id = fields.Str(dump_only=True)
     currency = fields.Str(dump_only=True)
-    total_price = fields.Decimal(dump_only=True)
+    total_price = fields.Decimal(dump_only=True, places=2)
 
 
 class StatisticsPaymentsSchema(base.BaseSchema):

@@ -12,7 +12,7 @@ class _ItemSchema(base.BaseSchema):
 
     store_item_id = fields.Str(required=True, validate=Length(min=1, max=512))
     quantity = fields.Int(required=True, validate=Range(min=1, max=1000))
-    unit_price = fields.Decimal(required=True, validate=Range(min=Decimal('0.01'), max=Decimal(500000)))
+    unit_price = fields.Decimal(required=True, places=2, validate=Range(min=Decimal('0.01'), max=Decimal(500000)))
     item_name = fields.Str(allow_none=True)
 
 
@@ -25,4 +25,4 @@ class InvoiceSchema(base.BaseSchema):
     items = fields.Nested(_ItemSchema, many=True, required=True, allow_none=False, validate=Length(min=1))
 
     payment_url = fields.Url(dump_only=True)
-    total_price = fields.Decimal(dump_only=True)
+    total_price = fields.Decimal(dump_only=True, places=2)

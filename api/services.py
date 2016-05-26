@@ -25,10 +25,8 @@ def _admin_server_get_request(url, **params):
 
     except exceptions.Timeout:
         raise errors.ServiceUnavailableError('The admin server connection timeout.')
-
     except exceptions.ConnectionError:
         raise errors.ServiceUnavailableError('The admin server connection error.')
-
     except exceptions.RequestException:
         raise errors.InternalServerError('The admin server request error.')
 
