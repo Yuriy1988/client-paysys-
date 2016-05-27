@@ -26,9 +26,9 @@ class XOPayJSONEncoder(json.JSONEncoder):
 
 def logger_configure(log_config):
 
-    if 'LOG_FILENAME' in log_config:
+    if 'LOG_FILE' in log_config and os.access(os.path.dirname(log_config['LOG_FILE']), os.W_OK):
         log_handler = logging.handlers.RotatingFileHandler(
-            filename=log_config['LOG_FILENAME'],
+            filename=log_config['LOG_FILE'],
             maxBytes=log_config['LOG_MAX_BYTES'],
             backupCount=log_config['LOG_BACKUP_COUNT'],
             encoding='utf8',

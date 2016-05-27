@@ -68,7 +68,7 @@ class Production(_Base):
     LOG_ROOT_LEVEL = 'INFO'
     LOG_LEVEL = 'INFO'
 
-    LOG_FILENAME = '/var/log/xopay/xopay.log'
+    LOG_FILE = '/var/log/xopay/xopay.log'
     LOG_MAX_BYTES = 10*1024*1024
     LOG_BACKUP_COUNT = 10
 
@@ -90,6 +90,9 @@ class Production(_Base):
 class Testing(_Base):
     TESTING = True
     PRESERVE_CONTEXT_ON_EXCEPTION = False
+
+    LOG_ROOT_LEVEL = 'INFO'
+    LOG_LEVEL = 'INFO'
 
     # Date base
     SQLALCHEMY_DATABASE_URI = "postgresql://xopclienttest:test123@127.0.0.1/xopclienttestdb"
