@@ -1,7 +1,7 @@
 import os
 import decimal
 import logging
-import logging.config
+import logging.handlers
 from datetime import datetime
 from werkzeug.contrib.fixers import ProxyFix
 from flask import Flask, Blueprint, json
@@ -24,6 +24,29 @@ class XOPayJSONEncoder(json.JSONEncoder):
         return super(XOPayJSONEncoder, self).default(obj)
 
 
+def logger_configure(log_config):
+
+    if 'LOG_FILENAME' in log_config:
+        log_handler = logging.handlers.RotatingFileHandler(
+            filename=log_config['LOG_FILENAME'],
+            maxBytes=log_config['LOG_MAX_BYTES'],
+            backupCount=log_config['LOG_BACKUP_COUNT'],
+            encoding='utf8',
+        )
+    else:
+        log_handler = logging.StreamHandler()
+
+    log_formatter = logging.Formatter(fmt=log_config['LOG_FORMAT'], datefmt=log_config['LOG_DATE_FORMAT'])
+    log_handler.setFormatter(log_formatter)
+
+    # root logger
+    logging.getLogger('').addHandler(log_handler)
+    logging.getLogger('').setLevel(log_config['LOG_ROOT_LEVEL'])
+
+    # local logger
+    logging.getLogger(log_config.get('LOG_BASE_NAME', '')).setLevel(log_config['LOG_LEVEL'])
+
+
 app = Flask(__name__)
 app.config.from_object('config.Production')
 app.static_folder = app.config["STATIC_FOLDER"]
@@ -31,13 +54,9 @@ app.static_folder = app.config["STATIC_FOLDER"]
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.json_encoder = XOPayJSONEncoder
 
-db = SQLAlchemy(app)
+logger_configure(app.config)
 
-# Logging:
-with open(os.path.join(app.config['BASE_FOLDER'], app.config['LOG_CONFIG']), 'rt') as f:
-    log_config = json.load(f)
-logging.config.dictConfig(log_config)
-logging.getLogger("production")
+db = SQLAlchemy(app)
 
 api_v1 = Blueprint('api_v1', __name__, url_prefix='/api/client/dev')
 

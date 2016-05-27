@@ -16,8 +16,7 @@ path_to_deploy = [
     'api',
     '*.py',
     'requirements.txt',
-    'Makefile',
-    'log_config.json'
+    'Makefile'
 ]
 
 path_to_exclude = [
@@ -144,7 +143,7 @@ def setup():
     # create log structure
     sudo('mkdir -p {log_dir}'.format(**env))
     sudo('chown -R "{user}:www-data" {log_dir}'.format(**env))
-    sudo('chmod 2660 {log_dir}'.format(**env))
+    sudo('chmod 2770 {log_dir}'.format(**env))
 
     # deploy
     deploy()

@@ -5,7 +5,6 @@ __author__ = 'Kostel Serhii'
 
 
 class _Base:
-    LOG_CONFIG = "log_config.json"
 
     # Paths
     BASE_FOLDER = os.path.abspath(os.path.dirname(__file__))
@@ -26,6 +25,10 @@ class _Base:
 
     SECRET_KEY = "twuDcr%V#QQ8i*J8DW3k9XNG{~|266~0I?5ek1Zy4HMF4w{KPwfsddf4456"
 
+    LOG_BASE_NAME = 'xop'
+    LOG_FORMAT = 'CLIENT | %(levelname)-6.6s | %(name)-15.15s | %(asctime)s | %(message)s'
+    LOG_DATE_FORMAT = '%d.%m %H:%M:%S'
+
     AUTH_ALGORITHM = 'HS512'
     AUTH_KEY = 'PzYs2qLh}2$8uUJbBnWB800iYKe5xdYqItRNo7@38yW@tPDVAX}EV5V31*ZK78QS'
     AUTH_TOKEN_LIFE_TIME = timedelta(minutes=30)
@@ -38,6 +41,9 @@ class Debug(_Base):
     DEBUG = True
 
     SERVER_NAME = '127.0.0.1:7254'
+
+    LOG_ROOT_LEVEL = 'DEBUG'
+    LOG_LEVEL = 'DEBUG'
 
     # Current links:
     ADMIN_API_URL = "http://127.0.0.1:7128/api/admin/dev"
@@ -58,6 +64,13 @@ class Production(_Base):
     DEBUG = False
 
     SERVER_NAME = 'xopay.digitaloutlooks.com'
+
+    LOG_ROOT_LEVEL = 'INFO'
+    LOG_LEVEL = 'INFO'
+
+    LOG_FILENAME = '/var/log/xopay/xopay.log'
+    LOG_MAX_BYTES = 10*1024*1024
+    LOG_BACKUP_COUNT = 10
 
     # Current links:
     ADMIN_API_URL = "http://127.0.0.1:7128/api/admin/dev"

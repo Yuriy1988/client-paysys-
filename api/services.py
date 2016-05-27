@@ -8,6 +8,9 @@ from api.message_queue import push_to_queue
 __author__ = 'Kostel Serhii'
 
 
+_log = logging.getLogger('xop.services')
+
+
 # Admin service
 
 def _admin_server_get_request(url, **params):
@@ -113,12 +116,12 @@ def _send_notify(queue_name, body_json):
     :param queue_name: notification queue name
     :param dict body_json: notification body json
     """
-    logging.info("Send notification to [%s]: %r", queue_name,  body_json)
+    _log.info("Send notification to [%s]: %r", queue_name,  body_json)
     try:
         push_to_queue(queue_name, body_json)
     except Exception as err:
         # Notification error should not crash task execution
-        logging.error("Notification service is unavailable now: %s" % str(err))
+        _log.error("Notification service is unavailable now: %s" % str(err))
 
 
 def send_email(email_address, subject, message):
