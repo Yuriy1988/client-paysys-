@@ -4,7 +4,7 @@ import logging
 import logging.handlers
 from datetime import datetime
 from werkzeug.contrib.fixers import ProxyFix
-from flask import Flask, Blueprint, json
+from flask import Flask, Blueprint, json, request
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -55,6 +55,18 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 app.json_encoder = XOPayJSONEncoder
 
 logger_configure(app.config)
+log = logging.getLogger('xop.main')
+log.info('Starting XOPay Client Service...')
+
+# in production werkzeug logger does not work
+# add requests log manually
+if app.config['DEBUG']:
+
+    @app.after_request
+    def log_request(response):
+        logging.getLogger('xop.request').info(
+            '[%s] %s %s %s' % (request.remote_addr, request.method, request.full_path, response.status_code))
+        return response
 
 db = SQLAlchemy(app)
 

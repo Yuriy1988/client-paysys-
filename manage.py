@@ -30,7 +30,7 @@ manager.add_command('db', MigrateCommand)
 
 # runserver
 # TODO: move port and debug into config
-server = Server(host="0.0.0.0", port=7254, use_debugger=True)
+server = Server(host="0.0.0.0", port=7254)
 manager.add_command('runserver', server)
 
 
