@@ -60,12 +60,17 @@ log.info('Starting XOPay Client Service...')
 
 # in production werkzeug logger does not work
 # add requests log manually
-if app.config['DEBUG']:
+if not app.config['DEBUG']:
 
     @app.after_request
     def log_request(response):
-        logging.getLogger('xop.request').info(
-            '[%s] %s %s %s' % (request.remote_addr, request.method, request.full_path, response.status_code))
+        request_detail = dict(
+            remote_address=request.headers.get('X-Real-IP', request.remote_addr),
+            method=request.method,
+            path=request.full_path if request.query_string else request.path,
+            status=response.status_code
+        )
+        logging.getLogger('xop.request').info('[%(remote_address)s] %(method)s %(path)s %(status)s' % request_detail)
         return response
 
 db = SQLAlchemy(app)

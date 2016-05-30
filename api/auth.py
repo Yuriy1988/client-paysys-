@@ -84,8 +84,9 @@ def _check_authorization(access_groups, verify=False):
             _log.debug('Session %s expired', payload.get('session_id'))
             raise errors.UnauthorizedError('Session expired')
 
-        if ip_addr != request.remote_addr:
-            _log.warning('Wrong IP: %s. Token created for IP: %s', request.remote_addr, ip_addr)
+        remote_address = request.headers.get('X-Real-IP', request.remote_addr)
+        if ip_addr != remote_address:
+            _log.warning('Wrong IP: %s. Token created for IP: %s', remote_address, ip_addr)
             raise errors.ForbiddenError('Request forbidden from another network')
 
     g.token = token
