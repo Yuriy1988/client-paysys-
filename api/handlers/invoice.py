@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask.ext.cors import cross_origin
 
-from api import api_v1, db, services
+from api import api_v1, db, utils
 from api.errors import NotFoundError, ValidationError
 from api.models import Invoice
 from api.schemas import InvoiceSchema
@@ -20,7 +20,7 @@ def invoice_create():
         raise ValidationError(errors=errors)
 
     store_id = data.get('store_id')
-    store_exists = services.check_store_exists(store_id)
+    store_exists = utils.check_store_exists(store_id)
     if not store_exists:
         raise ValidationError(errors={'store_id': ['Store {store_id} does not exists.'.format(store_id=store_id)]})
 
@@ -57,6 +57,6 @@ def invoice_allowed_payment_systems(invoice_id):
     if not invoice:
         raise NotFoundError()
 
-    allowed_paysys = services.get_allowed_store_paysys(invoice.store_id)
+    allowed_paysys = utils.get_allowed_store_paysys(invoice.store_id)
 
     return jsonify(invoice_paysys=allowed_paysys)

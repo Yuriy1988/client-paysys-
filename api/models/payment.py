@@ -1,4 +1,4 @@
-from api import db, services
+from api import db, utils
 from api.models import base, enum
 
 
@@ -63,8 +63,8 @@ def send_notifications(payment):
             message = 'Sorry, but your transaction [%s] is rejected.\nTry agen later.' % payment.id
 
         if message:
-            services.send_email(payment.notify_by_email, subject='XOPay transaction status', message=message)
+            utils.send_email(payment.notify_by_email, subject='XOPay transaction status', message=message)
 
     if payment.notify_by_phone:
         if payment.status in ['SUCCESS', 'REJECTED']:
-            services.send_sms(payment.notify_by_phone, 'XOPay transaction status is %s' % payment.status)
+            utils.send_sms(payment.notify_by_phone, 'XOPay transaction status is %s' % payment.status)

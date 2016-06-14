@@ -2,7 +2,7 @@ import functools
 import unittest
 from unittest.mock import MagicMock
 
-from api import services, helper
+from api import utils, helper
 
 
 # Util functions:
@@ -31,7 +31,7 @@ def merchant_id(route):
 class TestHelper(unittest.TestCase):
 
     def setUp(self):
-        services.get_payment_system_contracts = MagicMock(
+        utils.get_payment_system_contracts = MagicMock(
             return_value=[
                 contract_factory(1, 'visa',       '7.0', '2.5', "4*"),
                 contract_factory(2, 'master',     '8.0', '2.3', "5*"),
@@ -41,7 +41,7 @@ class TestHelper(unittest.TestCase):
                 contract_factory(6, 'aval all',   '0.0', '2.6', "*"),
                 contract_factory(7, 'shved',      '10.0', '2.4', "*"),
             ])
-        services.get_merchant_contracts = MagicMock(
+        utils.get_merchant_contracts = MagicMock(
             return_value=[
                 contract_factory(1, 'merch1', '0', '3.1'),
                 contract_factory(2, 'merch2', '0', '4.0'),  # max

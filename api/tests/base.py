@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from flask import json
 from flask.ext.testing import TestCase
 
-from api import app, db as app_db, auth as api_auth, models, services
+from api import app, db as app_db, auth as api_auth, models, utils
 
 __author__ = 'Andrey Kupriy'
 
@@ -99,13 +99,13 @@ class BaseTestCase(TestCase):
         app_db.drop_all()
         app_db.create_all()
 
-        services.get_store = MagicMock(return_value=self._store.copy())
-        services.check_store_exists = MagicMock(return_value={'exists': True})
-        services.get_allowed_store_paysys = MagicMock(return_value=list(models.enum.PAYMENT_SYSTEMS_ID_ENUM))
-        services.get_merchant_account = MagicMock(return_value=self._merchant_account.copy())
-        services.get_payment_system_contracts = MagicMock(return_value=self._paysys_contracts)
-        services.get_merchant_contracts = MagicMock(return_value=self._merchant_contracts)
-        services.push_to_queue = MagicMock(return_value=None)
+        utils.get_store = MagicMock(return_value=self._store.copy())
+        utils.check_store_exists = MagicMock(return_value={'exists': True})
+        utils.get_allowed_store_paysys = MagicMock(return_value=list(models.enum.PAYMENT_SYSTEMS_ID_ENUM))
+        utils.get_merchant_account = MagicMock(return_value=self._merchant_account.copy())
+        utils.get_payment_system_contracts = MagicMock(return_value=self._paysys_contracts)
+        utils.get_merchant_contracts = MagicMock(return_value=self._merchant_contracts)
+        utils.push_to_queue = MagicMock(return_value=None)
 
     def tearDown(self):
         """ Teardown after test case """
