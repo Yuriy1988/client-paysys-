@@ -46,7 +46,7 @@ class Debug(_Base):
     # FIXME: uncomment after config update (for full invite url)
     # SERVER_NAME = '127.0.0.1:7254'
 
-    LOG_ROOT_LEVEL = 'DEBUG'
+    LOG_ROOT_LEVEL = 'INFO'
     LOG_LEVEL = 'DEBUG'
 
     # Current links:

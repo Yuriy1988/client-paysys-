@@ -47,4 +47,4 @@ def public_key_create():
     except IOError:
         raise InternalServerError('Error writing public key to file.')
 
-    return Response(status=200)
+    return Response(status=200, mimetype='application/json')
