@@ -43,7 +43,8 @@ class _Base:
 class Debug(_Base):
     DEBUG = True
 
-    SERVER_NAME = '127.0.0.1:7254'
+    # FIXME: uncomment after config update (for full invite url)
+    # SERVER_NAME = '127.0.0.1:7254'
 
     LOG_ROOT_LEVEL = 'DEBUG'
     LOG_LEVEL = 'DEBUG'
@@ -58,15 +59,17 @@ class Debug(_Base):
     QUEUE_PASSWORD = '5lf01xiOFwyMLvQrkzz7'
     QUEUE_VIRTUAL_HOST = '/xopay'
 
-    QUEUE_TRANS_FOR_PROCESSING='transactions_for_processing'
+    QUEUE_TRANS_FOR_PROCESSING = 'transactions_for_processing'
     QUEUE_EMAIL = 'notify_email'
     QUEUE_SMS = 'notify_sms'
+    QUEUE_REQUEST = 'notify_request'
 
 
 class Production(_Base):
     DEBUG = False
 
-    SERVER_NAME = 'xopay.digitaloutlooks.com'
+    # FIXME: uncomment after config update (for full invite url)
+    # SERVER_NAME = 'xopay.digitaloutlooks.com'
 
     LOG_ROOT_LEVEL = 'INFO'
     LOG_LEVEL = 'INFO'
@@ -86,9 +89,10 @@ class Production(_Base):
     QUEUE_PASSWORD = '5lf01xiOFwyMLvQrkzz7'
     QUEUE_VIRTUAL_HOST = '/xopay'
 
-    QUEUE_TRANS_FOR_PROCESSING='transactions_for_processing'
-    QUEUE_EMAIL='notify_email'
-    QUEUE_SMS='notify_sms'
+    QUEUE_TRANS_FOR_PROCESSING = 'transactions_for_processing'
+    QUEUE_EMAIL = 'notify_email'
+    QUEUE_SMS = 'notify_sms'
+    QUEUE_REQUEST = 'notify_request'
 
 
 class Testing(_Base):

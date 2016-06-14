@@ -91,6 +91,9 @@ def _check_authorization(access_groups, verify=False):
 
     g.token = token
     g.user_id = user_id
+    g.user_name = payload.get('user_name', '')
+    g.user_ip_addr = payload.get('ip_addr', '')
+    g.groups = groups
 
 
 def auth(access_groups=None, verify=False):

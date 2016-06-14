@@ -1,11 +1,13 @@
+import pytz
+import pika
 import logging
 import requests
-import pika
+from datetime import datetime
 from pika import exceptions as mq_err
 from requests import exceptions
-from flask import current_app as app, json
+from flask import g, current_app as app, json, request
 
-from api import errors, auth, helper
+from api import after_app_created, errors, auth, helper
 from api.schemas import InvoiceSchema
 
 __author__ = 'Kostel Serhii'
@@ -195,6 +197,59 @@ def send_sms(phone_number, message):
     :param str message: sms message
     """
     _send_notify(app.config['QUEUE_SMS'], {'phone': phone_number, 'text': message})
+
+
+def add_track_extra_info(extra_info):
+    """
+    Add extra information into track extra info storage.
+    :param dict extra_info: dict with extra information to track
+    """
+    if 'track_extra_info' not in g:
+        g.track_extra_info = {}
+    g.track_extra_info.update(extra_info)
+
+
+@after_app_created
+def register_request_notifier(created_app):
+    """
+    Register request notifier.
+    :param created_app: Flask application
+    """
+    filtered_headers = ['HTTP_USER_AGENT', 'CONTENT_LENGTH', 'CONTENT_TYPE']
+
+    @created_app.after_request
+    def track_request(response):
+        """
+        After every request send information to the notify queue
+        to monitor and send alerts depending on the request information.
+        :param response: request response
+        """
+        request_detail = dict(
+            service_name=app.config['SERVICE_NAME'],
+
+            query=dict(
+                timestamp=datetime.now(tz=pytz.utc),
+                path=request.full_path if request.query_string else request.path,
+                method=request.method,
+                status_code=response.status_code,
+                remote_address=request.remote_addr,
+                view_args=request.view_args,
+                headers={k: v for k, v in request.headers.environ.items() if k in filtered_headers},
+            ),
+
+            user=dict(
+                id=g.get('user_id'),
+                name=g.get('user_name'),
+                ip_addr=g.get('user_ip_addr'),
+                groups=g.get('groups'),
+            ),
+
+            extra=g.get('track_extra_info', {})
+        )
+
+        _send_notify(app.config['QUEUE_REQUEST'], request_detail)
+
+        return response
 
 
 # Processing service
