@@ -1,7 +1,5 @@
 import unittest
-from flask import json
-
-from api import app
+from flask import json, current_app as app
 
 
 class TestGetVersion(unittest.TestCase):

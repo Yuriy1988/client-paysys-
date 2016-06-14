@@ -4,9 +4,9 @@ import jwt.exceptions as jwt_err
 from calendar import timegm
 from datetime import datetime
 from functools import wraps
-from flask import g, request
+from flask import g, request, current_app as app
 
-from api import app, errors
+from api import errors
 
 __author__ = 'Kostel Serhii'
 

@@ -39,7 +39,7 @@ class PaymentSchema(base.BaseSchema):
         """
         # Validate schema called before other validators,
         # so if some fields missing - it's will be validated later
-        if 'paysys_id' not in data or 'payment_account' not in data:
+        if not data or 'paysys_id' not in data or 'payment_account' not in data:
             return
 
         if data['paysys_id'] == 'VISA_MASTER':

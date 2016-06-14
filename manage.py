@@ -3,7 +3,7 @@ import os
 import unittest
 import coverage
 from flask_script import Manager, Server
-from flask_migrate import Migrate, MigrateCommand
+from flask_migrate import MigrateCommand
 
 COV = coverage.coverage(
     branch=True,
@@ -16,11 +16,10 @@ COV = coverage.coverage(
 )
 COV.start()
 
-from api import app, db
+from api import app
 
 __author__ = 'Kostel Serhii'
 
-migrate = Migrate(app, db)
 manager = Manager(app)
 
 

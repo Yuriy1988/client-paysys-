@@ -64,7 +64,7 @@ class Invoice(base.BaseModel):
 
     @property
     def payment_url(self):
-        return url_for('get_payment_form', invoice_id=self.id, _external=True)
+        return url_for('pages.get_payment_form', invoice_id=self.id, _external=True)
 
     @property
     def items(self):

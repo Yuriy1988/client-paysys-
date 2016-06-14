@@ -3,10 +3,40 @@ import decimal
 import logging
 import logging.handlers
 from datetime import datetime
-from werkzeug.contrib.fixers import ProxyFix
+from functools import wraps
 from flask import Flask, Blueprint, json, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from werkzeug.contrib.fixers import ProxyFix
 
+__author__ = 'Kostel Serhii'
+
+
+db = SQLAlchemy()
+migrate = Migrate()
+
+api_v1 = Blueprint('api_v1', __name__, url_prefix='/api/client/dev')
+pages = Blueprint('pages', __name__)
+
+
+# App created notifier
+
+_app_created_subscribers = set()
+
+
+def _inform_app_created(app):
+    """Send app to every subscribers."""
+    for func in _app_created_subscribers:
+        func(app)
+
+
+def after_app_created(func):
+    """Subscribe function to call after app created."""
+    _app_created_subscribers.add(func)
+    return wraps(func)
+
+
+# Extended JSON encoder
 
 class XOPayJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -73,11 +103,15 @@ if not app.config['DEBUG']:
         logging.getLogger('xop.request').info('[%(remote_address)s] %(method)s %(path)s %(status)s' % request_detail)
         return response
 
-db = SQLAlchemy(app)
-
-api_v1 = Blueprint('api_v1', __name__, url_prefix='/api/client/dev')
+db.app = app
+db.init_app(app)
+migrate.init_app(app, db)
 
 import api.handlers
 from api import views
 
 app.register_blueprint(api_v1)
+app.register_blueprint(pages)
+
+_inform_app_created(app)
+

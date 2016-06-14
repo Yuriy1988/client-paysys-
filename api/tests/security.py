@@ -1,6 +1,6 @@
 import os
+from flask import current_app as app
 
-from api import app
 from api.tests import base
 
 

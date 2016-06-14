@@ -23,7 +23,7 @@ def payment_create(invoice_id):
         raise ValidationError('Payment by invoice has been created. Current status: %s' % invoice.payment.status)
 
     schema = PaymentSchema(exclude=('status',))
-    data, errors = schema.load(request.get_json())
+    data, errors = schema.load(request.get_json(silent=True))
     if errors:
         raise ValidationError(errors=errors)
 
@@ -79,7 +79,7 @@ def payment_update(payment_id):
         raise NotFoundError('There is no payment with such id.')
 
     schema = PaymentSchema(partial=True, only=('status',))
-    data, errors = schema.load(request.get_json(), origin_model=payment)
+    data, errors = schema.load(request.get_json(silent=True), origin_model=payment)
     if errors:
         raise ValidationError(errors=errors)
 

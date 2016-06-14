@@ -15,7 +15,7 @@ def invoice_create():
     Allow Cross Origin requests.
     """
     schema = InvoiceSchema()
-    data, errors = schema.load(request.get_json())
+    data, errors = schema.load(request.get_json(silent=True))
     if errors:
         raise ValidationError(errors=errors)
 

@@ -1,7 +1,7 @@
 import os
-from flask import jsonify, request, Response
+from flask import jsonify, request, Response, current_app as app
 
-from api import app, api_v1, auth
+from api import api_v1, auth
 from api.errors import ServiceUnavailableError, InternalServerError, ValidationError
 from api.schemas.base import BaseSchema, Regexp, fields
 
@@ -37,7 +37,7 @@ def public_key_create():
     Upload public key into file.
     """
     schema = SecuritySchema()
-    data, errors = schema.load(request.get_json())
+    data, errors = schema.load(request.get_json(silent=True))
     if errors:
         raise ValidationError(errors=errors)
 

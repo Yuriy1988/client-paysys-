@@ -1,8 +1,9 @@
 import logging
 import requests
 from requests import exceptions
+from flask import current_app as app
 
-from api import app, errors, auth
+from api import errors, auth
 from api.message_queue import push_to_queue
 
 __author__ = 'Kostel Serhii'

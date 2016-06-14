@@ -1,32 +1,32 @@
-from flask import jsonify, render_template
+from flask import jsonify, render_template, current_app
 
-from api import app, models, services
+from api import pages, models, services
 
 
-@app.route('/')
+@pages.route('/')
 def index():
     """ Redirect from root to admin page """
-    return app.send_static_file('client/home.html')
+    return pages.send_static_file('client/home.html')
 
 
-@app.route('/client/demo_shop', methods=['GET'])
+@pages.route('/client/demo_shop', methods=['GET'])
 def demo_shop():
     """ Demo shop handler """
     return render_template('demo_shop.html')
 
 
-@app.route('/client/version', methods=['GET'])
+@pages.route('/client/version', methods=['GET'])
 def get_version():
     """ Return a current server and API versions """
     response = {
-        "api_version": app.config["API_VERSION"],
+        "api_version": current_app.config["API_VERSION"],
         "server_version": 'dev',
-        "build_date": app.config["BUILD_DATE"]
+        "build_date": current_app.config["BUILD_DATE"]
     }
     return jsonify(response)
 
 
-@app.route('/client/payment/<invoice_id>', methods=['GET'])
+@pages.route('/client/payment/<invoice_id>', methods=['GET'])
 def get_payment_form(invoice_id):
     invoice = models.Invoice.query.get(invoice_id)
     if not invoice:

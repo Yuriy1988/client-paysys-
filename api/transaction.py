@@ -1,4 +1,6 @@
-from api import app, services, helper
+from flask import current_app as app
+
+from api import services, helper
 from api.message_queue import push_to_queue
 from api.schemas import InvoiceSchema
 

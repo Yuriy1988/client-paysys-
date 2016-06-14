@@ -1,8 +1,8 @@
 import pika
 from pika import exceptions as mq_err
-from flask import json
+from flask import json, current_app as app
 
-from api import app, errors
+from api import errors
 
 __author__ = 'Kostel Serhii'
 
