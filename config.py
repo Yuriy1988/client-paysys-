@@ -11,6 +11,8 @@ class _Base:
     STATIC_FOLDER = os.path.join(BASE_FOLDER, 'frontend', 'static')
     PUBLIC_KEY_FILE_NAME = BASE_FOLDER + '/public.pem'
 
+    SERVICE_NAME = 'xopay-client'
+
     # Date base
     SQLALCHEMY_DATABASE_URI = 'postgresql://xopclient:G5MuJkzyAXQhslCQ@127.0.0.1/xopclientdb'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -28,6 +30,7 @@ class _Base:
     LOG_BASE_NAME = 'xop'
     LOG_FORMAT = 'CLIENT | %(levelname)-6.6s | %(name)-15.15s | %(asctime)s | %(message)s'
     LOG_DATE_FORMAT = '%d.%m %H:%M:%S'
+    LOG_REQUESTS = False
 
     AUTH_ALGORITHM = 'HS512'
     AUTH_KEY = 'PzYs2qLh}2$8uUJbBnWB800iYKe5xdYqItRNo7@38yW@tPDVAX}EV5V31*ZK78QS'
@@ -67,6 +70,7 @@ class Production(_Base):
 
     LOG_ROOT_LEVEL = 'INFO'
     LOG_LEVEL = 'INFO'
+    LOG_REQUESTS = True
 
     LOG_FILE = '/var/log/xopay/xopay.log'
     LOG_MAX_BYTES = 10*1024*1024
