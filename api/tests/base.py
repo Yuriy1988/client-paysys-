@@ -150,7 +150,8 @@ class BaseTestCase(TestCase):
 
     def post(self, url, body, token=None):
         response = self.request(url, method='POST', data=body, token=token)
-        return response.status_code, response.json if response.mimetype == 'application/json' else response.data
+        body = response.json if response.data and response.mimetype == 'application/json' else response.data
+        return response.status_code, body
 
     def put(self, url, body, token=None):
         response = self.request(url, method='PUT', data=body, token=token)
