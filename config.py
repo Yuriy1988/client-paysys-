@@ -13,6 +13,9 @@ class _Base:
 
     SERVICE_NAME = 'xopay-client'
 
+    AFTER_REQUEST_TRACK_ENABLE = False
+    AFTER_REQUEST_LOGGER_ENABLE = False
+
     # Date base
     SQLALCHEMY_DATABASE_URI = 'postgresql://xopclient:G5MuJkzyAXQhslCQ@127.0.0.1/xopclientdb'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -71,9 +74,11 @@ class Production(_Base):
     # FIXME: uncomment after config update (for full invite url)
     # SERVER_NAME = 'xopay.digitaloutlooks.com'
 
+    AFTER_REQUEST_TRACK_ENABLE = True
+    AFTER_REQUEST_LOGGER_ENABLE = True
+
     LOG_ROOT_LEVEL = 'INFO'
     LOG_LEVEL = 'INFO'
-    LOG_REQUESTS = True
 
     LOG_FILE = '/var/log/xopay/xopay.log'
     LOG_MAX_BYTES = 10*1024*1024

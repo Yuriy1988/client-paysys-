@@ -142,24 +142,25 @@ class BaseTestCase(TestCase):
 
         data = json.dumps(data) if isinstance(data, dict) else data
 
-        return self.client.open(self.api_base + url, method=method, data=data, headers=headers, **options)
-
-    def get(self, url, token=None):
-        response = self.request(url, method='GET', token=token)
-        return response.status_code, response.json
-
-    def post(self, url, body, token=None):
-        response = self.request(url, method='POST', data=body, token=token)
+        response = self.client.open(self.api_base + url, method=method, data=data, headers=headers, **options)
         body = response.json if response.data and response.mimetype == 'application/json' else response.data
         return response.status_code, body
 
+    def get(self, url, token=None):
+        code, body = self.request(url, method='GET', token=token)
+        return code, body
+
+    def post(self, url, body, token=None):
+        code, body = self.request(url, method='POST', data=body, token=token)
+        return code, body
+
     def put(self, url, body, token=None):
-        response = self.request(url, method='PUT', data=body, token=token)
-        return response.status_code, response.json
+        code, body = self.request(url, method='PUT', data=body, token=token)
+        return code, body
 
     def delete(self, url, token=None):
-        response = self.request(url, method='DELETE', token=token)
-        return response.status_code, response.json if response.status_code >= 400 else None
+        code, body = self.request(url, method='DELETE', token=token)
+        return code, body
 
     def get_invoice(self):
         return deepcopy(self._invoice)
