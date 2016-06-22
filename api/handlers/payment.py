@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, redirect, url_for
 
 from api import api_v1, db, auth, utils
 from api.errors import ValidationError, NotFoundError
@@ -91,3 +91,30 @@ def payment_update(payment_id):
     result = schema.dump(payment)
 
     return jsonify(result.data)
+
+
+@api_v1.route('/3d-secure/transaction/<trans_id>/<status>', methods=['GET'])
+def transaction_3d_secure_result(trans_id, status):
+    """
+    Handle redirect from 3D secure server and
+    forward result ot the processing.
+    Redirect to transaction status page.
+    :param trans_id: transaction identifier (equal payment_id and invoice_id)
+    :param status: transaction status (success or cancel)
+    """
+    payment = Payment.query.get(trans_id)
+    if not payment:
+        raise NotFoundError('There is no payment with such id.')
+
+    extra_info = request.args or {}
+
+    if payment.paysys_id == 'PAY_PAL':
+        # Update payment account
+        # Prevent recursive 3D secure redirect -> change status to PROCESSED
+        payment.payment_account = extra_info.get('payer_id')
+        payment.status = 'PROCESSED'
+        db.session.commit()
+
+    utils.send_3d_secure_result(trans_id, status, extra_info)
+
+    return redirect(url_for('pages.get_payment_form', invoice_id=trans_id))

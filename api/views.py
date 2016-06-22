@@ -1,6 +1,6 @@
 from flask import jsonify, render_template, current_app
 
-from api import pages, models, utils
+from api import pages, models, utils, errors
 
 
 @pages.route('/')
@@ -33,8 +33,9 @@ def get_payment_form(invoice_id):
         return render_template('payment_form.html', error='Invoice "%s" not found!' % invoice_id)
 
     # Getting custom layout store info from Admin (logo, etc):
-    store_data = utils.get_store(invoice.store_id)
-    if not store_data:
+    try:
+        store_data = utils.get_store(invoice.store_id)
+    except errors.BaseApiError:
         return render_template('payment_form.html', error='Store "%s" not found!' % invoice.store_id)
 
     store_info = {

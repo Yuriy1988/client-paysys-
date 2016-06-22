@@ -63,6 +63,7 @@ class Debug(_Base):
     QUEUE_VIRTUAL_HOST = '/xopay'
 
     QUEUE_TRANS_FOR_PROCESSING = 'transactions_for_processing'
+    QUEUE_3D_SECURE_RESULT = '3d_secure_result'
     QUEUE_EMAIL = 'notify_email'
     QUEUE_SMS = 'notify_sms'
     QUEUE_REQUEST = 'notify_request'
@@ -95,6 +96,7 @@ class Production(_Base):
     QUEUE_VIRTUAL_HOST = '/xopay'
 
     QUEUE_TRANS_FOR_PROCESSING = 'transactions_for_processing'
+    QUEUE_3D_SECURE_RESULT = '3d_secure_result'
     QUEUE_EMAIL = 'notify_email'
     QUEUE_SMS = 'notify_sms'
     QUEUE_REQUEST = 'notify_request'

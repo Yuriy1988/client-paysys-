@@ -291,4 +291,24 @@ def send_transaction(invoice, payment):
         }
     }
 
+    _log.info('Send transaction [%s] to queue', payment.id)
+
     push_to_queue(app.config['QUEUE_TRANS_FOR_PROCESSING'], transaction)
+
+
+def send_3d_secure_result(trans_id, status, extra_info):
+    """
+    Send result of the 3D secure to queue.
+    :param trans_id: transaction identifier
+    :param status: status of the 3D secure operation
+    :param extra_info: additional information from 3D server
+    """
+    result_3d_secure = {
+        "trans_id": trans_id,
+        "status": status,
+        "extra_info": extra_info
+    }
+
+    _log.info('Send 3D secure result [%s] to queue', str(result_3d_secure))
+
+    push_to_queue(app.config['QUEUE_3D_SECURE_RESULT'], result_3d_secure)
