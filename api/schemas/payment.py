@@ -1,6 +1,6 @@
 import re
 from marshmallow import fields, post_load, validates_schema, ValidationError
-from marshmallow.validate import OneOf, Length, Email
+from marshmallow.validate import OneOf, Length
 
 from api.schemas import base
 from api.models import enum
@@ -18,8 +18,8 @@ class PaymentSchema(base.BaseSchema):
 
     id = fields.Str(dump_only=True)
     paysys_id = fields.Str(required=True, validate=OneOf(enum.PAYMENT_SYSTEMS_ID_ENUM))
-    payment_account = fields.Str(required=True, validate=Length(min=10, max=127))
 
+    payment_account = fields.Str(allow_none=True, validate=Length(min=10, max=127))
     description = fields.Str(allow_none=True, validate=Length(min=3, max=128))
     crypted_payment = fields.Str(allow_none=True, validate=Length(min=1, max=4096))
 
@@ -41,11 +41,15 @@ class PaymentSchema(base.BaseSchema):
         """
         # Validate schema called before other validators,
         # so if some fields missing - it's will be validated later
-        if not data or 'paysys_id' not in data or 'payment_account' not in data:
+        if not data or 'paysys_id' not in data:
             return
 
         if data['paysys_id'] == 'VISA_MASTER':
-            cleaned_pa = re.sub('[- ]', '', data['payment_account'])
+
+            if 'payment_account' not in data:
+                raise ValidationError('Missing required "payment_account" field for Visa/Master.')
+
+            cleaned_pa = re.sub('[- ]', '', data.get('payment_account', ''))
             if not _visa_master_regexp.match(cleaned_pa):
                 raise ValidationError('Wrong Visa/Master payment account.')
 
@@ -59,7 +63,7 @@ class PaymentSchema(base.BaseSchema):
             return
 
         if data['paysys_id'] == 'VISA_MASTER' and not data.get('crypted_payment'):
-            raise ValidationError('Missing required "crypted_payment" field for Visa/Master payment account.')
+            raise ValidationError('Missing required "crypted_payment" field for Visa/Master.')
 
     @post_load
     def mask_payment_account(self, data):

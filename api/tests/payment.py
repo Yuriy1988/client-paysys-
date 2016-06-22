@@ -50,7 +50,7 @@ class TestPayment(base.BaseTestCase):
         self.assertEqual(payment.notify_by_phone, "380111234567")
         self.assertEqual(payment.invoice_id, invoice_body['id'])
 
-    def test_payment_account_required(self):
+    def test_payment_account_required_for_visa_master(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
@@ -59,7 +59,17 @@ class TestPayment(base.BaseTestCase):
         payment_status, payment_body = self.post('/invoices/%s/payments' % invoice_body['id'], payment_request)
 
         self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['payment_account'], ['Missing data for required field.'])
+
+    def test_payment_account_not_required_for_pay_pal(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        payment_request = self.get_payment()
+        payment_request['paysys_id'] = 'PAY_PAL'
+        del payment_request['payment_account']
+        payment_status, payment_body = self.post('/invoices/%s/payments' % invoice_body['id'], payment_request)
+
+        self.assertEqual(payment_status, 202)
 
     # cardholder_name validation
 
