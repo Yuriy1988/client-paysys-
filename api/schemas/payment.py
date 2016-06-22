@@ -19,7 +19,7 @@ class PaymentSchema(base.BaseSchema):
     id = fields.Str(dump_only=True)
     paysys_id = fields.Str(required=True, validate=OneOf(enum.PAYMENT_SYSTEMS_ID_ENUM))
     payment_account = fields.Str(required=True, validate=Length(min=10, max=127))
-    crypted_payment = fields.Str(required=True, validate=Length(min=1, max=4096))
+    crypted_payment = fields.Str(allow_none=True, validate=Length(min=1, max=4096))
 
     status = fields.Str(validate=OneOf(enum.PAYMENT_STATUS_ENUM))
 
@@ -47,8 +47,17 @@ class PaymentSchema(base.BaseSchema):
             if not _visa_master_regexp.match(cleaned_pa):
                 raise ValidationError('Wrong Visa/Master payment account.')
 
-        elif data['paysys_id'] == 'PAY_PAL':
-            Email(error='Wrong PayPal payment account.')(data['payment_account'])
+    @validates_schema
+    def validate_crypted_payment(self, data):
+        """
+        Check crypted payment present for VISA/MASTER.
+        :param data: payment json
+        """
+        if not data or 'paysys_id' not in data:
+            return
+
+        if data['paysys_id'] == 'VISA_MASTER' and not data.get('crypted_payment'):
+            raise ValidationError('Missing required "crypted_payment" field for Visa/Master payment account.')
 
     @post_load
     def mask_payment_account(self, data):
@@ -73,3 +82,9 @@ class PaymentSchema(base.BaseSchema):
                 string=cleaned_pa)
 
         return data
+
+
+class PaymentStatusSchema(base.BaseSchema):
+
+    id = fields.Str(dump_only=True)
+    status = fields.Str(dump_only=True)

@@ -63,7 +63,7 @@ class TestPayment(base.BaseTestCase):
 
     # cardholder_name validation
 
-    def test_crypted_payment_required(self):
+    def test_crypted_payment_required_for_visa_master(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
@@ -72,7 +72,6 @@ class TestPayment(base.BaseTestCase):
         payment_status, payment_body = self.post('/invoices/%s/payments' % invoice_body['id'], payment_request)
 
         self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['crypted_payment'], ['Missing data for required field.'])
 
     # cvv validation
 
@@ -98,7 +97,7 @@ class TestPayment(base.BaseTestCase):
         self.assertEqual(payment_status, 400)
         self.assertEqual(payment_body['error']['errors']['paysys_id'], ['Not a valid choice.'])
 
-    def test_crypted_payment_not_none(self):
+    def test_crypted_payment_not_none_for_visa_master(self):
         invoice = self.get_invoice()
         invoice_status, invoice_body = self.post('/invoices', invoice)
 
@@ -107,7 +106,17 @@ class TestPayment(base.BaseTestCase):
         payment_status, payment_body = self.post('/invoices/%s/payments' % invoice_body['id'], payment_request)
 
         self.assertEqual(payment_status, 400)
-        self.assertEqual(payment_body['error']['errors']['crypted_payment'], ['Field may not be null.'])
+
+    def test_crypted_payment_none_for_pay_pal(self):
+        invoice = self.get_invoice()
+        invoice_status, invoice_body = self.post('/invoices', invoice)
+
+        payment_request = self.get_payment()
+        payment_request['paysys_id'] = 'PAY_PAL'
+        payment_request['crypted_payment'] = None
+        payment_status, payment_body = self.post('/invoices/%s/payments' % invoice_body['id'], payment_request)
+
+        self.assertEqual(payment_status, 202)
 
     # Change Payment status API
 

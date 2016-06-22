@@ -3,7 +3,7 @@ from flask import request, jsonify
 from api import api_v1, db, auth, utils
 from api.errors import ValidationError, NotFoundError
 from api.models import Invoice, Payment
-from api.schemas import PaymentSchema
+from api.schemas import PaymentSchema, PaymentStatusSchema
 
 __author__ = 'Kostel Serhii'
 
@@ -41,7 +41,7 @@ def payment_create(invoice_id):
     payment.status = 'ACCEPTED'
     db.session.commit()
 
-    schema = PaymentSchema(only=('id', 'status',))
+    schema = PaymentStatusSchema()
     result = schema.dump(payment)
 
     response = result.data
@@ -61,7 +61,7 @@ def payment_detail(payment_id):
     if not payment:
         raise NotFoundError('There is no payment with such id.')
 
-    schema = PaymentSchema(only=('id', 'status',))
+    schema = PaymentStatusSchema()
     result = schema.dump(payment)
 
     return jsonify(result.data)
@@ -87,7 +87,7 @@ def payment_update(payment_id):
         payment.update(data)
         db.session.commit()
 
-    schema = PaymentSchema(only=('id', 'status',))
+    schema = PaymentStatusSchema()
     result = schema.dump(payment)
 
     return jsonify(result.data)

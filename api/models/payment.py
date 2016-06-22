@@ -20,8 +20,8 @@ class Payment(base.BaseModel):
 
     invoice_id = db.Column(db.String, db.ForeignKey('invoice.id', ondelete='CASCADE'), nullable=False)
 
-    def __init__(self, paysys_id, payment_account, invoice_id, crypted_payment,
-                 status='CREATED', notify_by_email=None, notify_by_phone=None):
+    def __init__(self, paysys_id, payment_account, invoice_id, status='CREATED',
+                 crypted_payment=None, notify_by_email=None, notify_by_phone=None):
         # create id to use it before commit (in transaction)
         # use the same id as invoice_id
         self.id = invoice_id
