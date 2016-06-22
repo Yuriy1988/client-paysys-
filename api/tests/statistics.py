@@ -1,8 +1,9 @@
+from datetime import datetime
+
+from api import db
 from api.models import Invoice, Payment
 from api.tests import base
-import unittest
-from datetime import datetime
-from api import db
+
 
 class TestStatistics(base.BaseTestCase):
 
@@ -16,9 +17,10 @@ class TestStatistics(base.BaseTestCase):
 
     def setUp(self):
         super(TestStatistics, self).setUp()
-        self.create_db()
+        self._create_invoice_db()
 
-    def create_invoice(self, order_id, store_id, currency, number_of_invoices, paysys_id, items, payment_account, status, year):
+    def _create_invoice(self, order_id, store_id, currency, number_of_invoices,
+                        paysys_id, items, payment_account, status, year):
         invoice = self.get_invoice()
         payment = self.get_payment()
         invoice['order_id'] = order_id
@@ -29,9 +31,10 @@ class TestStatistics(base.BaseTestCase):
         payment['status'] = status # 'CREATED', 'ACCEPTED', 'SUCCESS', '3D_SECURE', 'REJECTED'
         payment['paysys_id'] = paysys_id
 
-        for i in range(number_of_invoices):
-            inv = Invoice.create(invoice)
-            db.session.commit()
+        invoices_models = [Invoice.create(invoice) for i in range(number_of_invoices)]
+        db.session.commit()
+
+        for inv in invoices_models:
             payment['invoice_id'] = inv.id
             pay = Payment.create(payment)
             pay.created = datetime(year=year, month=5, day=4, hour=11, minute=1)
@@ -39,14 +42,14 @@ class TestStatistics(base.BaseTestCase):
 
         db.session.commit()
 
-    def create_db(self):
-        self.create_invoice('10', self.store_ids[0], 'UAH', 4, 'BIT_COIN', self.create_items(100), '0000', 'CREATED', 2015)
-        self.create_invoice('20', self.store_ids[1], 'RUB', 5, 'PAY_PAL', self.create_items(200), '1111', 'ACCEPTED', 2014)
-        self.create_invoice('30', self.store_ids[2], 'EUR', 6, 'VISA_MASTER', self.create_items(300), '2222', 'SUCCESS', 2016)
-        self.create_invoice('40', self.store_ids[3], 'USD', 7, 'VISA_MASTER', self.create_items(400), '3333', 'REJECTED', 2013)
-
-    def create_items(self, price):
+    def _create_items(self, price):
         return [{'store_item_id': 'aaa', 'quantity': 1, 'unit_price': price}]
+
+    def _create_invoice_db(self):
+        self._create_invoice('10', self.store_ids[0], 'UAH', 4, 'BIT_COIN', self._create_items(100), '0000', 'CREATED', 2015)
+        self._create_invoice('20', self.store_ids[1], 'RUB', 5, 'PAY_PAL', self._create_items(200), '1111', 'ACCEPTED', 2014)
+        self._create_invoice('30', self.store_ids[2], 'EUR', 6, 'VISA_MASTER', self._create_items(300), '2222', 'SUCCESS', 2016)
+        self._create_invoice('40', self.store_ids[3], 'USD', 7, 'VISA_MASTER', self._create_items(400), '3333', 'REJECTED', 2013)
 
     def get(self, url, query_args=None, **kwargs):
         return super(TestStatistics, self).get(url=url, query_args=query_args, token=self.get_system_token())
@@ -150,7 +153,3 @@ class TestStatistics(base.BaseTestCase):
         self.assertEqual(p[1]['count'], 10)
         p = self.get(self.url, query_args={'limit': 30, 'till_date': '2016-06-04T08:01:00+00:00'})
         self.assertEqual(p[1]['count'], 6)
-
-
-if __name__ == '__main__':
-    unittest.main()

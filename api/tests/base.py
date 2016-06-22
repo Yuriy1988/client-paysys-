@@ -144,8 +144,8 @@ class BaseTestCase(TestCase):
 
         return self.client.open(self.api_base + url, method=method, data=data, headers=headers, **options)
 
-    def get(self, url, token=None):
-        response = self.request(url, method='GET', token=token)
+    def get(self, url, query_args=None, token=None):
+        response = self.request(url, method='GET', token=token, query_string=query_args or {})
         return response.status_code, response.json
 
     def post(self, url, body, token=None):
