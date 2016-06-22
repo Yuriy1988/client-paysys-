@@ -9,6 +9,7 @@ class Payment(base.BaseModel):
     id = db.Column(db.String, primary_key=True)
     paysys_id = db.Column(db.Enum(*enum.PAYMENT_SYSTEMS_ID_ENUM, name='enum_payment_systems'), nullable=False)
     payment_account = db.Column(db.String(127), nullable=False)
+    description = db.Column(db.String(128))
 
     status = db.Column(db.Enum(*enum.PAYMENT_STATUS_ENUM, name='enum_payment_status'), default='CREATED')
 
@@ -21,13 +22,14 @@ class Payment(base.BaseModel):
     invoice_id = db.Column(db.String, db.ForeignKey('invoice.id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, paysys_id, payment_account, invoice_id, status='CREATED',
-                 crypted_payment=None, notify_by_email=None, notify_by_phone=None):
+                 description=None, crypted_payment=None, notify_by_email=None, notify_by_phone=None):
         # create id to use it before commit (in transaction)
         # use the same id as invoice_id
         self.id = invoice_id
 
         self.paysys_id = paysys_id
         self.payment_account = payment_account
+        self.description = description
 
         self.status = status
 

@@ -275,7 +275,7 @@ def send_transaction(invoice, payment):
     transaction = {
         "id": payment.id,
         "payment": {
-            "description": "Payment for order {id}".format(id=invoice.order_id),
+            "description": payment.description or "Payment for order {id}".format(id=invoice.order_id),
             "invoice": invoice_json,
             "amount_coins": invoice.total_price_coins,
         },

@@ -37,6 +37,7 @@ class BaseTestCase(TestCase):
         "paysys_id": "VISA_MASTER",
         "crypted_payment": "ssada" * 10,
         "payment_account": "4123987601230000",
+        "description": "Test payment",
         "notify_by_email": "email@email.com",
         "notify_by_phone": "380111234567"
     }

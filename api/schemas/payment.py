@@ -19,6 +19,8 @@ class PaymentSchema(base.BaseSchema):
     id = fields.Str(dump_only=True)
     paysys_id = fields.Str(required=True, validate=OneOf(enum.PAYMENT_SYSTEMS_ID_ENUM))
     payment_account = fields.Str(required=True, validate=Length(min=10, max=127))
+
+    description = fields.Str(allow_none=True, validate=Length(min=3, max=128))
     crypted_payment = fields.Str(allow_none=True, validate=Length(min=1, max=4096))
 
     status = fields.Str(validate=OneOf(enum.PAYMENT_STATUS_ENUM))
