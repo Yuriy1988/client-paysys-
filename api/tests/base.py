@@ -147,8 +147,8 @@ class BaseTestCase(TestCase):
         body = response.json if response.data and response.mimetype == 'application/json' else response.data
         return response.status_code, body
 
-    def get(self, url, token=None):
-        code, body = self.request(url, method='GET', token=token)
+    def get(self, url, query_args=None, token=None):
+        code, body = self.request(url, method='GET', token=token, query_string=query_args or {})
         return code, body
 
     def post(self, url, body, token=None):
