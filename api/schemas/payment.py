@@ -93,4 +93,5 @@ class PaymentSchema(base.BaseSchema):
 class PaymentStatusSchema(base.BaseSchema):
 
     id = fields.Str(dump_only=True)
-    status = fields.Str(dump_only=True)
+    status = fields.Str(validate=OneOf(enum.PAYMENT_STATUS_ENUM))
+    redirect_url = fields.Url(allow_none=True)

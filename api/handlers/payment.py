@@ -41,7 +41,7 @@ def payment_create(invoice_id):
     payment.status = 'ACCEPTED'
     db.session.commit()
 
-    schema = PaymentStatusSchema()
+    schema = PaymentStatusSchema(exclude=('redirect_url',))
     result = schema.dump(payment)
 
     response = result.data
@@ -78,7 +78,7 @@ def payment_update(payment_id):
     if not payment:
         raise NotFoundError('There is no payment with such id.')
 
-    schema = PaymentSchema(partial=True, only=('status',))
+    schema = PaymentStatusSchema(partial=True, exclude=('id',))
     data, errors = schema.load(request.get_json(silent=True), origin_model=payment)
     if errors:
         raise ValidationError(errors=errors)

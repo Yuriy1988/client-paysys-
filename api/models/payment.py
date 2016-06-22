@@ -16,6 +16,8 @@ class Payment(base.BaseModel):
     notify_by_email = db.Column(db.String(255))
     notify_by_phone = db.Column(db.String(16))
 
+    redirect_url = db.Column(db.String(255))
+
     created = db.Column(db.DateTime(timezone=True), server_default=base.now_dt)
     updated = db.Column(db.DateTime(timezone=True), server_default=base.now_dt, onupdate=base.now_dt)
 
