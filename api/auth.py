@@ -75,7 +75,7 @@ def _check_authorization(access_groups, verify=True):
         _log.warning('User %s not allowed to make such request. Need permissions: %r', user_id, access_groups)
         raise errors.ForbiddenError('Request forbidden for such role')
 
-    if 'system' not in groups:
+    if 'system' not in groups and 'access_token' not in groups:
         session_exp = payload.get('session_exp', 0)
         ip_addr = payload.get('ip_addr', '')
 
