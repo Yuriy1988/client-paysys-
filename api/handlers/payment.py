@@ -93,14 +93,14 @@ def payment_update(payment_id):
     return jsonify(result.data)
 
 
-@api_v1.route('/3d-secure/transaction/<trans_id>/<status>', methods=['GET'])
-def transaction_3d_secure_result(trans_id, status):
+@api_v1.route('/3d-secure/transaction/<trans_id>/<pay_result>', methods=['GET'])
+def transaction_3d_secure_result(trans_id, pay_result):
     """
     Handle redirect from 3D secure server and
     forward result ot the processing.
     Redirect to transaction status page.
     :param trans_id: transaction identifier (equal payment_id and invoice_id)
-    :param status: transaction status (success or cancel)
+    :param pay_result: transaction status (success or cancel)
     """
     payment = Payment.query.get(trans_id)
     if not payment:
@@ -115,6 +115,6 @@ def transaction_3d_secure_result(trans_id, status):
         payment.status = 'PROCESSED'
         db.session.commit()
 
-    utils.send_3d_secure_result(trans_id, status, extra_info)
+    utils.send_3d_secure_result(trans_id, pay_result, extra_info)
 
     return redirect(url_for('pages.get_payment_form', invoice_id=trans_id))

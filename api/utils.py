@@ -303,16 +303,16 @@ def send_transaction(invoice, payment):
     push_to_queue(app.config['QUEUE_TRANS_FOR_PROCESSING'], transaction)
 
 
-def send_3d_secure_result(trans_id, status, extra_info):
+def send_3d_secure_result(trans_id, pay_result, extra_info):
     """
     Send result of the 3D secure to queue.
     :param trans_id: transaction identifier
-    :param status: status of the 3D secure operation
+    :param pay_result: status of the 3D secure operation
     :param extra_info: additional information from 3D server
     """
     result_3d_secure = {
         'trans_id': trans_id,
-        'status': status,
+        'pay_result': pay_result,
         'extra_info': extra_info
     }
 
