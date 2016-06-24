@@ -23,12 +23,12 @@ def _get_queue_connection_parameters():
     Return pika connection parameters object.
     """
     return pika.ConnectionParameters(
-        host=app.config["QUEUE_HOST"],
-        port=app.config["QUEUE_PORT"],
-        virtual_host=app.config["QUEUE_VIRTUAL_HOST"],
+        host=app.config['QUEUE_HOST'],
+        port=app.config['QUEUE_PORT'],
+        virtual_host=app.config['QUEUE_VIRTUAL_HOST'],
         credentials=pika.credentials.PlainCredentials(
-            username=app.config["QUEUE_USERNAME"],
-            password=app.config["QUEUE_PASSWORD"],
+            username=app.config['QUEUE_USERNAME'],
+            password=app.config['QUEUE_PASSWORD'],
         )
     )
 
@@ -76,8 +76,8 @@ def _admin_server_get_request(url, **params):
     :param params: url parameters
     :return: response as dict or raise exception
     """
-    full_url = app.config["ADMIN_API_URL"] + url
-    headers = {"Authorization": "Bearer %s" % auth.get_system_token()}
+    full_url = app.config['ADMIN_API_URL'] + url
+    headers = {'Authorization': 'Bearer %s' % auth.get_system_token()}
 
     try:
         response = requests.get(full_url, params=params, headers=headers, timeout=5)
@@ -273,22 +273,29 @@ def send_transaction(invoice, payment):
     route = helper.get_route(payment.paysys_id, merchant_id, invoice.total_price, invoice.currency)
 
     transaction = {
-        "id": payment.id,
-        "payment": {
-            "description": payment.description or "Payment for order {id}".format(id=invoice.order_id),
-            "invoice": invoice_json,
-            "amount_coins": invoice.total_price_coins,
+        'id': payment.id,
+
+        'payment': {
+            'status': payment.status,
+            'paysys_id': payment.paysys_id,
+            'payment_account': payment.payment_account,
+            'description': payment.description or 'Payment for order {id}'.format(id=invoice.order_id),
+            'invoice': invoice_json,
         },
-        "source": {
-            "paysys_contract": route.paysys_contract,
-            "payment_requisites": {
-                "crypted_payment": payment.crypted_payment
+
+        'source': {
+            'paysys_contract': route.paysys_contract,
+            'payment_requisites': {
+                'crypted_payment': payment.crypted_payment
             }
         },
-        "destination": {
-            "merchant_contract": route.merchant_contract,
-            "merchant_account": merchant_account_json
-        }
+
+        'destination': {
+            'merchant_contract': route.merchant_contract,
+            'merchant_account': merchant_account_json
+        },
+
+        'store': store
     }
 
     _log.info('Send transaction [%s] to queue', payment.id)
@@ -304,9 +311,9 @@ def send_3d_secure_result(trans_id, status, extra_info):
     :param extra_info: additional information from 3D server
     """
     result_3d_secure = {
-        "trans_id": trans_id,
-        "status": status,
-        "extra_info": extra_info
+        'trans_id': trans_id,
+        'status': status,
+        'extra_info': extra_info
     }
 
     _log.info('Send 3D secure result [%s] to queue', str(result_3d_secure))

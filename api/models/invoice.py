@@ -72,10 +72,6 @@ class Invoice(base.BaseModel):
         # total_price calculated from it.
         return self._items
 
-    @property
-    def total_price_coins(self):
-        return int(self.total_price * 100)
-
     @classmethod
     def create(cls, data, add_to_db=True):
         data = deepcopy(data)
