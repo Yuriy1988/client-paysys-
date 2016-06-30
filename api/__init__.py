@@ -59,6 +59,8 @@ class XOPayJSONEncoder(json.JSONEncoder):
 app = Flask(__name__)
 app.config.from_object('config.Production')
 app.static_folder = app.config["STATIC_FOLDER"]
+pages.static_folder = app.config["STATIC_FOLDER"]
+
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.json_encoder = XOPayJSONEncoder
