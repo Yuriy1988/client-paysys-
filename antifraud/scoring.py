@@ -1,55 +1,29 @@
-class RULES:
-    pass
+from antifraud.apis import get_country_code_by_ip, get_country_code_by_bin
 
 
-def handler_registrar():
-    registry = []
-
-    def scorers_registrar(if_true, if_false):
-        def handler(func):
-            func.score_if_true = if_true
-            func.score_if_false = if_false
-            registry.append(func)
-            return func
-
-        return handler
-
-    scorers_registrar.handlers = registry
-    return scorers_registrar
-
-score = handler_registrar()  # Takes 2 parameters score_if_true and score_if_false
-
-
-def get_score(payment):
+def score(payment):
     _score = 0
-    for handler in score.handlers:
-        if handler(payment):
-            _score += handler.score_if_true
-        else:
-            _score += handler.score_if_false
-    return _score
+    if not is_trust_location(payment):
+        _score += 0
+    if not is_normal_amount(payment):
+        _score += 0
+    if not is_normal_count(payment):
+        _score += 0
 
 
-@score(1, -1)
 def is_trust_location(payment):
-    pass
+    """Country of card  != Country of payer  (get from IP)."""
+    # TODO get IP and BIN
+    ip = ""
+    bin_code = ""
+    return get_country_code_by_ip(ip) == get_country_code_by_bin(bin_code)
 
 
-@score(-1, 0)
-def is_in_blacklist(payment):
-    pass
-
-
-@score(1, 0)
-def is_in_whitelist(payment):
-    pass
-
-
-@score(1, -1)
 def is_normal_amount(payment):
+    """Amount of payment << or >> average amount of payment for the specific merchant."""
     pass
 
 
-@score(1, -1)
 def is_normal_count(payment):
+    """Increasing count of transaction for one merchant."""
     pass
