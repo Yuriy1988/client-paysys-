@@ -1,6 +1,6 @@
 from copy import deepcopy
 from decimal import Decimal
-from flask import url_for
+from flask import url_for, current_app as app
 
 from api import db
 from api.models import enum, base
@@ -64,7 +64,7 @@ class Invoice(base.BaseModel):
 
     @property
     def payment_url(self):
-        return url_for('pages.get_payment_form', invoice_id=self.id, _external=True)
+        return app.config['SERVER_URL'] + url_for('pages.get_payment_form', invoice_id=self.id)
 
     @property
     def items(self):

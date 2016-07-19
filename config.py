@@ -29,12 +29,15 @@ class debug:
     HOST = '127.0.0.1'
     PORT = CLIENT_PORT
     PREFERRED_URL_SCHEME = 'http'
+    HOSTNAME = '%s:%d' % (HOST, PORT)
+
+    @property
+    def SERVER_URL(self):
+        return '%s://%s' % (self.PREFERRED_URL_SCHEME, self.HOSTNAME)
 
     DEBUG = True
     AFTER_REQUEST_TRACK_ENABLE = False
     AFTER_REQUEST_LOGGER_ENABLE = False
-
-    SERVER_NAME = '%s:%d' % (HOST, PORT)
 
     # Logger
     LOGGER_NAME = 'xop'
@@ -110,12 +113,12 @@ class test(debug):
 class production(debug):
 
     PREFERRED_URL_SCHEME = 'https'
+    HOSTNAME = 'xopay.digitaloutlooks.com'
 
     DEBUG = False
     AFTER_REQUEST_TRACK_ENABLE = True
     AFTER_REQUEST_LOGGER_ENABLE = True
 
-    SERVER_NAME = 'xopay.digitaloutlooks.com'
 
     LOG_ROOT_LEVEL = 'INFO'
     LOG_LEVEL = 'INFO'
