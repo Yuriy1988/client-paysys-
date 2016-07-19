@@ -1,28 +1,23 @@
-import unittest
-from flask import json, current_app as app
+from api.tests import base
 
 
-class TestGetVersion(unittest.TestCase):
+class TestGetVersion(base.BaseTestCase):
+
+    api_base = ''
 
     _valid_resp = {
             "api_version": "dev",
             "server_version": "dev",
-            "build_date": "2016-01-01T12:00:00+00:00"
+            # "build_date": "2016-01-01T12:00:00+00:00"
         }
 
-    def setUp(self):
-        app.config['BUILD_DATE'] = "2016-01-01T12:00:00+00:00"
-        self.app = app.test_client()
-
-    # Tests:
+     # Tests:
 
     # GET /api/client/version
 
     def test_get_valid_response(self):
-        result = self.app.get('/client/version')
-        data = json.loads(result.data)
-
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(data["api_version"], self._valid_resp["api_version"])
-        self.assertEqual(data["server_version"], self._valid_resp["server_version"])
-        self.assertEqual(data["build_date"], self._valid_resp["build_date"])
+        status, body = self.get('/client/version')
+        self.assertEqual(status, 200)
+        self.assertEqual(body["api_version"], self._valid_resp["api_version"])
+        self.assertEqual(body["server_version"], self._valid_resp["server_version"])
+        # self.assertEqual(data["build_date"], self._valid_resp["build_date"])

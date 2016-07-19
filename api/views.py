@@ -19,9 +19,9 @@ def demo_shop():
 def get_version():
     """ Return a current server and API versions """
     response = {
-        "api_version": current_app.config["API_VERSION"],
+        "api_version": current_app.config["CLIENT_API_VERSION"],
         "server_version": 'dev',
-        "build_date": current_app.config["BUILD_DATE"]
+        # "build_date": current_app.config["BUILD_DATE"]
     }
     return jsonify(response)
 
