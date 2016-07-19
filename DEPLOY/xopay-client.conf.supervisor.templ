@@ -1,5 +1,5 @@
 [program:xopay-client]
-command = /var/www/xopay/client/venv/bin/gunicorn api:app --bind 127.0.0.1:{client_port} --workers=8 --reload
+command = /var/www/xopay/client/venv/bin/gunicorn "api:create_app('production')" --bind 127.0.0.1:{client_port} --workers=8
 directory = /var/www/xopay/client
 user = {user}
 autostart=true

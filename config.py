@@ -83,10 +83,6 @@ class debug:
     CSRF_SESSION_KEY = "rx$iyDi~~ztvGj$q|pUVQSmBD07gSWTPswP{H3vKQ0HkvSKnzj"
     CSRF_ENABLED = True
 
-    # Current versions:
-    API_VERSION = 'dev'
-    BUILD_DATE = '2016-04-16T17:09:00+00:00'
-
 
 class test(debug):
 
