@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from flask import json
 from flask.ext.testing import TestCase
 
-from api import app, db as app_db, auth as api_auth, models, utils
+from api import create_app, db as app_db, auth as api_auth, models, utils
 
 __author__ = 'Andrey Kupriy'
 
@@ -121,7 +121,7 @@ class BaseTestCase(TestCase):
 
     def create_app(self):
         """ App for testing """
-        app.config.from_object('config.Testing')
+        app = create_app('test')
         return app
 
     @staticmethod

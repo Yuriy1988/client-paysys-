@@ -1,13 +1,12 @@
-import os
 import decimal
-import logging
-import logging.handlers
-from datetime import datetime
 from functools import wraps
+from datetime import datetime
 from flask import Flask, Blueprint, json
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.contrib.fixers import ProxyFix
+
+from config import ConfigLoader
 
 __author__ = 'Kostel Serhii'
 
@@ -39,6 +38,7 @@ def after_app_created(func):
 # Extended JSON encoder
 
 class XOPayJSONEncoder(json.JSONEncoder):
+
     def default(self, obj):
 
         if isinstance(obj, decimal.Decimal):
@@ -56,28 +56,32 @@ class XOPayJSONEncoder(json.JSONEncoder):
 
 # Create application
 
-app = Flask(__name__)
-app.config.from_object('config.Production')
-app.static_folder = app.config["STATIC_FOLDER"]
-pages.static_folder = app.config["STATIC_FOLDER"]
+def create_app(config='debug'):
+    """
+    Create flask application object with additional parameters
+    :param config: name of the config object: debug, test, production
+    :return: Flask app object
+    """
+    app = Flask(__name__)
+    config_dict = ConfigLoader(config)
+    app.config.update(config_dict)
+    pages.static_folder = app.config["STATIC_FOLDER"]
 
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+    app.json_encoder = XOPayJSONEncoder
 
-app.wsgi_app = ProxyFix(app.wsgi_app)
-app.json_encoder = XOPayJSONEncoder
+    db.app = app
+    db.init_app(app)
+    migrate.init_app(app, db)
 
-db.app = app
-db.init_app(app)
-migrate.init_app(app, db)
+    import api.handlers
+    from api import views
 
-import api.handlers
-from api import views
+    app.register_blueprint(api_v1)
+    app.register_blueprint(pages)
 
-app.register_blueprint(api_v1)
-app.register_blueprint(pages)
+    import api.logger
 
-import api.logger
+    _inform_app_created(app)
 
-_inform_app_created(app)
-
-log = logging.getLogger('xop.main')
-log.info('Starting XOPay Client Service...')
+    return app

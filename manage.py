@@ -2,7 +2,7 @@
 import os
 import unittest
 import coverage
-from flask_script import Manager, Server
+from flask_script import Manager
 from flask_migrate import MigrateCommand
 
 COV = coverage.coverage(
@@ -16,24 +16,16 @@ COV = coverage.coverage(
 )
 COV.start()
 
-from api import app
+from api import create_app
 
 __author__ = 'Kostel Serhii'
 
-manager = Manager(app)
+manager = Manager(create_app)
+manager.add_option("-c", "--config", dest="config", default='debug', required=False)
 
 
-# db (migrations)
-manager.add_command('db', MigrateCommand)
+# ------ Tests -----
 
-
-# runserver
-# TODO: move port and debug into config
-server = Server(host="0.0.0.0", port=7254)
-manager.add_command('runserver', server)
-
-
-# tests
 def _api_test():
     tests_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'api/tests')
     suite = unittest.TestLoader().discover(tests_path, pattern='*.py')
@@ -63,6 +55,11 @@ def test_cover():
         COV.erase()
         return 0
     return 1
+
+
+# ------ Database -----
+
+manager.add_command('db', MigrateCommand)
 
 
 if __name__ == "__main__":

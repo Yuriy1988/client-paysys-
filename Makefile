@@ -24,7 +24,7 @@ install_python35_repo:
 
 install:
 	sudo apt-get install -y $(PYTHON) $(PYTHON)-dev python3-pip python3-wheel python-virtualenv
-	sudo apt-get install -y postgresql postgresql-contrib python-psycopg2
+	sudo apt-get install -y libpq-dev postgresql postgresql-contrib python-psycopg2
 	sudo apt-get install -y rabbitmq-server
 
 
@@ -34,9 +34,6 @@ db_update:
 	if [ ! -d "migrations" ]; then ./manage.py db init; fi;
 	./manage.py db migrate
 	./manage.py db upgrade
-
-db_revert:
-	./manage.py db downgrade
 
 db_psql_create:
 	sudo -u postgres psql -c "CREATE USER $(DB_USER) WITH PASSWORD '$(DB_PASSWORD)'"
@@ -58,6 +55,9 @@ db_remove:
 	sudo -u postgres dropuser -e --if-exists $(DB_USER)
 
 db_reset: db_remove db_create
+
+db_revert:
+	./manage.py db downgrade
 
 db_clean:
 	rm -rf migrations
@@ -102,6 +102,12 @@ setup: install venv_init db_create queue_create
 update: venv_init db_update
 
 
+# ----- Remove -----
+
+remove: db_remove queue_remove
+	rm -rf venv
+
+
 # ----- Test -----
 
 test: venv_init
@@ -120,7 +126,7 @@ deploy:
 # ----- Run Server -----
 
 runserver:
-	./manage.py runserver
+	./run.py --config=debug --reloadr
 
 
 # ========== MacOS ==========
