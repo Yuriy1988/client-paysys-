@@ -65,6 +65,7 @@ def create_app(config='debug'):
     app = Flask(__name__)
     config_dict = ConfigLoader(config)
     app.config.update(config_dict)
+    app.static_folder = app.config["STATIC_FOLDER"]
     pages.static_folder = app.config["STATIC_FOLDER"]
 
     app.wsgi_app = ProxyFix(app.wsgi_app)
