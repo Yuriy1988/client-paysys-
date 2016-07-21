@@ -14,6 +14,7 @@ hosts = dict(
 path_to_deploy = [
     'frontend/static',
     'api',
+    'antifraud',
     '*.py',
     'requirements.txt',
     'Makefile'
