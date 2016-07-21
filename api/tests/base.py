@@ -23,12 +23,12 @@ class BaseTestCase(TestCase):
             {
                 "store_item_id": "store_item_id_1",
                 "quantity": 3,
-                "unit_price": 23.5
+                "unit_price": "23.5"
             },
             {
                 "store_item_id": "store_item_id_2",
                 "quantity": 1,
-                "unit_price": 10
+                "unit_price": "10"
             }
         ]
     }
@@ -47,7 +47,7 @@ class BaseTestCase(TestCase):
     }
 
     _store = {
-        "id": 10,
+        "id": "00000000-1111-2222-3333-444444444444",
         "store_name": "The Greatest Store Ever!",
         "store_url": "http://www.greatest.com",
         "store_identifier": "dss9-asdf-sasf-fsaa",
