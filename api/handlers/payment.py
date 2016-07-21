@@ -1,3 +1,4 @@
+from antifraud.scoring import score
 from flask import request, jsonify, redirect, url_for
 
 from api import api_v1, db, auth, utils
@@ -35,8 +36,10 @@ def payment_create(invoice_id):
     data['invoice_id'] = invoice_id
     payment = Payment.create(data)
 
+    antifraud_score = score(invoice)
+
     # if got an exception - do not save payment into DB
-    utils.send_transaction(invoice, payment)
+    utils.send_transaction(invoice, payment, antifraud_score=antifraud_score)
 
     payment.status = 'ACCEPTED'
     db.session.commit()

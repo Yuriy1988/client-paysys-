@@ -69,7 +69,7 @@ class Invoice(base.BaseModel):
     @property
     def items(self):
         # NOTE: do NOT change items after Invoice creation, because
-        # total_price calculated from it.
+        # total_price calculated from them.
         return self._items
 
     @classmethod

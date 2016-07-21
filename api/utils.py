@@ -130,6 +130,10 @@ def get_store(store_id):
     return _admin_server_get_request('/stores/{id}'.format(id=store_id))
 
 
+def get_merchant_stores(merchant_id):
+    return _admin_server_get_request("/merchants/{merchant_id}/stores".format(merchant_id=merchant_id))["stores"]
+
+
 def get_merchant_account(merchant_id):
     """
     Request merchant account model json by store_id
@@ -260,7 +264,7 @@ def register_request_notifier(app):
 
 # Processing service
 
-def send_transaction(invoice, payment):
+def send_transaction(invoice, payment, **extra_info):
     """
     Collect all necessary information about transaction
     and send this object to queue.
@@ -298,7 +302,9 @@ def send_transaction(invoice, payment):
             'merchant_account': merchant_account_json
         },
 
-        'store': store
+        'store': store,
+
+        'extra_info': extra_info
     }
 
     _log.info('Send transaction [%s] to queue', payment.id)
