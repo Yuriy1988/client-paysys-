@@ -1,5 +1,7 @@
 import random
 import string
+
+from antifraud import apis
 from copy import deepcopy
 from unittest.mock import MagicMock
 from flask import json
@@ -107,6 +109,10 @@ class BaseTestCase(TestCase):
         utils.get_payment_system_contracts = MagicMock(return_value=self._paysys_contracts)
         utils.get_merchant_contracts = MagicMock(return_value=self._merchant_contracts)
         utils.push_to_queue = MagicMock(return_value=None)
+        utils.get_merchant_stores = MagicMock(return_value=[self._store.copy()])
+
+        apis.get_country_code_by_ip = MagicMock(return_value={"country_code": "US"})
+        apis.get_country_code_by_bin = MagicMock(return_value={"countrycode": "US"})
 
     def tearDown(self):
         """ Teardown after test case """

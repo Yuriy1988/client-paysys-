@@ -126,7 +126,7 @@ class TestPayment(base.BaseTestCase):
         payment_request['crypted_payment'] = None
         payment_status, payment_body = self.post('/invoices/%s/payments' % invoice_body['id'], payment_request)
 
-        self.assertEqual(payment_status, 202)
+        self.assertEqual(payment_status, 202, payment_body)
 
     # Change Payment status API
 

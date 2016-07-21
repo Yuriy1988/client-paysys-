@@ -36,7 +36,7 @@ def payment_create(invoice_id):
     data['invoice_id'] = invoice_id
     payment = Payment.create(data)
 
-    antifraud_score = score(invoice)
+    antifraud_score = score(invoice, payment)
 
     # if got an exception - do not save payment into DB
     utils.send_transaction(invoice, payment, antifraud_score=antifraud_score)

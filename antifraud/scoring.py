@@ -1,22 +1,22 @@
 from datetime import datetime, timedelta
 from functools import lru_cache
 
-from antifraud.apis import get_country_code_by_ip, get_country_code_by_bin
+from antifraud import apis
 from api.models import Invoice
-from api.utils import get_store, get_merchant_stores
+from api import utils
 from flask import request
 
 
-def score(invoice):
+def score(invoice, payment):
     s = 0
 
-    if is_trust_location(invoice.payment):
+    if is_trust_location(payment):
         s += 1
 
-    if is_normal_amount(invoice.payment):
+    if is_normal_amount(invoice):
         s += 1
 
-    if is_normal_amount(invoice.payment):
+    if is_normal_amount(invoice):
         s += 1
 
     return s
@@ -25,10 +25,12 @@ def score(invoice):
 def is_trust_location(payment):
     """Country of card  != Country of payer  (get from IP)."""
     ip = request.remote_addr
+    if not payment.payment_account:
+        return True
     bin_code = payment.payment_account[:6]  # get BIN from masked card number
     if not bin_code.isnumeric():
-        return True
-    return get_country_code_by_ip(ip) == get_country_code_by_bin(bin_code) is not None
+        return
+    return apis.get_country_code_by_ip(ip) == apis.get_country_code_by_bin(bin_code) is not None
 
 
 K = 2  # threshold coefficient of acceleration
@@ -58,8 +60,8 @@ def is_normal_count(invoice):
 
 @lru_cache()
 def _get_related_invoices(invoice, days):
-    merchant_id = get_store(invoice.store_id)["merchant_id"]
-    stores = get_merchant_stores(merchant_id)
+    merchant_id = utils.get_store(invoice.store_id).get("merchant_id")
+    stores = utils.get_merchant_stores(merchant_id)
 
     invoices = []
     for store in stores:
