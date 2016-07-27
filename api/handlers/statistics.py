@@ -6,14 +6,7 @@ from api.errors import ValidationError
 from api.schemas import StatisticsArgsSchema, StatisticsPaymentsSchema
 
 
-@api_v1.route('/statistics/payments', methods=['GET'])
-@auth.auth('system')
-def payments_statistics():
-    schema = StatisticsArgsSchema()
-    data, errors = schema.load(request.args)
-    if errors:
-        raise ValidationError(errors=errors)
-
+def payments_query_filter(data):
     query = Payment.query.join(Invoice)
 
     query = query.filter(Invoice.store_id == data['store_id']) if 'store_id' in data else query
@@ -27,15 +20,29 @@ def payments_statistics():
     query = query.filter(Payment.created >= data['from_date']) if 'from_date' in data else query
     query = query.filter(Payment.updated >= data['till_date']) if 'till_date' in data else query
 
+    return query
+
+
+@api_v1.route('/statistics/payments', methods=['GET'])
+@auth.auth('system')
+def payments_statistics():
+    schema = StatisticsArgsSchema()
+    data, errors = schema.load(request.args)
+    if errors:
+        raise ValidationError(errors=errors)
+
     order_criterion = getattr(Payment, data['order_by'], getattr(Invoice, data['order_by'], Payment.created))
 
-    query = query.order_by(order_criterion)
-    query = query.limit(data['limit'])
-    query = query.offset(data['offset'])
+    payments_query = payments_query_filter(data)
+    payments_query = payments_query.order_by(order_criterion)
+    payments_query = payments_query.limit(data['limit'])
+    payments_query = payments_query.offset(data['offset'])
 
-    payments = query.all()
+    payments = payments_query.all()
+
+    total_count = payments_query_filter(data).count()
 
     schema = StatisticsPaymentsSchema(many=True)
     result = schema.dump(payments)
 
-    return jsonify(payments=result.data, count=len(payments))
+    return jsonify(payments=result.data, count=len(payments), total_count=total_count)
