@@ -126,7 +126,7 @@ deploy:
 # ----- Run Server -----
 
 runserver:
-	./run.py --config=debug --reloadr
+	./run.py --config=debug --reload
 
 
 # ========== MacOS ==========
