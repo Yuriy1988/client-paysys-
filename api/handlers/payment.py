@@ -39,7 +39,9 @@ def payment_create(invoice_id):
     antifraud_score = score(invoice, payment)
 
     # if got an exception - do not save payment into DB
-    utils.send_transaction(invoice, payment, antifraud_score=antifraud_score)
+    utils.send_transaction(invoice, payment,
+                           antifraud_score=antifraud_score,
+                           antifraud_settings=utils.get_antifraud_settings())
 
     payment.status = 'ACCEPTED'
     db.session.commit()

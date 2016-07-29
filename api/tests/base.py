@@ -110,6 +110,14 @@ class BaseTestCase(TestCase):
         utils.get_merchant_contracts = MagicMock(return_value=self._merchant_contracts)
         utils.push_to_queue = MagicMock(return_value=None)
         utils.get_merchant_stores = MagicMock(return_value=[self._store.copy()])
+        utils.get_antifraud_settings = MagicMock(return_value=[
+            {"decline_threshold": '100.00', "three_d_secure_threshold": '30.00'}
+        ])
+        utils.get_scoring_rules = MagicMock(return_value=[
+            {"id": "is_trust_location", "score": 10.0, "parameters": {}},
+            {"id": "is_normal_amount", "score": 10.0, "parameters": {"threshold": 200}},
+            {"id": "is_normal_count", "score": 10.0, "parameters": {"threshold": 200}},
+        ])
 
         apis.get_country_code_by_ip = MagicMock(return_value={"country_code": "US"})
         apis.get_country_code_by_bin = MagicMock(return_value={"countrycode": "US"})

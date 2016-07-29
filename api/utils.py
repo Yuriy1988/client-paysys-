@@ -100,6 +100,16 @@ def _admin_server_get_request(url, **params):
     return data
 
 
+def get_scoring_rules():
+    resp = _admin_server_get_request('/antifraud_settings/scoring_rules')
+    return resp.get('rules', [])
+
+
+def get_antifraud_settings():
+    resp = _admin_server_get_request('/antifraud_settings/settings')
+    return resp
+
+
 def get_allowed_store_paysys(store_id):
     """
     Request store paysys, filter and return allowed only.
