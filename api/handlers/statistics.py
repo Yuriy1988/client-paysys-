@@ -18,7 +18,7 @@ def payments_query_filter(data):
     query = query.filter(Payment.payment_account == data['payment_account']) if 'payment_account' in data else query
     query = query.filter(Payment.status == data['status']) if 'status' in data else query
     query = query.filter(Payment.created >= data['from_date']) if 'from_date' in data else query
-    query = query.filter(Payment.updated >= data['till_date']) if 'till_date' in data else query
+    query = query.filter(Payment.created <= data['till_date']) if 'till_date' in data else query
 
     return query
 
