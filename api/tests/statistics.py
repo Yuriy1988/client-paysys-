@@ -160,11 +160,11 @@ class TestStatistics(base.BaseTestCase):
         status, body = self.get(self.url, query_args={'limit': 30, 'till_date': '2013-06-04T08:01:00+00:00'})
         self.assertEqual(body['count'], 7)
         status, body = self.get(self.url, query_args={'limit': 30, 'till_date': '2014-06-04T08:01:00+00:00'})
-        self.assertEqual(body['count'], 15)
+        self.assertEqual(body['count'], 12)
         status, body = self.get(self.url, query_args={'limit': 30, 'till_date': '2015-06-04T08:01:00+00:00'})
-        self.assertEqual(body['count'], 10)
+        self.assertEqual(body['count'], 16)
         status, body = self.get(self.url, query_args={'limit': 30, 'till_date': '2016-06-04T08:01:00+00:00'})
-        self.assertEqual(body['count'], 6)
+        self.assertEqual(body['count'], 22)
 
     def test_statistics_from_and_till_date(self):
         query = {'limit': 30, 'from_date': '2012-05-04T08:01:00+00:00', 'till_date': '2016-06-04T08:01:00+00:00'}
