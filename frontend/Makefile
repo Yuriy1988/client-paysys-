@@ -10,3 +10,6 @@ install:
 build:
 	npm install
 	npm run build -- --client_host $(CLIENT_HOST) --client_api_version $(CLIENT_API_VERSION)
+
+dev:
+	npm run dev -- --client_host 127.0.0.1:7254 --client_api_version dev
