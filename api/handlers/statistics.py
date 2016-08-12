@@ -1,3 +1,4 @@
+from sqlalchemy import desc
 from flask import request, jsonify
 
 from api import api_v1, auth
@@ -23,6 +24,14 @@ def payments_query_filter(data):
     return query
 
 
+def order_query(query, order_by):
+    reverse_order, order_by = order_by[0]=='-', order_by.replace('-', '')
+    order_criterion = getattr(Payment, order_by, getattr(Invoice, order_by, Payment.created))
+    if reverse_order:
+        return query.order_by(desc(order_criterion))
+    return query.order_by(order_criterion)
+
+
 @api_v1.route('/statistics/payments', methods=['GET'])
 @auth.auth('system')
 def payments_statistics():
@@ -31,10 +40,8 @@ def payments_statistics():
     if errors:
         raise ValidationError(errors=errors)
 
-    order_criterion = getattr(Payment, data['order_by'], getattr(Invoice, data['order_by'], Payment.created))
-
     payments_query = payments_query_filter(data)
-    payments_query = payments_query.order_by(order_criterion)
+    payments_query = order_query(payments_query, data['order_by'])
     payments_query = payments_query.limit(data['limit'])
     payments_query = payments_query.offset(data['offset'])
 

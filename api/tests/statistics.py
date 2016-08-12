@@ -146,6 +146,15 @@ class TestStatistics(base.BaseTestCase):
         self.assertEqual(body['payments'][7]['paysys_id'], 'BIT_COIN')
         self.assertEqual(body['payments'][18]['paysys_id'], 'VISA_MASTER')
 
+    def test_statistics_order_by_price(self):
+        status, body = self.get(self.url, query_args={'order_by': 'total_price'})
+        fist, last = body['payments'][0], body['payments'][-1]
+        self.assertLess(float(fist['invoice']['total_price']), float(last['invoice']['total_price']))
+
+        status, body = self.get(self.url, query_args={'order_by': '-total_price'})
+        fist, last = body['payments'][0], body['payments'][-1]
+        self.assertGreater(float(fist['invoice']['total_price']), float(last['invoice']['total_price']))
+
     def test_statistics_from_date(self):
         status, body = self.get(self.url, query_args={'limit': 30, 'from_date': '2013-05-04T08:01:00+00:00'})
         self.assertEqual(body['count'], 22)
