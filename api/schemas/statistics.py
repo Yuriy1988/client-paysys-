@@ -6,7 +6,7 @@ from api.models import enum
 from api.errors import ValidationError
 
 
-class StatisticsArgsSchema(base.BaseSchema):
+class StatisticsFilterSchema(base.BaseSchema):
 
     store_id = fields.Str(allow_none=True, validate=Length(equal=36))
     currency = fields.Str(allow_none=True, validate=OneOf(enum.CURRENCY_ENUM))
@@ -18,10 +18,6 @@ class StatisticsArgsSchema(base.BaseSchema):
     status = fields.Str(allow_none=True, validate=OneOf(enum.PAYMENT_STATUS_ENUM))
     from_date = fields.Date(allow_none=True)
     till_date = fields.Date(allow_none=True)
-
-    order_by = fields.Str(allow_none=True, missing='created', validate=Length(min=5, max=20))
-    limit = fields.Int(allow_none=True, missing=10, validate=Range(min=1, max=30))
-    offset = fields.Int(allow_none=True, missing=0, validate=Range(min=0))
 
     @validates_schema
     def validate_date(self, data):
@@ -48,6 +44,12 @@ class StatisticsArgsSchema(base.BaseSchema):
         if from_total_price and till_total_price:
             if from_total_price > till_total_price:
                 raise ValidationError('Till price must be grater than From price.')
+
+
+class StatisticsArgsSchema(StatisticsFilterSchema):
+    order_by = fields.Str(allow_none=True, missing='created', validate=Length(min=5, max=20))
+    limit = fields.Int(allow_none=True, missing=10, validate=Range(min=1, max=30))
+    offset = fields.Int(allow_none=True, missing=0, validate=Range(min=0))
 
 
 class _StatisticsInvoiceSchema(base.BaseSchema):
