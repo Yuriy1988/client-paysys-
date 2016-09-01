@@ -21,6 +21,8 @@ class Payment(base.BaseModel):
     created = db.Column(db.DateTime(timezone=True), server_default=base.now_dt)
     updated = db.Column(db.DateTime(timezone=True), server_default=base.now_dt, onupdate=base.now_dt)
 
+    score = db.Column(db.Numeric, default=0)
+
     invoice_id = db.Column(db.String, db.ForeignKey('invoice.id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, paysys_id, invoice_id, status='CREATED', payment_account=None,

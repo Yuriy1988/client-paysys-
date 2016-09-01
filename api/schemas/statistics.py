@@ -69,5 +69,7 @@ class StatisticsPaymentsSchema(base.BaseSchema):
     created = fields.DateTime(dump_only=True)
     updated = fields.DateTime(dump_only=True)
 
+    score = fields.Decimal(dump_only=True)
+
     invoice = fields.Nested(_StatisticsInvoiceSchema, dump_only=True)
 

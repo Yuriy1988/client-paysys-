@@ -31,6 +31,8 @@ class PaymentSchema(base.BaseSchema):
     created = fields.DateTime(dump_only=True)
     updated = fields.DateTime(dump_only=True)
 
+    score = fields.Decimal()
+
     invoice_id = fields.Str(dump_only=True)
 
     @validates_schema

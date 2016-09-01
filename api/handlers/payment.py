@@ -42,6 +42,7 @@ def payment_create(invoice_id):
     utils.send_transaction(invoice, payment,
                            antifraud_score=antifraud_score,
                            antifraud_settings=utils.get_antifraud_settings())
+    payment.score = antifraud_score
 
     payment.status = 'ACCEPTED'
     db.session.commit()
