@@ -12,7 +12,7 @@ def score(invoice, payment):
 
     for rule in utils.get_scoring_rules():
         if globals().get(rule["id"])(payment, invoice, **rule["parameters"]):
-            s += rule["score"]
+            s += float(rule["score"])
 
     return s
 
