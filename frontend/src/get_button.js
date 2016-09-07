@@ -4,10 +4,10 @@
 
 import ajax from 'axios'
 
-var targetUrl = `${XOPAY_CLIENT_HOST}/api/client/${XOPAY_CLIENT_API_VERSION}/invoices`;
+var targetUrl = `${location.origin}/api/client/${XOPAY_CLIENT_API_VERSION}/invoices`;
 
 function sendInvoice(invoice) {
-    console.log("Request");
+
     return ajax({
         url: targetUrl,
         data: JSON.stringify(invoice),
@@ -26,7 +26,7 @@ function validateInvoice(invoice) {
 function render() {
     var root = document.createElement("link");
     root.rel = "stylesheet";
-    root.href = `${XOPAY_CLIENT_HOST}/static/client/css/get-button.css`;
+    root.href = `${location.origin}/static/client/css/get-button.css`;
     return root;
 }
 
@@ -49,7 +49,7 @@ document.onclick = function (event) {
                 .then(function (response) {
                     switch (response.status) {
                         case 200:
-                            location.href = `${XOPAY_CLIENT_HOST}/client/payment/${response.data.id}`;
+                            location.href = `${location.origin}/client/payment/${response.data.id}`;
                             break;
                         default:
                             alert(response); // TODO CATCH ERROR

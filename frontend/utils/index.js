@@ -19,6 +19,10 @@ export default class Utils {
         return `${XOPAY_CLIENT_HOST}/api/client/${XOPAY_CLIENT_API_VERSION}/security/public_key`;
     }
 
+    static getAllowedPasystems(id) {
+        return `${XOPAY_CLIENT_HOST}/api/client/${XOPAY_CLIENT_API_VERSION}/invoices/${id}/invoice_paysys`;
+    }
+
     static getStatusUrl(paymentId) {
         return `${XOPAY_CLIENT_HOST}/api/client/${XOPAY_CLIENT_API_VERSION}/payment/${paymentId}`;
     }

@@ -43,6 +43,7 @@ export class Payment {
     }
 
     static encryptPayment(data, publicKey) {
+
         var encrypter = new RSA(publicKey);
         return encrypter.encrypt(JSON.stringify({
             card_number: data.card_number,		// {required, digits only, len 12-24} номер карточки
@@ -55,3 +56,4 @@ export class Payment {
 }
 
 window.Payment = Payment;
+

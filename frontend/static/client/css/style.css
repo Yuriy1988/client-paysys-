@@ -191,7 +191,14 @@ html, body {
     text-align: center;
 }
 
+.pasysSelectorHeader {
+    color: darkgreen;
+    font-weight: bold;
+}
 
+.paysysSelctor {
+    margin-bottom: 20px ;
+}
 /*
 @media (min-width: 768px) {
     .sidebar-mini.sidebar-collapse .sidebar-menu > li:not(.active):hover > a > span,

@@ -8,9 +8,15 @@ const argumentParser = require("node-argument-parser");
 
 const argv = argumentParser.parse("./arguments.json", process);
 
+//prod
 const DEV_MODE = process.env.DEV_MODE == 'true' || false;
 const XOPAY_CLIENT_HOST = argv.clientHost || "http://www.xopay.com";
 const XOPAY_CLIENT_API_VERSION = argv.clientApiVersion || "dev";
+
+//dev
+// const DEV_MODE = process.env.DEV_MODE == 'true' || false;
+// const XOPAY_CLIENT_HOST = 'http://127.0.0.1:7254'//"http://www.xopay.com"; dev
+// const XOPAY_CLIENT_API_VERSION =  "dev";
 
 //Print info
 console.log("Configuration:");
