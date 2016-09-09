@@ -118,17 +118,23 @@ class PaymentForm extends Component {
                 .then(function (response) {
                     //self.setState({info: "Good"}); //TODO
                     self.setState({
-                        paymentId: response.data.id
+                        paymentId: response.data.id,
+                        error: ''
                     });
                     self.setState({token:  response.data.access_token});
                     //debugger;
                 })
                 .catch(function (response) {
+                    if (response.data.error && response.data.error.message ) {
+                        self.setState({
+                            error: response.data.error.message,
+                            paymentId: null
+                        });
+                    }
                     self.setState({
-                        error: "Something went wrong",
+                        error: response.data.error.errors._schema.map((item)=>item),
                         paymentId: null
                     });
-                    debugger;
                 });
         } else {
             this.setState({
@@ -254,9 +260,9 @@ class PaymentForm extends Component {
                 <Field icon="phone"
                        name="notify_by_phone"
                        onChange={this.handleDataChange}
-                       value={data.notify_by_phone}
+                       value={parseInt(data.notify_by_phone) || ''}
                        errors={errors.notify_by_phone}
-                       placeholder="+380991234567"
+                       placeholder="380991234567"
                        label="Notify by Phone"
                 />
 
