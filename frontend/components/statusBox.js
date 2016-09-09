@@ -36,7 +36,8 @@ export class StatusBox extends Component {
       if (this.props.paymentId != "new") {
         ajax({
           url: Utils.getStatusUrl(this.props.paymentId),
-          dataType: "json"
+          dataType: "json",
+          headers: {'Authorization': `Bearer ${this.props.token}`}
         }).then((response) => {
           switch (response.status) {
             case 200:

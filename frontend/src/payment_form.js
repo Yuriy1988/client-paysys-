@@ -34,7 +34,8 @@ class PaymentForm extends Component {
             error: "",
             info: "",
             hardValidation: false,
-            allowedPasystems: []
+            allowedPasystems: [],
+            token: ''
         };
         this.publicKey = "";
 
@@ -119,6 +120,7 @@ class PaymentForm extends Component {
                     self.setState({
                         paymentId: response.data.id
                     });
+                    self.setState({token:  response.data.access_token});
                     //debugger;
                 })
                 .catch(function (response) {
@@ -339,7 +341,7 @@ class PaymentForm extends Component {
     renderStatus(paymentId) {
         if (paymentId) {
             return (
-                <StatusBox paymentId={paymentId}/>
+                <StatusBox paymentId={paymentId} token={this.state.token}/>
             );
         }
     }
